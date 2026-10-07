@@ -45,6 +45,12 @@ PHP 专用 `oms-web` 用户，只读挂载 `/app`；唯一写入位置是该发�
 
 新候选 `cba8b3affe30-2a96c216fa5c` 的不可变安装、缓存实际成功终态及 loopback 首页 200 已取得；缓存峰值 56,066,048 B。首次宝塔配置检查由 root 执行，创建 `0600` 的 error log / pid，阻止 oms-web 单元启动；两次真实失败保持 `nginx-start-failures-r3.log`。仅修正这两个文件归属，后续独立配置检查以 oms-web 用户及任务自己的 `-e` 日志路径执行；恢复 helper 已采用同一路径。正式 Nginx 的 root 配置检查和共享网站规则不改变。
 
+该候选第三次完整运行在目录速度门失败，driver / 外部 owner 均保留实际失败终态，`run-r3-failed.json` / `run-r3-owner-failed.json` 保存在受保护 F 盘。首次 BMS / mania 个人页分别 266.617 / 74.504 ms；四播放器各完整 29,204 人、gzip 原始数组 / 本人 / 并列名次及两类 413 通过，分别 9,559.706 / 9,216.659 / 9,559.015 / 9,352.583 ms。目录九次查询 p95 599.781 ms 超 300，仍未进入完整分页、burst 或 1,800 秒阶段；不能用这些成功分项提升运行总门。
+
+逐项诊断保留各 HTTP、SQL 计划和耗时，均 `staging_host_gate=false`。独立冷态全部目录 HTTP 首次 1,106.674 ms，重复 71.197 / 56.071 ms；主因是 live 目录公开资格探测，单纯移除页面 CTE 或 archive 的空 `WHERE 1` 不能解释或解决原失败。原生完整榜不截断，历史投影保持只读。顺序全分数集合、`IN` / 分组改写和仅公开组覆盖索引的负面结果一并保留，不采用它们。仅合成库的两条窄覆盖索引试验保留原 SQL：live 资格首读 97.157 ms、去历史重复 288.981 ms、完整总数 290.525 ms，精确总数仍为 338,121；结束时移除试验索引，schema / score_groups 指纹前后相同。服务采用 `scores(chart_md5,group_id)` 与 `score_groups(id,public_board)`，不新增表或触发器；空 archive 计数使用真正无条件 COUNT，资格、各来源标题搜索、排重、元数据与 BEGIN 快照保持。软件与完整 HTTP 新门须另行记录，诊断不能代签。
+
+该修订目录 / 备份 focused 32 项及全服务 338 项通过，JUnit `directory-covering-{focused,full}-r1.xml`（13.98 / 106.19 秒）；新增行为覆盖隐藏组、删除部分成绩和删空后仍存在的旧组。只读审查确认固定 d1 日备份验证器仍接受普通 core 索引，旧 b520 / d1 runtime 保留并自动维护它们，表与触发器定义不改。目录探针现在保存每次请求的查询类别、重复次序、精确总数 / 行数和 HTTP 度量，后续失败能准确定位请求。软件通过不提升新 HTTP、空间或恢复门。
+
 完整第二失败工作区 131 文件已独立保全至 F，gzip CRC / 所有 SHA / 全 22 表与真实保全 worker 成功终态通过，archive `stopped-staging-3ae-r3-complete.tar.gz` / SHA `67c9c025276a8e73ff5c95e39205df52b82c40531bb6f0db14b2172057d686ff`。旧失败报告不改；仅停止、核验后的合成 data 在同一文件系统移动给新候选，dev/inode/size 保持，无第二份 raw，记录 `verification-stopped-data-transfer-r3.json`。真实账号库未访问或移动。
 
 长验收超过原合成 access 的剩余时间，独立 staging 的 50 个假账号、100 个原 session 已通过真实 HTTP refresh 更新，保持原 session / owner / 一小时正常寿命，凭据原子保存在私有文件；没有 SQL 延长 TTL。工具现于运行及恢复阶段开始调用同一真实刷新边界，故意撤销后的请求仍验证 401。独立刷新启动的 scope / transferred-seed 注册失败记录保留；transfer 仍只由真实 run 注册。运行包中的工具与另行绑定的修订工具分别记 SHA，实际完整运行尚待签收。
