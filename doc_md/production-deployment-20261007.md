@@ -53,6 +53,12 @@ PHP 专用 `oms-web` 用户，只读挂载 `/app`；唯一写入位置是该发�
 
 完整第二失败工作区 131 文件已独立保全至 F，gzip CRC / 所有 SHA / 全 22 表与真实保全 worker 成功终态通过，archive `stopped-staging-3ae-r3-complete.tar.gz` / SHA `67c9c025276a8e73ff5c95e39205df52b82c40531bb6f0db14b2172057d686ff`。旧失败报告不改；仅停止、核验后的合成 data 在同一文件系统移动给新候选，dev/inode/size 保持，无第二份 raw，记录 `verification-stopped-data-transfer-r3.json`。真实账号库未访问或移动。
 
+第三失败工作区已完整保全至 F，175 文件 SHA、gzip CRC 和全 22 表指纹通过；archive `stopped-staging-cba-r4-complete.tar.gz` / SHA `178a656d36cfbab34fd7ff8bb814efe40e27194defe502c73d6ab748d8f49418`。保全后产生的五个有限进程控制文件另取实际终态保存，未忽略变动；停止后的四个合成数据文件按 dev / inode / size / SHA 在同一文件系统转移给 `2775faec4359-16d467e1a047`。核验 F 盘全文件后仅退役旧任务候选、失败工作区和重复压缩件，两批实际收回 667,779,072 / 293,068,800 B；原正式发布和固定日备份 helper 保留。
+
+该新候选第四次运行在首次来源榜检查失败，正式站仍未切换，目录、原生、完整分页和 1800 秒均未执行。旧检查把 HTTP 状态与 300 ms 合并且未先保存度量，不能据此宣称榜单延迟回归。实际只读 session 元数据证明开跑时该账号两种 access 均已过期 617 秒、未撤销；独立诊断实际请求返回 401 / `invalid_session`，72.064 ms，正常 HTTP refresh 后同一请求 200 / 67.368 ms。诊断及外部 owner 实际有限终态成功，报告 `verification-auth-expiry-diagnostic-r5.json` / `verification-auth-expiry-owner-r5.json`；这些定位结果仍 `staging_host_gate=false`。验收工具改为在首次独立来源进程前刷新原 100 个假 session，随后主访问阶段再刷新，保持正常一小时寿命与账号归属；每次来源 HTTP 在断言前记录状态、耗时、重复和首末位置，状态与速度分别判定。故意撤销后仍须 401，完整运行必须新轮重跑。
+
+新候选安装成功；准备 helper 的首次首页请求在监听就绪前返回 curl 7，真实单元没有重启、错误日志为空，随后同一路径 200。保留该失败，后续入口使用有限的就绪等待。缓存实际 receipt 沿用文件名 `cache-live-r3.json`，其 release、单元和来源指纹绑定本轮；首次错误引用不存在的 r4 文件在注册前失败，原脚本保留，不重标 receipt 文件名或旧失败。
+
 长验收超过原合成 access 的剩余时间，独立 staging 的 50 个假账号、100 个原 session 已通过真实 HTTP refresh 更新，保持原 session / owner / 一小时正常寿命，凭据原子保存在私有文件；没有 SQL 延长 TTL。工具现于运行及恢复阶段开始调用同一真实刷新边界，故意撤销后的请求仍验证 401。独立刷新启动的 scope / transferred-seed 注册失败记录保留；transfer 仍只由真实 run 注册。运行包中的工具与另行绑定的修订工具分别记 SHA，实际完整运行尚待签收。
 
 已核验 F 盘完整保存的任务专用重复压缩件及失效新候选后，定点退役实际收回 524,623,872 B；另将已停止的第一次失败工作区完整保全、核验 F 盘后定点退役，实际再收回 1,681,768,448 B，receipt `failed-native-r1/retire-failed-native-r1.json`。保留原发布、原设计与所有失败证据，当前剩余空间仍不足完整备份 / 恢复预算。共享主机通用 journal 约 1.9 GB、独立 OMS journal 约 4.5 MB；通用日志保全至 F 后限制为 512 MB 的方案已询问用户，待确认，不自行调整其它应用的日志保留范围。

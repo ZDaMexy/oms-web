@@ -1080,17 +1080,22 @@ def fresh_source_queries(context):
                 first = None
                 records = []
                 for repeat in range(5):
-                    for page in (1, max(1, math.ceil(len(expected) / 20))):
+                    for position, page in enumerate((1, max(1, math.ceil(len(expected) / 20)))):
                         metric, body = service.client.request("GET", p.board_path(context.metadata["chart"]["md5"], selected, page=page),
                                                               user=context.users[1])
-                        require(metric["status"] == 200 and metric["ms"] <= 300, "fresh_and_warm_source_board_300ms")
+                        context.evidence.stage(f"fresh-source-HTTP-{index}-{repeat}-{position}",
+                            {"sources": selected, "page": page, "repeat": repeat, "position": position, "HTTP": metric})
+                        require(metric["status"] == 200, "fresh_source_board_HTTP_200")
+                        require(metric["ms"] <= 300, "fresh_and_warm_source_board_300ms")
                         p.check_board(body, expected, selected, page, mine=2)
                         if first is None:
                             first = metric["ms"]
                         records.append(metric)
                 metric, body = service.client.request("GET", p.board_path(context.metadata["chart"]["md5"], selected, browser=True),
                                                       user=context.users[1], browser=True)
-                require(metric["status"] == 200 and metric["ms"] <= 300, "browser_and_game_source_board_300ms")
+                context.evidence.stage(f"fresh-source-browser-HTTP-{index}", {"sources": selected, "HTTP": metric})
+                require(metric["status"] == 200, "browser_source_board_HTTP_200")
+                require(metric["ms"] <= 300, "browser_and_game_source_board_300ms")
                 p.check_board(body, expected, selected, 1, mine=2)
                 records.append(metric)
                 cases.append({"sources": selected, "participants": len(expected), "first_process_request_ms": first,
@@ -1544,7 +1549,7 @@ def disk_gate(context, restore_result):
             "formal_live_DB_and_actual_daily_backups_require_separate_owner_evidence": True}
 
 
-def renew_synthetic_sessions(context, service):
+def renew_synthetic_sessions(context, service, *, label="real-owned-session-refresh"):
     """Keep long acceptance runs within the real, unchanged one-hour lifetime."""
     credentials = read_json(context.data / "credentials.json")
     credentials["users"] = context.users
@@ -1553,7 +1558,7 @@ def renew_synthetic_sessions(context, service):
     with context.p.readonly(context.database) as connection:
         require(all(tuple(connection.execute("SELECT user_id,transport,revoked FROM sessions WHERE id=?", (session,)).fetchone())
                     == (owner, transport, 0) for session, owner, transport in sessions), "owned_active_sessions_before_refresh")
-    with Observation(context, "real-owned-session-refresh", service._budget):
+    with Observation(context, label, service._budget):
         for user in context.users:
             for transport in ("desktop", "browser"):
                 headers = {"Content-Type": "application/json"}
@@ -1591,7 +1596,7 @@ def renew_synthetic_sessions(context, service):
             require(all(tuple(connection.execute("SELECT user_id,transport,revoked FROM sessions WHERE id=?", (session,)).fetchone())
                         == (owner, transport, 0) for session, owner, transport in sessions), "same_session_ownership_after_refresh")
         require(remaining >= 3590, "real_normal_session_lifetime_before_long_phase")
-        context.evidence.stage("real-owned-session-refresh", {"requests": len(sessions), "accounts": len(context.users),
+        context.evidence.stage(label, {"requests": len(sessions), "accounts": len(context.users),
             "minimum_access_seconds_remaining": remaining, "session_ownership_preserved": True,
             "expiry_extended_by_SQL": False, "credentials_remain_private": True})
 
@@ -1601,6 +1606,12 @@ def run(context):
     context.load_state()
     record_hideable_group(context)
     context.install_services()
+    initial = p.Service(context.data, context.database, context.archive, context.port, "initial-session-refresh")
+    initial.start()
+    try:
+        renew_synthetic_sessions(context, initial, label="initial-owned-session-refresh")
+    finally:
+        initial.stop()
     context.evidence.stage("fresh-source-selections", fresh_source_queries(context))
     service = p.Service(context.data, context.database, context.archive, context.port, "main")
     service.start()
