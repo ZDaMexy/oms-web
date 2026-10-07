@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 root = Path(__file__).resolve().parent.parent
 paths = ('resources/js', 'resources/css', 'resources/fonts', 'package.json', 'package-lock.json', 'webpack.config.js', 'tsconfig.json', '.node-version')
@@ -10,11 +11,27 @@ names = subprocess.check_output(['git', '-C', str(root), 'ls-files', '-z', '--',
 def inputs():
     return {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in names if name}
 before = inputs()
-with (root / 'artifacts/production/compiled-build.log').open('x') as output:
-    subprocess.run(['npm', 'run', 'prod'], cwd=root, stdout=output, stderr=subprocess.STDOUT, check=True)
-assert before == inputs(), 'Build inputs changed while compiling'
-assets = {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted((root / 'public/assets').rglob('*')) if path.is_file()}
+existing = '--record-existing' in sys.argv
 target = root / 'artifacts/production/compiled-inputs.json'
-with target.open('x') as output:
-    json.dump({'inputs': before, 'assets': assets, 'passed': True}, output, indent=2)
+if existing:
+    previous = json.loads(target.read_text())
+    assert previous['inputs'] == before and previous['passed']
+    (target.parent / 'compiled-inputs-r1-crlf.json').write_text(json.dumps(previous, indent=2))
+else:
+    with (root / 'artifacts/production/compiled-build.log').open('x') as output:
+        subprocess.run(['npm', 'run', 'prod'], cwd=root, stdout=output, stderr=subprocess.STDOUT, check=True)
+assert before == inputs(), 'Build inputs changed while compiling'
+source = {}
+for name in before:
+    # Git text conversion accounts for the Windows checkout's CRLF. Record both
+    # actual build bytes and canonical source bytes instead of equating them.
+    working_blob = subprocess.check_output(['git', '-C', str(root), 'hash-object', '--path=' + name, str(root / name)]).strip()
+    committed_blob = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD:' + name]).strip()
+    assert working_blob == committed_blob, name
+    source[name] = hashlib.sha256(subprocess.check_output(['git', '-C', str(root), 'show', 'HEAD:' + name])).hexdigest()
+assets = {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted((root / 'public/assets').rglob('*')) if path.is_file()}
+if existing:
+    assert assets == previous['assets']
+with target.open('w' if existing else 'x') as output:
+    json.dump({'inputs': source, 'working_inputs': before, 'assets': assets, 'passed': True}, output, indent=2)
 print(json.dumps({'compiled_files': len(assets), 'source_files': len(before), 'passed': True}))
