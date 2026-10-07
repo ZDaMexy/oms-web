@@ -159,7 +159,7 @@ RemainAfterExit=yes
 Restart=no
 User=oms-web
 Group=oms-web
-ExecStart=/www/server/nginx/sbin/nginx -c {output}/nginx.conf -g "daemon off;"
+ExecStart=/www/server/nginx/sbin/nginx -e {work}/nginx-error.log -c {output}/nginx.conf -g "daemon off;"
 MemoryHigh=80M
 MemoryMax=96M
 CPUQuota=25%
@@ -180,6 +180,7 @@ error_log {work}/nginx-error.log warn;
 worker_processes 1;
 events {{ worker_connections 256; }}
 http {{
+lua_package_path "/www/server/nginx/lib/lua/?.lua;;";
 include /www/server/nginx/conf/mime.types;
 access_log off;
 server_tokens off;
