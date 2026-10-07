@@ -31,6 +31,7 @@ from contextlib import nullcontext
 from datetime import datetime, timezone
 import hashlib
 import http.client
+from http.cookies import SimpleCookie
 import importlib
 import json
 import math
@@ -1543,6 +1544,56 @@ def disk_gate(context, restore_result):
             "formal_live_DB_and_actual_daily_backups_require_separate_owner_evidence": True}
 
 
+def renew_synthetic_sessions(context, service):
+    """Keep long acceptance runs within the real, unchanged one-hour lifetime."""
+    credentials = read_json(context.data / "credentials.json")
+    credentials["users"] = context.users
+    sessions = [(user[transport]["session"], user["id"], transport)
+                for user in context.users for transport in ("desktop", "browser")]
+    with context.p.readonly(context.database) as connection:
+        require(all(tuple(connection.execute("SELECT user_id,transport,revoked FROM sessions WHERE id=?", (session,)).fetchone())
+                    == (owner, transport, 0) for session, owner, transport in sessions), "owned_active_sessions_before_refresh")
+    with Observation(context, "real-owned-session-refresh", service._budget):
+        for user in context.users:
+            for transport in ("desktop", "browser"):
+                headers = {"Content-Type": "application/json"}
+                if transport == "desktop":
+                    body = {"refresh_token": user[transport]["refresh"]}
+                else:
+                    headers.update(Origin=context.base, Cookie="oms_ir_refresh=" + user[transport]["refresh"])
+                    headers["X-OMS-IR"] = "1"
+                    body = {}
+                client = http.client.HTTPConnection("127.0.0.1", context.port, timeout=10)
+                try:
+                    client.request("POST", "/api/ir/v1/auth/refresh", json.dumps(body).encode(), headers)
+                    response = client.getresponse()
+                    payload = json.loads(response.read(65537))
+                    require(response.status == 200 and payload["user"] == {"id": user["id"], "username": user["username"]}
+                            and payload["expires_in"] == 3600, "real_refresh_same_owner_and_normal_lifetime")
+                    if transport == "desktop":
+                        access, refresh = payload["access_token"], payload["refresh_token"]
+                    else:
+                        cookies = SimpleCookie()
+                        for name, value in response.getheaders():
+                            if name.lower() == "set-cookie":
+                                cookies.load(value)
+                        access, refresh = cookies["oms_ir_access"].value, cookies["oms_ir_refresh"].value
+                    user[transport].update(access=access, refresh=refresh)
+                    # Rotation already committed; preserve each private new token
+                    # before the next request, including if a later request fails.
+                    replace_owned_json(context.data / "credentials.json", credentials)
+                finally:
+                    client.close()
+        with context.p.readonly(context.database) as connection:
+            remaining = connection.execute("SELECT MIN(access_expires)-? FROM sessions WHERE revoked=0", (int(time.time()),)).fetchone()[0]
+            require(all(tuple(connection.execute("SELECT user_id,transport,revoked FROM sessions WHERE id=?", (session,)).fetchone())
+                        == (owner, transport, 0) for session, owner, transport in sessions), "same_session_ownership_after_refresh")
+        require(remaining >= 3590, "real_normal_session_lifetime_before_long_phase")
+        context.evidence.stage("real-owned-session-refresh", {"requests": len(sessions), "accounts": len(context.users),
+            "minimum_access_seconds_remaining": remaining, "session_ownership_preserved": True,
+            "expiry_extended_by_SQL": False, "credentials_remain_private": True})
+
+
 def run(context):
     p = context.p
     context.load_state()
@@ -1552,6 +1603,7 @@ def run(context):
     service = p.Service(context.data, context.database, context.archive, context.port, "main")
     service.start()
     try:
+        renew_synthetic_sessions(context, service)
         context.evidence.stage("first-player", player_checks(context, service, fresh=True, label="first-player"))
         context.evidence.stage("initial-PHP", frontend_checks(context, service, "initial-PHP"))
         context.evidence.stage("real-adapters", adapter_checks(context, service))
@@ -1605,6 +1657,7 @@ def run_recovery(context):
     service = context.p.Service(context.data, context.database, context.archive, context.port, "recovery-source")
     service.start()
     try:
+        renew_synthetic_sessions(context, service)
         result = recovery(context, service)
         capacity = disk_gate(context, result)
         context.evidence.stage("recovery-capacity", capacity)

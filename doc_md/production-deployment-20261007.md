@@ -43,6 +43,12 @@ PHP 专用 `oms-web` 用户，只读挂载 `/app`；唯一写入位置是该发�
 
 服务修订仅在 BMS 路径省去未使用的 `passed` payload 提取，mania 保留真实 passed；完整原生在同一 BEGIN 快照内改为每批 256 个已选主键顺序读取大 payload，排名仍在完整窄候选上计算，最终按最高 EX / 原 ID 排列有界字节。没有截断人数或删除未知条件。BMS / mania 玩家针对性 107 项、原生针对性 17 项与本次全服务 337 项通过，JUnit `bms-profile-covering-focused-r1.xml`、`native-batch-{focused,full}-r1.xml`。这些软件结果不能提升共享主机或 P/C 状态，新候选须重新运行。
 
+新候选 `cba8b3affe30-2a96c216fa5c` 的不可变安装、缓存实际成功终态及 loopback 首页 200 已取得；缓存峰值 56,066,048 B。首次宝塔配置检查由 root 执行，创建 `0600` 的 error log / pid，阻止 oms-web 单元启动；两次真实失败保持 `nginx-start-failures-r3.log`。仅修正这两个文件归属，后续独立配置检查以 oms-web 用户及任务自己的 `-e` 日志路径执行；恢复 helper 已采用同一路径。正式 Nginx 的 root 配置检查和共享网站规则不改变。
+
+完整第二失败工作区 131 文件已独立保全至 F，gzip CRC / 所有 SHA / 全 22 表与真实保全 worker 成功终态通过，archive `stopped-staging-3ae-r3-complete.tar.gz` / SHA `67c9c025276a8e73ff5c95e39205df52b82c40531bb6f0db14b2172057d686ff`。旧失败报告不改；仅停止、核验后的合成 data 在同一文件系统移动给新候选，dev/inode/size 保持，无第二份 raw，记录 `verification-stopped-data-transfer-r3.json`。真实账号库未访问或移动。
+
+长验收超过原合成 access 的剩余时间，独立 staging 的 50 个假账号、100 个原 session 已通过真实 HTTP refresh 更新，保持原 session / owner / 一小时正常寿命，凭据原子保存在私有文件；没有 SQL 延长 TTL。工具现于运行及恢复阶段开始调用同一真实刷新边界，故意撤销后的请求仍验证 401。独立刷新启动的 scope / transferred-seed 注册失败记录保留；transfer 仍只由真实 run 注册。运行包中的工具与另行绑定的修订工具分别记 SHA，实际完整运行尚待签收。
+
 已核验 F 盘完整保存的任务专用重复压缩件及失效新候选后，定点退役实际收回 524,623,872 B；另将已停止的第一次失败工作区完整保全、核验 F 盘后定点退役，实际再收回 1,681,768,448 B，receipt `failed-native-r1/retire-failed-native-r1.json`。保留原发布、原设计与所有失败证据，当前剩余空间仍不足完整备份 / 恢复预算。共享主机通用 journal 约 1.9 GB、独立 OMS journal 约 4.5 MB；通用日志保全至 F 后限制为 512 MB 的方案已询问用户，待确认，不自行调整其它应用的日志保留范围。
 
 当前未宣称部署成功。切换后应登记“已部署待验收”，给出正式首页、谱面、个人、来源筛选与客户端账号对照路径；保留公开发行版尚未包含 IR 的说明。P/C 完整闭环仍需真实播放器交分与原生读榜及指定玩法矩阵的人工作证。
