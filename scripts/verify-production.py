@@ -32,7 +32,7 @@ from datetime import datetime, timezone
 import hashlib
 import http.client
 from http.cookies import SimpleCookie
-import importlib
+import importlib.util
 import json
 import math
 import os
@@ -627,8 +627,23 @@ class Context:
                 and projection.is_file() and not projection.is_symlink(), "only_approved_readonly_public_projection")
         self.archive_path = projection
         sys.path.insert(0, str(self.backend))
-        self.p = importlib.import_module("scripts.multisource_probe")
-        require(Path(self.p.__file__).resolve() == self.backend / "scripts/multisource_probe.py", "candidate_probe_module")
+        if detached:
+            probe_path = self.work / "multisource_probe.py"
+            probe_hash = self.runtime.get("multisource_probe_sha256")
+            probe_commit = self.runtime.get("multisource_probe_source_commit", "")
+            require(probe_path.is_file() and not probe_path.is_symlink()
+                    and re.fullmatch(r"[0-9a-f]{64}", probe_hash or "") is not None
+                    and file_hash(probe_path) == probe_hash
+                    and re.fullmatch(r"[0-9a-f]{40}", probe_commit) is not None,
+                    "explicit_source_bound_detached_multisource_probe")
+            spec = importlib.util.spec_from_file_location("verification_multisource_probe", probe_path)
+            self.p = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(self.p)
+        else:
+            self.p = importlib.import_module("scripts.multisource_probe")
+            require(Path(self.p.__file__).resolve() == self.backend / "scripts/multisource_probe.py", "candidate_probe_module")
+            probe_hash = self.source_hashes["backend/scripts/multisource_probe.py"]
+            probe_commit = self.manifest["backend_commit"]
         self.archive_info = self.p.archive_info(self.archive)
         require(self.archive_info == {"projection_version": approved["projection_version"], "rows": approved["total_summary_rows"],
                                       "bytes": approved["bytes"], "sha256": approved["sha256"]}, "actual_full_projection_binding")
@@ -655,6 +670,8 @@ class Context:
                    "manifest_sha256": expected["manifest_sha256"], "runtime_control_sha256": file_hash(self.runtime_path),
                    "source_sha256": self.source_hashes, "archive": self.archive_info,
                    "verification_harness_sha256": harness_hash, "harness_is_candidate_runtime_file": embedded,
+                   "verification_probe_sha256": probe_hash, "verification_probe_source_commit": probe_commit,
+                   "probe_is_candidate_runtime_file": not detached,
                    "data_scope": "synthetic task-owned staging DB plus immutable complete public projection",
                    "production_database_accessed": False, "browser_acceptance": False, "player_acceptance": False,
                    "fresh_operating_system_restore": False, "driver_terminal_owner_collection_required": True}
