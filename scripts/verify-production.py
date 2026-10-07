@@ -1381,6 +1381,7 @@ def recovery(context, service):
         reader = None
         wal = {"uncheckpointed_committed_policy_delta_proven": False}
         try:
+            renew_synthetic_sessions(context, service, label=f"pre-snapshot-owned-session-refresh-{number}")
             if number == 2:
                 # Leave a real reader at the old committed frame while HTTP and
                 # ordinary moderation commit changes to the same synthetic DB.
@@ -1670,7 +1671,6 @@ def run_recovery(context):
     service = context.p.Service(context.data, context.database, context.archive, context.port, "recovery-source")
     service.start()
     try:
-        renew_synthetic_sessions(context, service)
         result = recovery(context, service)
         capacity = disk_gate(context, result)
         context.evidence.stage("recovery-capacity", capacity)
