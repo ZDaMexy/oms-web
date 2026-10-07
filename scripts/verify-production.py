@@ -397,7 +397,9 @@ class Observation:
     """250 ms paired whole-host / driver / main / PHP / Nginx / catalog samples."""
     def __init__(self, context, label, backend=None, maintenance=None):
         self.context, self.label = context, label
-        self.units = {"driver": context.driver, **context.frontend}
+        self.units = {"driver": context.driver}
+        if not getattr(context, "frontend_closed", False):
+            self.units.update(context.frontend)
         if context.catalog is not None:
             self.units["catalog"] = context.catalog
         if backend is not None:
@@ -410,6 +412,9 @@ class Observation:
         self.minimum = None
         self.minimum_disk_frame = None
         self.database_peak = {"main_bytes": 0, "wal_bytes": 0, "main_plus_wal_bytes": 0}
+        self.databases = {"primary": context.database,
+                          **{f"restore-{number}": context.work / f"empty-restore-{number}/live.db" for number in (1, 2)}}
+        self.database_peaks = {name: dict(self.database_peak) for name in self.databases}
         self.maxima = {name: {"memory_current_bytes": 0, "memory_peak_bytes": 0, "pss_kib": 0,
                              "rss_kib": 0, "processes": 0} for name in self.units}
         self.cpu_rates = {name: [] for name in self.units}
@@ -422,14 +427,23 @@ class Observation:
         frame = {"monotonic": time.monotonic(), "host": host_memory(),
                  "disk_free_bytes": shutil.disk_usage(self.context.work).free,
                  "groups": {name: unit.frame() for name, unit in self.units.items()}}
-        main = self.context.database
-        wal = main.with_name(main.name + "-wal")
-        main_bytes = main.stat().st_size if main.is_file() else 0
-        wal_bytes = wal.stat().st_size if wal.is_file() else 0
-        frame["owned_primary_database_bytes"] = {"main_bytes": main_bytes, "wal_bytes": wal_bytes,
-                                                "main_plus_wal_bytes": main_bytes + wal_bytes}
-        for name, number in frame["owned_primary_database_bytes"].items():
-            self.database_peak[name] = max(self.database_peak[name], number)
+        frame["owned_database_bytes"] = {}
+        for name, main in self.databases.items():
+            wal = main.with_name(main.name + "-wal")
+            try:
+                main_bytes = main.stat().st_size
+            except FileNotFoundError:
+                main_bytes = 0  # An explicitly owned stopped restore may be retired.
+            try:
+                wal_bytes = wal.stat().st_size
+            except FileNotFoundError:
+                wal_bytes = 0  # SQLite may checkpoint/unlink WAL during sampling.
+            size = {"main_bytes": main_bytes, "wal_bytes": wal_bytes, "main_plus_wal_bytes": main_bytes + wal_bytes}
+            frame["owned_database_bytes"][name] = {"path": str(main), **size}
+            for field, number in size.items():
+                self.database_peaks[name][field] = max(self.database_peaks[name][field], number)
+        frame["owned_primary_database_bytes"] = frame["owned_database_bytes"]["primary"]
+        self.database_peak = self.database_peaks["primary"]
         if self.first is None:
             self.first = frame
         if self.minimum is None or frame["host"]["available_bytes"] < self.minimum["host"]["available_bytes"]:
@@ -489,6 +503,7 @@ class Observation:
             "samples": self.frames, "interval_seconds": 0.25, "sample_span_seconds": seconds,
             "first": self.first, "last": self.last, "paired_minimum_available_frame": self.minimum,
             "minimum_disk_free_frame": self.minimum_disk_frame, "primary_database_peak": self.database_peak,
+            "owned_database_peaks": self.database_peaks,
             "whole_filesystem_free_includes_other_host_activity": True,
             "peaks": self.maxima,
             "cpu": {name: {"mean_percent_one_core": (self.cpu_last[name] - self.cpu_first[name]) / (seconds * 10000),
@@ -742,17 +757,34 @@ class Context:
             service._log_path = service.directory / (service.label + "-" + uuid.uuid4().hex[:8] + ".log")
             with service._log_path.open("xb"):
                 pass
-            command = [str(context.python), "-B", "-m", "oms_ir", "serve", "--db", str(service.database),
+            release = getattr(service, "runtime_release", context.release)
+            require(release == context.release or release in
+                    (context.work / "empty-restore-1/release", context.work / "empty-restore-2/release"),
+                    "only_original_or_explicit_empty_restore_runtime")
+            direct_path(release)
+            backend = release / "backend"
+            python = backend / ".venv/bin/python"
+            require(file_hash(release / "release.json") == file_hash(context.release / "release.json"),
+                    "API_runtime_matches_bound_candidate_manifest")
+            runtime = json.loads(subprocess.check_output([str(python), "-B", "-c",
+                "import json,sys,sqlite3,oms_ir; print(json.dumps({'prefix':sys.prefix,'module':oms_ir.__file__,'sqlite':sqlite3.sqlite_version}))"],
+                cwd=backend, text=True, env={**os.environ, "PYTHONPATH": ""}))
+            require(runtime["prefix"] == str(backend / ".venv") and runtime["module"] == str(backend / "oms_ir/__init__.py")
+                    and tuple(map(int, runtime["sqlite"].split("."))) >= (3, 51, 3), "actual_API_venv_and_source_directory")
+            command = [str(python), "-B", "-m", "oms_ir", "serve", "--db", str(service.database),
                        "--archive", str(context.archive), "--port", str(context.port), "--public-origin", context.base,
-                       "--trusted-loopback-proxy", "--web-directory", str(context.release / "web/ir")]
+                       "--trusted-loopback-proxy", "--web-directory", str(release / "web/ir")]
             with socket.socket() as listener:
                 listener.bind(("127.0.0.1", context.port))
-            launch_unit(service.unit, command, context, service._log_path, 500, 150, high=384)
+            launch_unit(service.unit, command, context, service._log_path, 500, 150, high=384, backend=backend)
             values = properties(service.unit)
             service.pid = int(values["MainPID"])
             service._budget = BudgetUnit(service.unit, service.pid, 500, 1.5, 384)
-            require(service._budget.identity["argv"] == command and service._budget.identity["cwd"] == str(context.backend),
+            require(service._budget.identity["argv"] == command and service._budget.identity["cwd"] == str(backend),
                     "actual_candidate_backend_process")
+            context.evidence.stage("API-runtime-" + service.unit, {"release": str(release), "backend": str(backend),
+                "python": str(python), "environment_probe": runtime, "actual_process_identity": service._budget.identity,
+                "restored_source_runtime": release != context.release})
             service._stopped = False
             context.active_service = service
             for _ in range(120):
@@ -783,13 +815,13 @@ class Context:
         self.frontend_closed = True
 
 
-def launch_unit(unit, command, context, log, memory, cpu, *, high=None):
+def launch_unit(unit, command, context, log, memory, cpu, *, high=None, backend=None):
     launch = ["systemd-run", "--quiet", "--unit=" + unit, "--property=Type=exec", "--property=RemainAfterExit=yes",
               "--property=Restart=no", "--property=MemoryAccounting=yes", "--property=CPUQuota=" + str(cpu) + "%",
               "--property=MemoryMax=" + str(memory) + "M", "--property=MemorySwapMax=0", "--property=TasksMax=96",
               "--property=UMask=0077", "--property=IPAddressDeny=any", "--property=IPAddressAllow=localhost",
               "--property=StandardOutput=append:" + str(log), "--property=StandardError=append:" + str(log),
-              "--working-directory=" + str(context.backend), "--setenv=PYTHONPATH=", "--setenv=PYTHONDONTWRITEBYTECODE=1",
+              "--working-directory=" + str(context.backend if backend is None else backend), "--setenv=PYTHONPATH=", "--setenv=PYTHONDONTWRITEBYTECODE=1",
               "--setenv=PYTHONUNBUFFERED=1", "--setenv=TMPDIR=" + str(context.work / "tmp")]
     if high is not None:
         launch.append("--property=MemoryHigh=" + str(high) + "M")
@@ -1256,10 +1288,19 @@ def bind_restored_frontend(context, destination, number):
     new_json(ready, {"round": number, "release_target": str(release), "cache_target": str(cache),
                      "database": str(destination / "live.db"), "base": context.base,
                      "original_release_manifest_sha256": file_hash(context.release / "release.json"),
-                     "required": "restore the complete native package into the new release target; rebuild caches in runtime/bootstrap and runtime/storage; start one registered PHP/Nginx pair"})
-    receipt = wait_owner_file(receipt_path)
+                     "required": "restore the complete native package; offline frozen uv sync in restored/backend; rebuild fresh PHP caches; start one registered PHP/Nginx pair"})
+    with Observation(context, f"owner-source-restore-{number}"):
+        receipt = wait_owner_file(receipt_path)
     require(receipt["round"] == number and receipt["release"] == str(release) and receipt["cache_root"] == str(cache)
             and receipt["source_restored_from_package"] is True, "explicit_full_frontend_restore_receipt")
+    environment = receipt["backend_environment"]
+    require(environment["prefix"] == str(release / "backend/.venv")
+            and environment["module"] == str(release / "backend/oms_ir/__init__.py")
+            and tuple(map(int, environment["sqlite"].split("."))) >= (3, 51, 3), "restored_offline_backend_environment")
+    owner_path = context.work / f"verification-owner-restore-{number}.json"
+    owner = read_json(owner_path)
+    require(file_hash(owner_path) == receipt["owner_report_sha256"] and owner["status"] == "completed"
+            and owner["stages"][f"resources-owner-restore-{number}"]["passed"], "actual_owner_restore_resource_samples")
     direct_path(release)
     require(file_hash(release / "release.json") == file_hash(context.release / "release.json"), "restored_release_manifest_same_bytes")
     for name, checksum in context.runtime_files.items():
@@ -1293,6 +1334,8 @@ def bind_restored_frontend(context, destination, number):
     result = {"round": number, "full_files_verified": len(context.runtime_files), "restore_target": str(release),
               "receipt_sha256": file_hash(receipt_path), "manifest_sha256": file_hash(release / "release.json"),
               "fresh_cache_build_terminal": values, "shared_readonly_PHP_OS_runtime": original_php["RootDirectory"],
+              "backend_environment": environment, "owner_report_sha256": file_hash(owner_path),
+              "owner_runtime_disk_phases": receipt["runtime_disk_phases"],
               "complete_source_dependency_and_assets_verified": True, "fresh_OS_recovery": False}
     context.evidence.stage(f"complete-PHP-source-restore-{number}", result)
     return result
@@ -1307,7 +1350,8 @@ def serial_export(context, destination, compressed, number):
                     "gzip_sha256": file_hash(compressed), "sidecar_sha256": file_hash(paths[2]),
                     "restored_database_sha256": file_hash(destination / "live.db"),
                     "remove_only_after_complete_F_export_and_verification": True})
-    value = wait_owner_file(receipt)
+    with Observation(context, f"owner-export-{number}", context.active_service._budget):
+        value = wait_owner_file(receipt)
     require(value["round"] == number and value["complete_F_export_verified"] is True
             and value["removed_owned_paths"] == [str(path) for path in paths]
             and not any(os.path.lexists(path) for path in paths), "verified_F_export_and_exact_owned_retirement")
@@ -1391,6 +1435,8 @@ def recovery(context, service):
                 source_restore = bind_restored_frontend(context, destination, number)
             new_json(destination / "seed.json", {p.MARKER: True, "database": "live.db", "archive": context.archive_info, "recovery_round": number})
             recovered = p.Service(destination, restored_path, context.archive, context.port, "restored-" + str(number))
+            if source_restore is not None:
+                recovered.runtime_release = destination / "release"
             recovered.start()
             try:
                 with Observation(context, f"recovered-api-{number}", recovered._budget):
@@ -1428,7 +1474,8 @@ def recovery(context, service):
                     restart_ready = context.work / "restart-original-frontend-ready.json"
                     restart_receipt = context.work / "restart-original-frontend-receipt.json"
                     new_json(restart_ready, {"release": str(context.release), "base": context.base})
-                    restart = wait_owner_file(restart_receipt)
+                    with Observation(context, "owner-restart-original-frontend", service._budget):
+                        restart = wait_owner_file(restart_receipt)
                     require(restart["release"] == str(context.release), "original_frontend_restart_binding")
                     units = {}
                     for name, memory, cpu, high in (("php", 200, 0.5, 160), ("nginx", 96, 0.25, None)):
@@ -1475,12 +1522,22 @@ def disk_gate(context, restore_result):
     wal = Path(str(context.database) + "-wal")
     if wal.is_file():
         maximum_raw = max(maximum_raw, context.database.stat().st_size + wal.stat().st_size)
+    samples = [row for name, row in context.evidence.data["stages"].items() if name.startswith("resources-")]
+    require(samples, "actual_recovery_disk_observations")
+    maximum_raw = max(maximum_raw, *(peak["main_plus_wal_bytes"] for row in samples for peak in row["owned_database_peaks"].values()))
+    minimum_free = min(row["minimum_disk_free_frame"]["disk_free_bytes"] for row in samples)
     free = shutil.disk_usage(context.work).free
-    required = 8 * (maximum_gzip + MIB) + maximum_raw + 2 * GIB
+    retained_pairs = 8 * (maximum_gzip + MIB)
+    required = retained_pairs + maximum_raw + 2 * GIB
     return {"actual_free_after_retained_releases_projection_and_two_restores_bytes": free,
             "actual_maximum_gzip_bytes": maximum_gzip, "actual_maximum_raw_or_main_plus_WAL_bytes": maximum_raw,
             "seven_daily_pairs_plus_one_atomic_write_and_one_raw_restore_bytes": required - 2 * GIB,
-            "system_margin_bytes": 2 * GIB, "required_additional_free_bytes": required, "passed": free >= required,
+            "system_margin_bytes": 2 * GIB, "required_additional_free_bytes": required,
+            "passed": free >= required and minimum_free >= retained_pairs + 2 * GIB,
+            "actual_minimum_free_during_backup_restore_source_dependencies_cache_and_HTTP_bytes": minimum_free,
+            "actual_2GiB_margin_throughout_sampled_recovery": minimum_free >= 2 * GIB,
+            "eight_retained_pairs_fit_at_actual_recovery_peak": minimum_free >= retained_pairs + 2 * GIB,
+            "actual_recovery_peak_additional_retention_bytes": retained_pairs,
             "synthetic_capacity_snapshots_only": True, "formal_production_daily_pairs_checked": False,
             "formal_live_DB_and_actual_daily_backups_require_separate_owner_evidence": True}
 
@@ -1502,6 +1559,7 @@ def run(context):
             api = p.api_checks(service, context.metadata, context.users, context.keys, context.fixtures)
             directory = p.directory_stage(service, context.metadata)
             native = p.native_stage(service, context.metadata, context.keys)
+            context.evidence.stage("original-API-latency", {"API": api, "directory": directory, "native": native})
             require(directory["p95_gate_passed"] and native["under_10_seconds"]
                     and native["gzip_wire_and_complete_decoded_bodies_verified"], "original_directory_and_full_native_latency")
             key = p.key_for(context.keys, 3, "lr2oraja_ed")
@@ -1527,6 +1585,7 @@ def run(context):
         context.evidence.stage("real-peer-quota", quota_probe(context, service))
         context.evidence.data["database_empty_restore_gate"] = False
         context.evidence.data["complete_PHP_empty_restore_gate"] = False
+        context.evidence.data["complete_API_source_empty_restore_gate"] = False
         context.evidence.data["recovery_requires_separate_serial_owner_run"] = True
         with Observation(context, "projection-after", service._budget):
             after = p.archive_info(context.archive)
@@ -1546,11 +1605,16 @@ def run_recovery(context):
     service.start()
     try:
         result = recovery(context, service)
+        capacity = disk_gate(context, result)
+        context.evidence.stage("recovery-capacity", capacity)
+        context.evidence.check(capacity["passed"] and capacity["actual_2GiB_margin_throughout_sampled_recovery"],
+                               "eight_daily_pairs_raw_restore_and_actual_recovery_disk_margin")
         context.evidence.stage("two-database-restores", {"passed": result["two_actual_empty_directory_HTTP_restores_passed"],
                                                         "rounds": [1, 2], "serial_backend": True,
                                                         "complete_PHP_source_restore_proven": context.args.external_frontend_restores})
         context.evidence.data["database_empty_restore_gate"] = True
         context.evidence.data["complete_PHP_empty_restore_gate"] = context.args.external_frontend_restores
+        context.evidence.data["complete_API_source_empty_restore_gate"] = context.args.external_frontend_restores
     finally:
         service.stop()
     context.close_frontend()
