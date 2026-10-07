@@ -87,4 +87,12 @@ F 盘四份已关闭失败轮的可再生成 raw 解包副本已定点退役，�
 
 两空恢复的五份来源已保存在 F 的 `recovery-protocol-r7`，AST 与只读审查通过，**实际未运行**。预备入口使用 ready / close 握手：仍存活时完成采样，再读真实退出终态，最后发布回执。每轮仅导出自己的完整关闭目录和 snapshot / sidecar，F 全字节证明后才定点退役。新源码 / 冻结依赖、全 22 表、完整原生数组、旧 reader 下 WAL 撤钥 / 隐帖、八份备份及真实 raw 峰值门保持。新检查来源和工作区须重新绑定并保留原预备来源，不能将准备当恢复完成。
 
+第七失败轮已完整保存在服务器 `stopped-staging-277-r8-complete.tar.gz`，106,099,752 B，SHA `5df0ce11d73b54614b51b037550f2755016bcc9f8ebc788776faae91929ae33b`；实际 128 MiB / 50% CPU worker 完成，全 22 表、integrity / FK 与资源观察通过。外部保全 controller 在 worker 正常退出成为 zombie、systemd 尚未清零 MainPID 的瞬间以 `owned_pid_not_reused` 失败，原失败报告和日志保持，不补签其终态。新增独立关闭复核实际 exit 0，读取同一 worker 的 loaded / active-exited / MainPID 0 / 原 PID、预算与真实源码，消费历史 kernel 帧并明确其不是终态；完整归档 SHA、每项 SHA / gzip EOF 及四个停库文件重新核对，原 controller 仍为失败。验证回执保存在 F 的 `run-r7-failed`；完整归档尚未导出到 F，不将服务器保全等同外存成功。
+
+第八轮在新 `r5` 接续同一不可变候选和四个合成数据文件。独立关闭复核、准备 / 缓存、同盘转移三个有限进程已实际成功，转移前后 inode / size / SHA 保持、无第二份 raw；缓存实际峰值 55,132,160 B。原 ownership 只在真实 run 开始时注册一次。新检查入口绑定 Web `f7537f0d2619305b5d96d296d8786b3db02a6360` / SHA `7544623f2264658a2f04a919af73a6072ab335fafa97781a799623d714362ef4`，probe 沿同一 `6fb0c2b7` / `aaa551ab…`；来源原文件在 F 的 `runtime-source-controls-r8`，实际准备 / 缓存 / 转移及 loaded 终态在 `staging-preparation-r8`。本轮工具、候选产品和 Git 文档 HEAD 分别登记，服务预算不扩大。实际完整运行仍在进行，未签资源、恢复或上线。
+
+同轮浏览器通过临时 SSH loopback 入口打开实际候选的新闻首页、Ginger 目录、谱面详情与历史榜；清空来源后人数由 9 变 0，选择 LR2 历史后恢复 9，再恢复全来源。旧 namespace、历史摘要、未知游玩时间和未确认的下载连通性如实显示。统一账号面板实际打开 / 收起，未填账号或提交表单；临时标签与转发已关闭。回执 `browser-staging-r8.json` 不保存个人原始行，明确下载入库、真人账号 / 客户端、资源与生产切换未验。
+
+两空恢复预备入口另保留为 `recovery-protocol-r8`，消费 `r5` 与本轮准确工具 SHA；在任何重启前读实际已关闭完整 run driver / 外部 owner 成功状态。ExecStart 不在原工具的属性列表内，预执行只读审查发现直接索引会失败，已改为恢复 owner 单独实测执行定义，原终态不补字段、运行中工具不改。正常退出仅接受原 PID / starttime 的 zombie 或确实消失，再等待 systemd 实际 MainPID 0，所有原终态 / 预算断言保持。五份修订源 AST 与只读审查通过，旧源和修订前 receipt 保留；两次恢复仍**未执行**，F 空间和共享日志决策仍待。
+
 当前未宣称部署成功。切换后应登记“已部署待验收”，给出正式首页、谱面、个人、来源筛选与客户端账号对照路径；保留公开发行版尚未包含 IR 的说明。P/C 完整闭环仍需真实播放器交分与原生读榜及指定玩法矩阵的人工作证。
