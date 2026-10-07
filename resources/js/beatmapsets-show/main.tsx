@@ -1,231 +1,38 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
 // See the LICENCE file in the repository root for full licence text.
 
-import Comments from 'components/comments';
 import HeaderV4 from 'components/header-v4';
-import NotificationBanner from 'components/notification-banner';
-import PlaymodeTabs from 'components/playmode-tabs';
-import StringWithComponent from 'components/string-with-component';
-import Ruleset, { rulesets } from 'interfaces/ruleset';
-import { action, autorun, computed, IReactionDisposer, makeObservable, observable, untracked } from 'mobx';
-import { observer } from 'mobx-react';
-import core from 'osu-core-singleton';
+import { useApi } from 'oms/api';
+import { Status } from 'oms/components';
+import { pageData, ruleset, useQuery } from 'oms/page';
+import { BmsDetail, IrChart, ManiaDetail } from 'oms/types';
 import * as React from 'react';
-import { showVisual } from 'utils/beatmapset-helper';
-import { generate, setHash } from 'utils/beatmapset-page-hash';
-import { trans } from 'utils/lang';
-import { reloadPage } from 'utils/turbolinks';
-import Controller from './controller';
-import Header from './header';
-import headerLinks from './header-links';
-import Hype from './hype';
-import Info from './info';
-import NsfwWarning from './nsfw-warning';
+import Header, { IrHeader } from './header';
+import Info, { IrInfo } from './info';
 import ScoreboardMain from './scoreboard/main';
 
-interface Props {
-  container: HTMLElement;
-}
-
-@observer
-export default class Main extends React.Component<Props> {
-  @observable private readonly controller: Controller;
-  private setHashDisposer?: IReactionDisposer;
-
-  @computed
-  private get showEnableLazerModeLink() {
-    // enabling lazer mode requires full page reload.
-    return this.controller.currentBeatmap.lazer_only && untracked(() => core.userPreferences.get('legacy_score_only'));
-  }
-
-  @computed
-  private get headerLinksAppend() {
-    if (this.controller.state.showingNsfwWarning) return null;
-
-    const entries = rulesets.map((ruleset) => {
-      const beatmaps = this.controller.beatmaps.get(ruleset) ?? [];
-      const mainCount = beatmaps.filter((b) => !b.convert).length;
-
-      return {
-        count: mainCount > 0 ? mainCount : undefined,
-        disabled: beatmaps.length === 0,
-        href: generate({ ruleset }),
-        mode: ruleset,
-      };
-    });
-
-    return (
-      <PlaymodeTabs
-        currentMode={this.controller.currentBeatmap.mode}
-        entries={entries}
-        modifiers='beatmapset'
-        onClick={this.onClickPlaymode}
-      />
-    );
-  }
-
-  constructor(props: Props) {
-    super(props);
-
-    this.controller = new Controller(this.props.container);
-
-    makeObservable(this);
-  }
-
-  componentDidMount() {
-    this.setHashDisposer = autorun(this.setHash);
-    $(document).one('turbo:before-cache', () => this.setHashDisposer?.());
-  }
-
-  componentWillUnmount() {
-    this.setHashDisposer?.();
-    this.controller.destroy();
-  }
-
-  render() {
-    return (
-      <div className='osu-layout osu-layout--full'>
-        {this.renderDeletedNotification()}
-        {this.renderPageHeader()}
-        {this.controller.state.showingNsfwWarning
-          ? <NsfwWarning onClose={this.onCloseNsfwWarning} />
-          : this.renderPage()
-        }
+export default function Main(_props: {container:HTMLElement}) {
+  const initial=pageData<{context:{ruleset?:'bms'|'mania';md5?:string;sha256?:string;sid?:number;ir_only?:boolean};catalog?:BmsDetail|ManiaDetail;chart?:IrChart}>().data;
+  const [query,update]=useQuery();
+  const md5=initial.context.md5??query.get('md5');
+  const irOnly=initial.context.ir_only===true;
+  const irMetadata=useApi<IrChart>(irOnly&&initial.chart==null&&md5!=null?'/api/ir/v2/charts/'+md5:null);
+  const ir=initial.chart??irMetadata.data;
+  const mode=irOnly?ir?.ruleset??initial.context.ruleset??ruleset(query):initial.context.ruleset??ruleset(query);
+  const sid=initial.context.sid??query.get('sid');
+  const sha256=initial.context.sha256??query.get('sha256');
+  const endpoint=mode==='bms'&&md5?'/api/ir/v1/catalog/bms/'+md5+(sha256==null?'':'?'+new URLSearchParams({sha256})):mode==='mania'&&sid?'/api/ir/v1/catalog/mania/sets/'+sid:null;
+  const metadata=useApi<BmsDetail|ManiaDetail>(!irOnly&&initial.catalog==null?endpoint:null);
+  const detail=initial.catalog??metadata.data;
+  return <div className='osu-layout osu-layout--full'>
+    <HeaderV4 theme='beatmapset' links={[{title:irOnly?'成绩谱面':'谱面',url:irOnly?'/ir':'/beatmapsets'},{title:'详情',url:location.pathname+location.search,active:true}]}/>
+    <div className='osu-page osu-page--generic-compact'>
+      {irOnly?<><Status error={irMetadata.error} ready={ir!=null}/>{ir!=null&&<><IrHeader detail={ir}/><IrInfo detail={ir}/></>}</>:
+        <>{endpoint==null?<p>{mode==='mania'&&md5!=null?'当前只有原 .osu MD5，尚未关联 Sayobot 谱包。':'缺少原 MD5 或镜像谱包 ID。'}</p>:<Status error={metadata.error} ready={detail!=null}/>}
+          {detail!=null&&<><Header detail={detail} md5={md5} sha256={sha256} selectedSource={query.get('download_source')} onSource={source=>update({download_source:source})}/><Info detail={detail}/></>}</>}
+      <div className='user-profile-pages user-profile-pages--no-tabs'>
+        {md5!=null?(!irOnly||ir!=null)&&<div className='page-extra'><ScoreboardMain md5={md5} mode={mode}/></div>:<div className='page-extra page-extra--compact'><p>镜像未提供原 .osu MD5，暂未关联 OMS 同谱榜。</p></div>}
       </div>
-    );
-  }
-
-
-  private handleEnableLazerMode(this: void, event: React.SyntheticEvent) {
-    event.preventDefault();
-    const request = core.userPreferences.set('legacy_score_only', false);
-
-    if (request == null) {
-      // the page is in weird state
-      reloadPage();
-    } else {
-      request.done(reloadPage);
-    }
-  }
-
-  @action
-  private readonly onClickPlaymode = (e: React.MouseEvent, mode: Ruleset) => {
-    e.preventDefault();
-
-    this.controller.state.playmode = mode;
-  };
-
-  @action
-  private readonly onCloseNsfwWarning = () => {
-    this.controller.state.showingNsfwWarning = false;
-  };
-
-  private renderDeletedNotification() {
-    if (this.controller.beatmapset.deleted_at == null) {
-      return;
-    }
-
-    return (
-      <NotificationBanner
-        message={trans('beatmapsets.show.deleted_banner.message')}
-        title={trans('beatmapsets.show.deleted_banner.title')}
-        type='info'
-      />
-    );
-  }
-
-  private renderLazerOnlyMessage() {
-    return (
-      <div className='beatmapset-hype'>
-        <div className='beatmapset-hype__box beatmapset-hype__box--description'>
-          <div className='beatmapset-hype__description-row beatmapset-hype__description-row--status'>
-            <div className='beatmapset-status beatmapset-status--lazer-only'>
-              {trans('beatmapsets.show.lazer_only.title')}
-            </div>
-          </div>
-          <p className='beatmapset-hype__description-row beatmapset-hype__description-row--current'>
-            {trans('beatmapsets.show.lazer_only.description')}
-          </p>
-          {this.showEnableLazerModeLink && (
-            <p className='beatmapset-hype__description-row'>
-              <StringWithComponent
-                mappings={{
-                  enable_link: (
-                    <a href='#' onClick={this.handleEnableLazerMode}>
-                      {trans('beatmapsets.show.lazer_only.scoreboard_switch_mode.enable_link')}
-                    </a>
-                  ),
-                }}
-                pattern={trans('beatmapsets.show.lazer_only.scoreboard_switch_mode._')}
-              />
-            </p>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  private renderPage() {
-    return (
-      <>
-        <div className='osu-page osu-page--generic-compact'>
-          <Header controller={this.controller} />
-          <Info controller={this.controller} />
-
-          <div className='user-profile-pages user-profile-pages--no-tabs'>
-            {this.controller.beatmapset.can_be_hyped &&
-              <div className='page-extra page-extra--compact'>
-                <Hype beatmapset={this.controller.beatmapset} />
-              </div>
-            }
-
-            {this.controller.currentBeatmap.lazer_only && (
-              <div className='page-extra page-extra--compact'>
-                {this.renderLazerOnlyMessage()}
-              </div>
-            )}
-
-            {this.controller.currentBeatmap.is_scoreable && !this.showEnableLazerModeLink &&
-              <div className='page-extra'>
-                <ScoreboardMain
-                  beatmap={this.controller.currentBeatmap}
-                  container={this.props.container}
-                />
-              </div>
-            }
-
-            <div className='page-extra page-extra--compact'>
-              <Comments
-                baseCommentableMeta={{
-                  id: this.controller.beatmapset.id,
-                  type: 'beatmapset',
-                }}
-                controllerStateSelector='#json-comments'
-                modifiers='page-extra'
-              />
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  private renderPageHeader() {
-    return (
-      <HeaderV4
-        backgroundImage={
-          showVisual(this.controller.beatmapset, !this.controller.state.showingNsfwWarning)
-            ? this.controller.beatmapset.covers.slimcover
-            : null
-        }
-        links={headerLinks('show', this.controller.beatmapset)}
-        linksAppend={this.headerLinksAppend}
-        theme='beatmapset'
-      />
-    );
-  }
-
-  private readonly setHash = () => {
-    setHash(generate({ beatmap: this.controller.currentBeatmap }));
-  };
+    </div>
+  </div>;
 }

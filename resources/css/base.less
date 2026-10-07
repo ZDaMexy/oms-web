@@ -124,6 +124,11 @@ a[disabled] {
   cursor: pointer;
 }
 
+// Auth and ownership visibility must override component display rules.
+[hidden] {
+  display: none !important;
+}
+
 [data-visibility] {
   will-change: opacity;
   transition: opacity 120ms;

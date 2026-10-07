@@ -84,5 +84,9 @@ composer-installer
 /storage/htmlpurifier/
 /storage/paypal_auth.cache
 
+# OMS local tools, runtime and evidence stay on the development drive.
+/.dev-cache/
+/artifacts/
+
 /database/ip2asn/*.idx
 /database/ip2asn/*.tsv

@@ -1,6 +1,6 @@
 <?php
 
-// require helpers here so it's correctly reloaded by octane
+// Original presentation helpers are needed while configuration is loaded.
 require_once __DIR__.'/../app/helpers.php';
 
 /*
@@ -44,7 +44,7 @@ $app->singleton(
 
 $app->singleton(
     'Illuminate\Contracts\Debug\ExceptionHandler',
-    'App\Exceptions\Handler'
+    'App\Libraries\OmsExceptionHandler'
 );
 
 /*

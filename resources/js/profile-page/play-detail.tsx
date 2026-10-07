@@ -1,160 +1,46 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
 // See the LICENCE file in the repository root for full licence text.
 
-import Mods from 'components/mods';
-import { PlayDetailMenu } from 'components/play-detail-menu';
-import TimeWithTooltip from 'components/time-with-tooltip';
-import { rulesetNames } from 'interfaces/ruleset';
-import { ScoreJsonForUser } from 'interfaces/score-json';
-import UserJson from 'interfaces/user-json';
-import { route } from 'laroute';
 import * as React from 'react';
-import PpValue from 'scores/pp-value';
-import { shouldShowPp } from 'utils/beatmap-helper';
-import { getArtist, getTitle } from 'utils/beatmapset-helper';
-import { classWithModifiers } from 'utils/css';
-import { formatNumber } from 'utils/html';
-import { trans } from 'utils/lang';
-import { accuracy, displayMods, hasMenu, rank } from 'utils/score-helper';
-import { beatmapUrl } from 'utils/url';
+import { Details } from 'oms/components';
+import { chartUrl, sourceNames } from 'oms/page';
+import { PublicBest } from 'oms/types';
 
-const bn = 'play-detail';
-
-interface Props {
-  activated: boolean;
-  score: ScoreJsonForUser;
-  showPinSortableHandle?: boolean;
-  showPpWeight?: boolean;
-  user: UserJson;
-}
-
-interface State {
-  compact: boolean;
-}
-
-export default class PlayDetail extends React.PureComponent<Props, State> {
-  render() {
-    const { score, user } = this.props;
-    const { beatmap, beatmapset } = score;
-
-    let blockClass = classWithModifiers(
-      bn,
-      this.props.activated ? 'active' : 'highlightable',
-      {
-        'pin-sortable': this.props.showPinSortableHandle,
-      },
-    );
-
-    const additionalAttributes: Partial<Record<`data-${string}`, string>> = {};
-
-    if (this.props.showPinSortableHandle) {
-      const pinData = score.current_user_attributes.pin;
-      additionalAttributes['data-score-pin'] = JSON.stringify(pinData);
-      blockClass += ' js-score-pin-sortable';
-    }
-
-    const scoreWeight = this.props.showPpWeight ? score.weight : null;
-    const scoreRank = rank(score);
-
-    return (
-      <div className={blockClass} {...additionalAttributes}>
-        <a className={`${bn}__bg-link`} href={route('scores.show', { score: score.id })} />
-
-        {this.renderPinSortableHandle()}
-        <div className={`${bn}__group ${bn}__group--top`}>
-          <div className={`${bn}__icon ${bn}__icon--main`}>
-            <div className={`score-rank score-rank--full score-rank--${scoreRank}`} />
-          </div>
-
-          <div className={`${bn}__detail`}>
-            <a
-              className={`${bn}__title u-ellipsis-overflow`}
-              href={beatmapUrl(beatmap, rulesetNames[score.ruleset_id])}
-            >
-              {getTitle(beatmapset)}
-              {' '}
-              <small className={`${bn}__artist`}>
-                {trans('users.show.extra.beatmaps.by_artist', { artist: getArtist(beatmapset) })}
-              </small>
-            </a>
-            <div className={`${bn}__beatmap-and-time`}>
-              <span className={`${bn}__beatmap`}>
-                {beatmap.version}
-              </span>
-              <span className={`${bn}__time`}>
-                <TimeWithTooltip dateTime={score.ended_at} relative />
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className={`${bn}__group ${bn}__group--bottom`}>
-          <div className={`${bn}__score-detail`}>
-            <div className={`${bn}__icon ${bn}__icon--extra`}>
-              <div className={`score-rank score-rank--full score-rank--${scoreRank}`} />
-            </div>
-            <div className={`${bn}__score-detail-top-right`}>
-              <div className={`${bn}__accuracy-and-weighted-pp`}>
-                <span className={`${bn}__accuracy`}>
-                  {formatNumber(accuracy(score), 2, { style: 'percent' })}
-                </span>
-                {scoreWeight != null && (
-                  <span className={`${bn}__weighted-pp`}>
-                    {score.pp != null && `${formatNumber(Math.round(scoreWeight.pp))}pp`}
-                  </span>
-                )}
-              </div>
-
-              {scoreWeight != null && (
-                <div className={`${bn}__pp-weight`}>
-                  {trans('users.show.extra.top_ranks.pp_weight', {
-                    percentage: `${formatNumber(scoreWeight.percentage / 100, 0, { style: 'percent' })}`,
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className={`${bn}__mods-pp`}>
-            <div className={`${bn}__mods`}>
-              <div className='u-contents u-hover'>
-                <Mods mods={displayMods(score, false)} />
-              </div>
-            </div>
-
-            <div className={`${bn}__pp`}>
-              {shouldShowPp(beatmap) ? (
-                <PpValue
-                  score={score}
-                  suffix={<span className={`${bn}__pp-unit`}>pp</span>}
-                />
-              ) : (
-                <span title={trans('users.show.extra.top_ranks.not_ranked')}>
-                  {(beatmap.status === 'loved') ? (
-                    <span className='fas fa-heart' />
-                  ) : (
-                    '-'
-                  )}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className={`${bn}__more`}>
-            {hasMenu(score) && <PlayDetailMenu score={score} user={user} />}
-          </div>
+export default function PlayDetail({ item }: { item: PublicBest }) {
+  const score = item.score;
+  const name = item.chart.title ?? '曲名未提供';
+  const received = item.activity?.order_at ?? score.received_at;
+  return <div className='play-detail play-detail--highlightable'>
+    <div className='play-detail__group play-detail__group--top'>
+      <div className='play-detail__detail'>
+        {item.chart.md5 == null
+          ? <span className='play-detail__title'>{name}</span>
+          : <a className='play-detail__title u-ellipsis-overflow' href={chartUrl(item.chart.md5, item.ruleset)}>{name}</a>}
+        {item.chart.artist != null && <small className='play-detail__artist'> {item.chart.artist}</small>}
+        <div className='play-detail__beatmap-and-time'>
+          <span className='play-detail__beatmap'>{item.chart.difficulty ?? '难度名未提供'} · {sourceNames[score.source] ?? score.source}</span>
+          <span className='play-detail__time'>{score.played_at == null
+            ? <>接收 <time dateTime={received} className='js-localtime'>{received}</time></>
+            : <>游玩 <time dateTime={score.played_at} className='js-localtime'>{score.played_at}</time></>}</span>
         </div>
       </div>
-    );
-  }
-
-  private renderPinSortableHandle() {
-    if (!this.props.showPinSortableHandle) return;
-
-    return (
-      <div className='js-score-pin-sortable-handle hidden-xs sortable-handle sortable-handle--score-pin'>
-        <span className='fas fa-bars' />
+    </div>
+    <div className='play-detail__group play-detail__group--bottom'>
+      <div className='play-detail__score-detail'>
+        <div className='play-detail__score-detail-top-right'>
+          <div className='play-detail__accuracy-and-weighted-pp'>
+            <span className='play-detail__accuracy'>{item.ruleset === 'bms'
+              ? <>EX {score.ex_score == null ? '未知' : score.ex_score.toLocaleString('zh-CN')} / {score.max_ex_score == null ? '未知' : score.max_ex_score.toLocaleString('zh-CN')}</>
+              : <>分数 {score.total_score == null ? '未知' : score.total_score.toLocaleString('zh-CN')}</>}</span>
+          </div>
+          <div>{score.lamp?.label ?? (score.passed == null ? '原灯未提供' : score.passed ? '通关' : '未通关')}</div>
+        </div>
       </div>
-    );
-  }
+      <div className='play-detail__mods-pp'>
+        <div className='play-detail__mods'>{item.best_lamps.map(lamp =>
+          <span key={lamp.family} title={lamp.rule_label}>{lamp.label} · {sourceNames[lamp.source ?? score.source] ?? lamp.source ?? score.source} </span>)}</div>
+      </div>
+      <div className='play-detail__more'><Details value={item} /></div>
+    </div>
+  </div>;
 }

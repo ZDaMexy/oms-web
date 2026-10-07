@@ -4,7 +4,12 @@
     "baseUrl": "./resources/js",
     "experimentalDecorators": true,
     "jsx": "react",
-    "lib": ["dom", "dom.iterable", "es2020"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2020",
+      "ESNext.Collection"
+    ],
     "module": "es2020",
     "moduleResolution": "node",
     "noImplicitAny": true,
@@ -16,16 +21,19 @@
     "strictPropertyInitialization": true,
     "target": "es2015",
     "types": [
-      "cloudflare-turnstile",
-      "jquery.fileupload",
-      "jquery.scrollto",
-      "jqueryui",
-      "timeago"
+      "jquery",
+      "bootstrap",
+      "timeago",
+      "hotwired__turbo"
     ],
     "useDefineForClassFields": true
   },
   "include": [
-    "resources/js",
-    "resources/builds/ziggy.d.ts"
+    "resources/js/globals.d.ts",
+    "resources/js/entrypoints/app.ts",
+    "resources/js/entrypoints/beatmaps.tsx",
+    "resources/js/entrypoints/beatmapsets-show.tsx",
+    "resources/js/entrypoints/profile-page.tsx",
+    "resources/js/turbo-extended.d.ts"
   ]
 }

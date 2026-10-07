@@ -1,373 +1,80 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
 // See the LICENCE file in the repository root for full licence text.
 
-import UserLinkList from 'beatmap-discussions/user-link-list';
-import BeatmapsetBadge from 'components/beatmapset-badge';
-import BeatmapsetCover from 'components/beatmapset-cover';
-import BeatmapsetMapping from 'components/beatmapset-mapping';
+import { SearchFilter } from 'beatmaps/search-filter';
 import BigButton from 'components/big-button';
-import DifficultyBadge from 'components/difficulty-badge';
-import StringWithComponent from 'components/string-with-component';
-import { createTooltip } from 'components/user-list-popup';
-import { route } from 'laroute';
-import { action, computed, makeObservable } from 'mobx';
-import { observer } from 'mobx-react';
-import core from 'osu-core-singleton';
+import { sourceNames, chartUrl } from 'oms/page';
+import { downloadBms, message } from 'oms/api';
+import { BmsDetail, IrChart, ManiaDetail } from 'oms/types';
 import * as React from 'react';
-import { hasGuestOwners } from 'utils/beatmap-helper';
-import { downloadLimited, getArtist, getTitle, makeSearchQueryOption, toggleFavourite } from 'utils/beatmapset-helper';
-import { classWithModifiers } from 'utils/css';
-import { formatNumber } from 'utils/html';
-import { trans } from 'utils/lang';
-import { beatmapDownloadDirect, wikiUrl } from 'utils/url';
-import BeatmapPicker from './beatmap-picker';
-import BeatmapsetMenu from './beatmapset-menu';
-import Controller from './controller';
 import Stats from './stats';
 
-const favouritesToShow = 50;
-
-function statusIcon(type: 'storyboard' | 'video') {
-  const iconClass = type === 'video' ? 'fas fa-film' : 'fas fa-image';
-
-  return (
-    <div
-      className='beatmapset-status beatmapset-status--show-icon'
-      title={trans(`beatmapsets.show.info.${type}`)}
-    >
-      <span className={iconClass} />
+interface Props {detail:BmsDetail|ManiaDetail;md5:string|null;sha256:string|null;selectedSource:string|null;onSource:(source:string|null)=>void}
+export default function Header({detail,md5,sha256,selectedSource,onSource}:Props) {
+  const [downloading,setDownloading]=React.useState(false);
+  const [downloadError,setDownloadError]=React.useState<string|null>(null);
+  const downloadController=React.useRef<AbortController>();
+  React.useEffect(()=>{
+    setDownloading(false); setDownloadError(null);
+    const cancelDownload=()=>{
+      downloadController.current?.abort();
+      setDownloading(false); setDownloadError(null);
+    };
+    document.addEventListener('turbo:before-visit',cancelDownload);
+    return ()=>{
+      document.removeEventListener('turbo:before-visit',cancelDownload);
+      downloadController.current?.abort();
+    };
+  },[md5,selectedSource]);
+  const candidate=detail.ruleset==='bms'?detail.candidates.find(value=>value.source===(selectedSource??detail.recommended_source)):null;
+  const chart=detail.ruleset==='bms'?detail.chart:detail.set.charts[0];
+  const cover=detail.ruleset==='bms'?candidate?.cover_url:detail.set.cover_url;
+  const charts=detail.ruleset==='bms'?candidate?.charts:detail.set.charts;
+  const automatic='/api/ir/v1/catalog/bms/'+md5+'/download'+(sha256==null?'':'?'+new URLSearchParams({sha256}));
+  const download=detail.ruleset==='bms'?selectedSource==null?automatic:candidate?.eligible?candidate.package.download_url:null:detail.download.full_url;
+  return <div className='beatmapset-header'>
+    <div className='beatmapset-header__cover'>{cover!=null&&<div className='beatmapset-cover beatmapset-cover--full' style={{backgroundImage:`url("${cover}")`}}/>}</div>
+    <div className='beatmapset-header__box beatmapset-header__box--main'>
+      <div className='beatmapset-header__beatmap-picker-box'><div className='beatmap-picker'>
+        {charts?.map(item=>item.md5!=null?<a className='beatmap-picker__beatmap' key={item.md5} href={chartUrl(item.md5,detail.ruleset,detail.ruleset==='mania'?{sid:String(detail.set.sid)}:{})}>{item.difficulty??'难度名未知'} · {item.keymode??'键型未知'}</a>:<span className='beatmap-picker__beatmap' key={item.bid}>{item.difficulty??'难度名未知'} · {item.keymode??'键型未知'}</span>)}
+      </div></div>
+      <span className='beatmapset-header__details-text beatmapset-header__details-text--title'>{(detail.ruleset==='bms'?chart?.title:detail.set.title)??md5??'标题未知'}</span>
+      <span className='beatmapset-header__details-text beatmapset-header__details-text--artist'>{(detail.ruleset==='bms'?chart?.artist:detail.set.artist)??'艺术家未知'}</span>
+      {detail.ruleset==='mania'&&detail.set.creator!=null&&<div className='beatmapset-mapping'>{detail.set.creator}</div>}
+      {detail.ruleset==='bms'&&<SearchFilter title='下载来源' options={[{id:'auto',name:'自动'},...detail.candidates.map(value=>({id:value.source,name:sourceNames[value.source]??value.source,disabled:!value.eligible}))]} selected={[selectedSource??'auto']} onChange={values=>onSource(values[0]==='auto'?null:values[0])}/>}
+      <div className='beatmapset-header__buttons'>
+        <BigButton href={download??undefined} disabled={download==null||(detail.ruleset==='bms'&&detail.candidates.every(value=>!value.eligible))} icon='fas fa-download' modifiers='beatmapset-download'
+          isBusy={downloading} text={{top:'下载谱包',bottom:detail.ruleset==='mania'?'Sayobot':selectedSource==null?'自动选择合格来源':sourceNames[selectedSource]??selectedSource}}
+          props={{'data-turbo':'false',onClick:detail.ruleset==='bms'&&selectedSource==null?event=>{
+            event.preventDefault();
+            if (downloading) return;
+            const controller=new AbortController();
+            downloadController.current=controller;
+            setDownloading(true); setDownloadError(null);
+            void downloadBms(automatic,controller.signal).catch(error=>{if (!controller.signal.aborted) setDownloadError(message(error));})
+              .finally(()=>{if (!controller.signal.aborted) setDownloading(false);});
+          }:undefined}}/>
+        {detail.ruleset==='mania'&&<BigButton href={detail.download.novideo_url} modifiers='beatmapset-download' text='下载（无视频）' icon='fas fa-download' props={{'data-turbo':'false'}}/>}
+      </div>
+      {downloadError!=null&&<p role='alert' className='beatmapset-header__availability-info'>{downloadError}</p>}
+      {detail.ruleset==='bms'&&candidate!=null&&<p className='beatmapset-header__availability-info'>{candidate.identity==='md5-only'?'仅确认原 MD5，SHA256 未知':'来源提供 SHA256'} · {candidate.availability==='unchecked'?'下载连通性尚未确认':candidate.availability}{candidate.reason==null?'':' · '+candidate.reason}</p>}
+      {detail.ruleset==='bms'&&<details><summary>其他来源与状态</summary>{detail.source_status.map(status=><p key={status.source}>{sourceNames[status.source]??status.source}：{status.message??status.status}</p>)}</details>}
     </div>
-  );
+    <div className='beatmapset-header__box beatmapset-header__box--stats'><Stats chart={chart??null}/></div>
+  </div>;
 }
 
-interface DownloadButtonOptions {
-  bottomTextKey?: string;
-  href: string;
-  icon?: string;
-  topTextKey?: string;
-}
-
-interface Props {
-  controller: Controller;
-}
-
-@observer
-export default class Header extends React.Component<Props> {
-  private readonly favouriteIconRef = React.createRef<HTMLSpanElement>();
-  private favouritePopupDisposer?: () => void;
-
-  private get controller() {
-    return this.props.controller;
-  }
-
-  @computed
-  private get filteredFavourites() {
-    let ret = this.controller.beatmapset.recent_favourites;
-
-    const user = core.currentUser;
-    if (user != null) {
-      ret = ret.filter((f) => f.id !== user.id);
-
-      if (this.controller.beatmapset.has_favourited) {
-        ret.unshift(user);
-      }
-    }
-
-    return ret.slice(0, favouritesToShow);
-  }
-
-  constructor(props: Props) {
-    super(props);
-
-    makeObservable(this);
-  }
-
-  componentWillUnmount() {
-    this.favouritePopupDisposer?.();
-  }
-
-  render() {
-    const favouriteButton = this.controller.beatmapset.has_favourited
-      ? {
-        action: 'unfavourite',
-        icon: 'fas fa-heart',
-      } : {
-        action: 'favourite',
-        icon: 'far fa-heart',
-      };
-
-    return (
-      <div className='beatmapset-header'>
-        <div className='beatmapset-header__cover'>
-          <BeatmapsetCover
-            beatmapset={this.controller.beatmapset}
-            forceShowNsfw // check already covered by parent component
-            modifiers='full'
-            size='cover'
-          />
-        </div>
-
-        <div className='beatmapset-header__box beatmapset-header__box--main'>
-          <div className='beatmapset-header__beatmap-picker-box'>
-            <BeatmapPicker controller={this.controller} />
-
-            {this.renderBeatmapVersion()}
-
-            <div>
-              {this.controller.beatmapset.status === 'pending' &&
-                <span className='beatmapset-header__value' title={trans('beatmapsets.show.stats.nominations')}>
-                  <span className='beatmapset-header__value-icon'><span className='fas fa-thumbs-up' /></span>
-                  <span className='beatmapset-header__value-name'>
-                    {formatNumber(this.controller.beatmapset.nominations_summary.current)}
-                  </span>
-                </span>
-              }
-
-              <span className='beatmapset-header__value' title={trans('beatmapsets.show.stats.playcount')}>
-                <span className='beatmapset-header__value-icon'><span className='fas fa-play-circle' /></span>
-                <span className='beatmapset-header__value-name'>{formatNumber(this.controller.beatmapset.play_count)}</span>
-              </span>
-
-              <span
-                ref={this.favouriteIconRef}
-                className={classWithModifiers('beatmapset-header__value', { 'has-favourites': this.controller.beatmapset.favourite_count > 0 })}
-                onMouseOver={this.onEnterFavouriteIcon}
-                onTouchStart={this.onEnterFavouriteIcon}
-              >
-                <span className='beatmapset-header__value-icon'>
-                  <span className='fas fa-heart' />
-                </span>
-                <span className='beatmapset-header__value-name'>
-                  {formatNumber(this.controller.beatmapset.favourite_count)}
-                </span>
-              </span>
-            </div>
-          </div>
-
-          <span className='beatmapset-header__details-text beatmapset-header__details-text--title'>
-            <a
-              className='beatmapset-header__details-text-link'
-              href={route('beatmapsets.index', { q: makeSearchQueryOption('title', getTitle(this.controller.beatmapset)) })}
-            >
-              {getTitle(this.controller.beatmapset)}
-            </a>
-            <BeatmapsetBadge
-              beatmapset={this.controller.beatmapset}
-              type='nsfw'
-            />
-            <BeatmapsetBadge
-              beatmapset={this.controller.beatmapset}
-              type='spotlight'
-            />
-          </span>
-
-          <span className='beatmapset-header__details-text beatmapset-header__details-text--artist'>
-            <a
-              className='beatmapset-header__details-text-link'
-              href={route('beatmapsets.index', { q: makeSearchQueryOption('artist', getArtist(this.controller.beatmapset)) })}
-            >
-              {getArtist(this.controller.beatmapset)}
-            </a>
-            <BeatmapsetBadge
-              beatmapset={this.controller.beatmapset}
-              type='featured_artist'
-            />
-          </span>
-
-          <BeatmapsetMapping beatmapset={this.controller.beatmapset} />
-
-          {this.renderAvailabilityInfo()}
-
-          <div className='beatmapset-header__buttons'>
-            {core.currentUser != null &&
-              <BigButton
-                icon={favouriteButton.icon}
-                modifiers={`beatmapset-header-square beatmapset-header-square-${favouriteButton.action}`}
-                props={{
-                  onClick: this.onClickFavourite,
-                  title: trans(`beatmapsets.show.details.${favouriteButton.action}`),
-                }}
-              />
-            }
-
-            {this.renderDownloadButtons()}
-            {this.renderLoginButton()}
-
-            {!this.controller.beatmapset.is_scoreable && core.currentUser != null && core.currentUser.id !== this.controller.beatmapset.user_id &&
-              <div className='beatmapset-header__more'>
-                <div className='btn-circle btn-circle--page-toggle btn-circle--page-toggle-detail'>
-                  <BeatmapsetMenu beatmapset={this.controller.beatmapset} />
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-
-        <div className='beatmapset-header__box beatmapset-header__box--stats'>
-          {this.renderStatusBar()}
-
-          <Stats controller={this.controller} />
-        </div>
-      </div>
-    );
-  }
-
-  private downloadButton({ bottomTextKey, href, icon = 'fas fa-download', topTextKey = '_' }: DownloadButtonOptions) {
-    return (
-      <BigButton
-        href={href}
-        icon={icon}
-        modifiers='beatmapset-header'
-        text={{
-          bottom: bottomTextKey == null ? undefined : trans(`beatmapsets.show.details.download.${bottomTextKey}`),
-          top: trans(`beatmapsets.show.details.download.${topTextKey}`),
-        }}
-      />
-    );
-  }
-
-  private readonly onClickFavourite = () => {
-    toggleFavourite(this.controller.beatmapset);
-  };
-
-  @action
-  private readonly onEnterFavouriteIcon = () => {
-    this.favouritePopupDisposer ??= createTooltip(
-      () => this.favouriteIconRef.current,
-      () => ({
-        count: this.controller.beatmapset.favourite_count,
-        title: this.controller.beatmapset.favourite_count > 0
-          ? trans('beatmapsets.show.stats.favourites')
-          : trans('beatmapsets.show.stats.no_favourites'),
-        users: this.filteredFavourites,
-      }),
-      'right center',
-    );
-  };
-
-  private renderAvailabilityInfo() {
-    if (!downloadLimited(this.controller.beatmapset)) return;
-
-    let label: string;
-    let href: string | null;
-
-    if (this.controller.beatmapset.availability.download_disabled) {
-      label = trans('beatmapsets.availability.disabled');
-    } else {
-      if (this.controller.beatmapset.availability.more_information === 'rule_violation') {
-        label = trans('beatmapsets.availability.rule_violation');
-        href = `${wikiUrl('Rules')}#beatmap-submission-rules`;
-      } else {
-        label = trans('beatmapsets.availability.parts-removed');
-      }
-    }
-
-    href ??= this.controller.beatmapset.availability.more_information;
-
-    return (
-      <div className='beatmapset-header__availability-info'>
-        {label}
-
-        {href != null &&
-          <div className='beatmapset-header__availability-link'>
-            <a href={href} rel="noreferrer" target='_blank'>
-              {trans('beatmapsets.availability.more-info')}
-            </a>
-          </div>
-        }
-      </div>
-    );
-  }
-
-  private renderBeatmapVersion() {
-    const beatmap = this.controller.hoveredBeatmap ?? this.controller.currentBeatmap;
-
-    return (
-      <span className='beatmapset-header__diff-name'>
-        <DifficultyBadge modifiers='beatmapset' rating={beatmap.difficulty_rating} />
-        {' '}
-        {beatmap.version}
-
-        {hasGuestOwners(beatmap, this.controller.beatmapset) && (
-          <span className='beatmapset-header__diff-extra'>
-            <StringWithComponent
-              mappings={{
-                mapper: <UserLinkList users={this.controller.owners(beatmap)} />,
-              }}
-              pattern={trans('beatmapsets.show.details.mapped_by')}
-            />
-          </span>
-        )}
-      </span>
-    );
-  }
-
-  private renderDownloadButtons() {
-    if (core.currentUser == null || this.controller.beatmapset.availability.download_disabled) return;
-
-    return (
-      <>
-        {this.controller.beatmapset.video ? (
-          <>
-            {this.downloadButton({
-              bottomTextKey: 'video',
-              href: route('beatmapsets.download', { beatmapset: this.controller.beatmapset.id }),
-            })}
-
-            {this.downloadButton({
-              bottomTextKey: 'no-video',
-              href: route('beatmapsets.download', { beatmapset: this.controller.beatmapset.id, noVideo: 1 }),
-            })}
-          </>
-        ) : (this.downloadButton({
-          href: route('beatmapsets.download', { beatmapset: this.controller.beatmapset.id }),
-        }))}
-
-        {this.downloadButton({
-          href: core.currentUser.is_supporter
-            ? beatmapDownloadDirect(this.controller.currentBeatmap.id)
-            : route('support-the-game'),
-          topTextKey: 'direct',
-        })}
-      </>
-    );
-  }
-
-  private renderLoginButton() {
-    if (core.currentUser != null) return;
-
-    return (
-      <BigButton
-        extraClasses={['js-user-link']}
-        icon='fas fa-lock'
-        modifiers='beatmapset-header'
-        text={{
-          bottom: trans('beatmapsets.show.details.login_required.bottom'),
-          top: trans('beatmapsets.show.details.login_required.top'),
-        }}
-      />
-    );
-  }
-
-  private renderStatusBar() {
-    return (
-      <div className='beatmapset-header__status'>
-        {this.controller.beatmapset.video && statusIcon('video')}
-        {this.controller.beatmapset.storyboard && statusIcon('storyboard')}
-        <a className='beatmapset-status beatmapset-status--show' href={this.statusToWikiLink(this.controller.currentBeatmap.status)}>
-          {trans(`beatmapsets.show.status.${this.controller.currentBeatmap.status}`)}
-        </a>
-      </div>
-    );
-  }
-
-  private statusToWikiLink(status: string): string {
-    let fragment: string;
-    if (status === 'wip' || status === 'pending') {
-      fragment = 'wip-and-pending';
-    } else {
-      fragment = status;
-    }
-    return wikiUrl(`Beatmap/Category#${fragment}`);
-  }
+export function IrHeader({detail}:{detail:IrChart}) {
+  const chart = detail.chart;
+  const search = chartUrl(chart.md5,detail.ruleset,chart.sha256==null?{}:{sha256:chart.sha256});
+  return <div className='beatmapset-header'>
+    <div className='beatmapset-header__cover'/>
+    <div className='beatmapset-header__box beatmapset-header__box--main'>
+      <div className='beatmapset-header__beatmap-picker-box'><div className='beatmap-picker'><span className='beatmap-picker__beatmap'>{chart.difficulty??'难度名未知'}</span></div></div>
+      <span className='beatmapset-header__details-text beatmapset-header__details-text--title'>{chart.title??'标题未知'}</span>
+      <span className='beatmapset-header__details-text beatmapset-header__details-text--artist'>{chart.artist??'艺术家未知'}</span>
+      {detail.ruleset==='bms'&&<div className='beatmapset-header__buttons'><BigButton href={search} modifiers='beatmapset-download' text={{top:'查找谱包',bottom:'Ginger Rush / 616'}} icon='fas fa-search'/></div>}
+    </div>
+    <div className='beatmapset-header__box beatmapset-header__box--stats'><Stats chart={null}/></div>
+  </div>;
 }

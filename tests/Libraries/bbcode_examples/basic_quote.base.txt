@@ -1,5 +1,0 @@
-[quote]Basic
-quote
-tag[/quote]
-
-[quote="name"]And with name[/quote]

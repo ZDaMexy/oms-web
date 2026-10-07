@@ -6,14 +6,6 @@ declare module '@images/*' {
   export default url;
 }
 
-declare module 'mod-names.json' {
-  import ModJson from 'interfaces/mod-json';
-
-  const modNames: Partial<Record<string, ModJson>>;
-
-  export default modNames;
-}
-
 // Scoping to prevent global type import pollution.
 // There interfaces are only used in this file.
 declare module 'legacy-modules' {

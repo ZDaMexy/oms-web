@@ -1,7 +1,0 @@
-two
-:one:
-:two:
-three
-yesno::::
-
-

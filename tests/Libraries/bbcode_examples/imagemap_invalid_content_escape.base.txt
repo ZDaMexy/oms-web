@@ -1,3 +1,0 @@
-[imagemap]
-<strong>
-[/imagemap]

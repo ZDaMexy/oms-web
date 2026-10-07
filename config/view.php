@@ -28,6 +28,9 @@ return [
     |
     */
 
-    'compiled' => realpath(storage_path().'/framework/views'),
+    'compiled' => storage_path('framework/views'),
+
+    // The runtime compiles views before each start. Rebuild/restart after editing.
+    'check_cache_timestamps' => false,
 
 ];

@@ -1,0 +1,9 @@
+<!-- OMS branding. Licensed under AGPL-3.0-or-later; see LICENCE. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 350">
+  <circle cx="175" cy="175" r="142.5" fill="none" stroke="#fff" stroke-width="15"/>
+  <g fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="101" cy="175" rx="25" ry="35"/>
+    <path d="M145 210V140L175 185L205 140V210"/>
+    <path d="M273 148c-7-6-14-9-23-9-14 0-22 8-22 18 0 13 12 16 24 20s24 7 24 20c0 11-10 17-24 17-10 0-20-4-27-11"/>
+  </g>
+</svg>

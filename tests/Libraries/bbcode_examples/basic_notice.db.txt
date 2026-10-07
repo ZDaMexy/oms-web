@@ -1,3 +1,0 @@
-[notice:1]
-This is a notice
-[/notice:1]

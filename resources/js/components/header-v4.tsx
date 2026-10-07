@@ -7,7 +7,6 @@ import * as React from 'react';
 import { classWithModifiers, Modifiers, urlPresence } from 'utils/css';
 import { formatNumber } from 'utils/html';
 import { parseJson } from 'utils/json';
-import { trans, transExists } from 'utils/lang';
 import { presence } from 'utils/string';
 
 interface Props {
@@ -22,35 +21,6 @@ interface Props {
   onLinkClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
   theme?: string;
 }
-
-interface RouteSection {
-  action: string;
-  controller: string;
-  namespace: string;
-  section: string;
-}
-
-// sync with page_title in helpers.php
-const pageTitleMap: Record<`${'action' | 'controller' | 'namespace'}Key`, Partial<Record<string, string>>> = {
-  actionKey: {
-    'forum.topic_watches_controller.index': 'main.home_controller.index',
-    'main.account_controller.edit': 'main.home_controller.index',
-    'main.beatmapset_watches_controller.index': 'main.home_controller.index',
-    'main.follows_controller.index': 'main.home_controller.index',
-    'main.friends_controller.index': 'main.home_controller.index',
-  },
-  controllerKey: {
-    'main.artist_tracks_controller._': 'main.artists_controller._',
-    'main.store_controller._': 'store._',
-    'multiplayer.rooms_controller._': 'main.ranking_controller._',
-    'ranking.daily_challenge_controller._': 'main.ranking_controller._',
-    'ranking.matchmaking_controller._': 'main.ranking_controller._',
-    'ranking.top_plays_controller._': 'main.ranking_controller._',
-  },
-  namespaceKey: {
-    'admin_forum._': 'admin._',
-  },
-};
 
 export default class HeaderV4 extends React.Component<Props> {
   static defaultProps = {
@@ -210,27 +180,8 @@ export default class HeaderV4 extends React.Component<Props> {
   }
 
   private title() {
-    const routeSection = parseJson<RouteSection>('json-route-section');
-
-    let actionKey = `${routeSection.namespace}.${routeSection.controller}.${routeSection.action}`;
-    actionKey = pageTitleMap.actionKey[actionKey] ?? actionKey;
-    let controllerKey = `${routeSection.namespace}.${routeSection.controller}._`;
-    controllerKey = pageTitleMap.controllerKey[controllerKey] ?? controllerKey;
-    let namespaceKey = `${routeSection.namespace}._`;
-    namespaceKey = pageTitleMap.namespaceKey[namespaceKey] ?? namespaceKey;
-
-    const keys = [
-      `page_title.${actionKey}`,
-      `page_title.${controllerKey}`,
-      `page_title.${namespaceKey}`,
-    ];
-
-    for (const key of keys) {
-      if (transExists(key, fallbackLocale)) {
-        return trans(key);
-      }
-    }
-
-    return 'unknown';
+    const page = parseJson<{page: string}>('json-oms-page');
+    const titles: Record<string,string> = {beatmaps:'谱面',beatmapset:'谱面',profile:'个人',rankings:'玩家榜'};
+    return titles[page.page] ?? 'OMS';
   }
 }

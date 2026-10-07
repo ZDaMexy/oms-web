@@ -5,7 +5,6 @@ import { TurboBeforeRenderEvent } from '@hotwired/turbo';
 import { removeLeftoverPortalContainers } from 'components/portal';
 import TurbolinksReload from 'core/turbolinks-reload';
 import { runInAction } from 'mobx';
-import OsuCore from 'osu-core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { currentUrl } from 'utils/turbolinks';
@@ -20,7 +19,7 @@ export default class ReactTurbolinks {
   private scrolled = false;
   private timeoutScroll?: number;
 
-  constructor(private readonly core: OsuCore, private readonly turbolinksReload: TurbolinksReload) {
+  constructor(private readonly turbolinksReload: TurbolinksReload) {
     $(document).on('turbo:before-cache', this.handleBeforeCache);
     $(document).on('turbo:before-visit', this.handleBeforeVisit);
     $(document).on('turbo:load', this.handleLoad);
@@ -90,7 +89,8 @@ export default class ReactTurbolinks {
     this.setNewUrl();
     this.pageReady = true;
     removeLeftoverPortalContainers();
-    this.core.updateCurrentUser();
+    // Authentication is refreshed after the actual new body is installed.
+    // No private user JSON is embedded in cached HTML.
     this.loadScripts().then(() => {
       this.boot();
       e.detail.resume();

@@ -1,0 +1,32 @@
+name: OMS source checks
+on: [push, pull_request]
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: intl, mbstring
+          tools: composer:v2
+          coverage: none
+      - run: composer install --no-dev --prefer-dist --no-progress
+      - run: composer audit --locked --no-dev
+      - run: npm ci --no-fund
+      - run: npm audit --audit-level=high
+      - run: npm run typecheck
+      - run: npm run production
+        env:
+          NODE_OPTIONS: --max-old-space-size=1024
+      - run: find app config routes bootstrap -name '*.php' -print0 | xargs -0 -n1 php -l
+      - run: php artisan view:cache && php artisan route:list --json

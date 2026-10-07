@@ -1,0 +1,45 @@
+import { SearchFilter } from 'beatmaps/search-filter';
+import { Spinner } from 'components/spinner';
+import * as React from 'react';
+import { useApi } from './api';
+import { keys } from './page';
+import { Ruleset, Source } from './types';
+
+export function Status({ error, ready }: { error?: string; ready: boolean }) {
+  if (error != null) return <p role='alert' className='beatmapset-scoreboard__notice'>{error}</p>;
+  if (!ready) return <p className='beatmapset-scoreboard__notice'><Spinner /> 正在读取…</p>;
+  return null;
+}
+export function Paginator({ page, limit, total, onPage }: { page: number; limit: number; total: number; onPage: (page: number) => void }) {
+  const last = Math.max(1, Math.ceil(total / limit));
+  return <div className='pagination-v2'>
+    <button type='button' className='pagination-v2__link' disabled={page <= 1} onClick={() => onPage(1)}>第一页</button>
+    <button type='button' className='pagination-v2__link' disabled={page <= 1} onClick={() => onPage(page - 1)}>上一页</button>
+    <span className='pagination-v2__link pagination-v2__link--active'>{page} / {last}</span>
+    <button type='button' className='pagination-v2__link' disabled={page >= last} onClick={() => onPage(page + 1)}>下一页</button>
+    <button type='button' className='pagination-v2__link' disabled={page >= last} onClick={() => onPage(last)}>最后一页</button>
+  </div>;
+}
+export function ModeFilters({ mode, keymode, onChange }: { mode: Ruleset; keymode: string; onChange: (changes: Record<string, string | null>) => void }) {
+  return <>
+    <SearchFilter title='玩法' options={[{id:'bms',name:'BMS'},{id:'mania',name:'mania'}]} selected={[mode]} onChange={values => onChange({ruleset:values[0],keymode:values[0] === 'bms' ? 'bms_7k' : 'mania_4k',sources:null,source:null,condition:null})} />
+    <SearchFilter title='键型' options={keys(mode).map(id=>({id,name:id.replace('bms_','BMS ').replace('pms_','PMS ').replace('mania_','')}))} selected={[keymode]} onChange={values=>onChange({keymode:values[0],condition:null})}/>
+  </>;
+}
+export function Sources({ value, onChange, live = false, single = false, mode = 'bms' }: { value: string | null; onChange: (value: string) => void; live?: boolean; single?: boolean; mode?: Ruleset }) {
+  const registry = useApi<{items:Source[]}>('/api/ir/v2/sources');
+  if (registry.data == null) return <Status error={registry.error} ready={false}/>;
+  const sources = registry.data.items.filter(source => (mode !== 'mania' || source.code === 'oms') && (!live || source.record_kind !== 'archive_best'));
+  const selected = value == null ? sources.filter(source=>source.available).map(source=>source.code) : value.split(',').filter(Boolean);
+  return <>
+    <SearchFilter title='成绩来源' options={sources.map(source=>({id:source.code,name:source.label+(source.available?'':'（未开放）'),disabled:!source.available}))}
+      selected={single ? selected.slice(0,1) : selected} multiselect={!single} onChange={ids=>onChange(ids.join(','))}/>
+    {!single && <div className='beatmapsets-search-filter__items'>
+      <button type='button' className='beatmapsets-search-filter__item' onClick={()=>onChange(sources.filter(source=>source.available).map(source=>source.code).join(','))}>全部可用</button>
+      <button type='button' className='beatmapsets-search-filter__item' onClick={()=>onChange('')}>清空</button>
+    </div>}
+  </>;
+}
+export function Details({ value }: { value: unknown }) {
+  return <details><summary>原始条件与记录</summary><pre className='u-fancy-scrollbar'>{JSON.stringify(value,null,2)}</pre></details>;
+}

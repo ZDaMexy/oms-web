@@ -1,7 +1,0 @@
-some text
-link bold italic
-text
-some text here
-next line
-
-

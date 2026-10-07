@@ -2,18 +2,12 @@
 // See the LICENCE file in the repository root for full licence text.
 
 import 'app-deps';
-
 import 'jquery-pubsub.coffee';
-
 import '_classes/timeout.coffee';
-
-import 'store-username-change.coffee';
-import 'forum/post-box.coffee';
-import 'ujs-common.coffee';
-import 'bootstrap-modal.coffee';
-import 'shared.coffee';
-
 import 'osu-core-singleton';
 import 'main.coffee';
-
 import 'register-components';
+import { session } from 'oms/api';
+import 'oms/forms';
+
+document.addEventListener('turbo:load', () => { void session.refresh(); });

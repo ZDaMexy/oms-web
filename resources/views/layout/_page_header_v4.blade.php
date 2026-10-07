@@ -11,7 +11,6 @@
     $linksBreadcrumb = $params['linksBreadcrumb'] ?? false;
     $theme = $params['theme'] ?? null;
     $showTitle = $params['showTitle'] ?? true;
-    $currentUser = auth()->user();
 
     $linksElement = $linksBreadcrumb ? 'ol' : 'ul';
 @endphp

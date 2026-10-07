@@ -23,6 +23,4 @@
     @include('layout._sticky_header')
 </div>
 
-@if (Auth::user() === null)
-    @include('layout._popup_login')
-@endif
+@include('layout._popup_login')

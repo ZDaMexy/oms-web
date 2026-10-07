@@ -1,178 +1,62 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
 // See the LICENCE file in the repository root for full licence text.
 
-import Captcha from 'core/captcha';
-import UserJson from 'interfaces/user-json';
-import core from 'osu-core-singleton';
-import { xhrErrorMessage } from 'utils/ajax';
-import { createClickCallback } from 'utils/html';
-import { reloadPage } from 'utils/turbolinks';
-
-declare global {
-  interface Window {
-    showLoginModal?: boolean;
-  }
-}
-
-interface CaptchaTriggeredResponse {
-  captcha_triggered: true;
-  error: string;
-}
-
-interface LoginSuccessJson {
-  csrf_token: string;
-  header: string;
-  header_popup: string;
-  user: UserJson;
-}
-
-function isCaptchaTriggeredResponse(arg: unknown): arg is CaptchaTriggeredResponse {
-  return typeof arg === 'object'
-    && arg != null
-    && 'captcha_triggered' in arg;
-}
+import { message, session } from 'oms/api';
 
 export default class UserLogin {
-  // Used as callback on original action (where login was required)
-  private callback?: () => void;
-
-  constructor(private readonly captcha: Captcha) {
-    $(document)
-      .on('ajax:success', '.js-login-form', this.loginSuccess)
-      .on('ajax:error', '.js-login-form', this.loginError)
-      .on('submit', '.js-login-form', this.clearError)
-      .on('input', '.js-login-form-input', this.clearError)
-      .on('click', '.js-user-link', this.showOnClick)
-      .on('click', '.js-login-required--click', this.showToContinue)
-      .on('ajax:before', '.js-login-required--click', () => core.currentUser != null)
-      .on('ajax:error', this.onError)
-      .on('turbo:load', this.showOnLoad);
-    $.subscribe('nav:popup:hidden', this.reset);
+  private readonly busy = new WeakSet<HTMLFormElement>();
+  constructor() {
+    document.addEventListener('submit', this.submit, true);
+    document.addEventListener('click', this.click);
+    document.addEventListener('turbo:load', this.update);
+    document.addEventListener('oms:session', this.update);
   }
 
-  show = (callback?: () => void) => {
-    this.callback = callback;
-
-    window.setTimeout(() => {
-      $(document).trigger('gallery:close');
-      $('.js-user-login--menu')[0]?.click();
-    }, 0);
-  };
-
-  showIfGuest = (callback?: () => void) => {
-    if (core.currentUser != null) {
-      return false;
+  readonly update = () => {
+    const user = session.user;
+    for (const element of document.querySelectorAll<HTMLElement>('[data-oms-auth]')) element.hidden = (element.dataset.omsAuth === 'user') !== (user != null);
+    for (const element of document.querySelectorAll('[data-oms-username]')) element.textContent = user?.username ?? '登录';
+    for (const element of document.querySelectorAll<HTMLAnchorElement>('[data-oms-profile-link]')) {
+      if (user != null) element.href = `/users/${user.id}`; else element.removeAttribute('href');
     }
-
-    this.show(callback);
-
-    return true;
+    for (const element of document.querySelectorAll<HTMLAnchorElement>('[data-oms-history-link]')) element.href = user == null ? '/account?section=history' : `/users/${user.id}?section=history`;
+    for (const element of document.querySelectorAll<HTMLElement>('[data-oms-session-message]')) { element.textContent = session.error ?? ''; element.hidden = session.error == null; }
+    if (user == null) for (const element of document.querySelectorAll<HTMLElement>('[data-oms-private]')) element.replaceChildren();
   };
 
-  showOnError = (xhr: JQuery.jqXHR, callback?: () => void) => {
-    if (xhr.status !== 401 || xhr.responseJSON?.authentication !== 'basic') {
-      return false;
-    }
-
-    if (core.currentUser != null) {
-      // broken page state
-      reloadPage();
-    } else {
-      this.show(callback);
-    }
-
-    return true;
+  private readonly submit = async (event: Event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement) || !['oms-login', 'oms-register'].includes(form.id)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (this.busy.has(form)) return;
+    const result = form.querySelector('[data-oms-message]');
+    const fields = new FormData(form);
+    const username = fields.get('username');
+    const password = fields.get('password');
+    if (typeof username !== 'string' || typeof password !== 'string') throw new Error('登录表单字段不完整。');
+    const buttons = form.querySelectorAll<HTMLButtonElement>('button[type=submit]');
+    this.busy.add(form);
+    buttons.forEach(button => button.disabled = true);
+    if (result != null) result.textContent = '正在登录…';
+    const operation = session.login(form.id === 'oms-login' ? 'login' : 'register', username, password);
+    const revision = session.revision;
+    try {
+      const completedRevision = await operation;
+      if (!form.isConnected || session.revision !== completedRevision) return;
+      form.reset();
+      if (result != null) result.textContent = '';
+      window.osuCore.clickMenu.close();
+      this.update();
+    } catch (error) { if (result != null && form.isConnected && session.revision === revision) result.textContent = message(error); }
+    finally { this.busy.delete(form); buttons.forEach(button => button.disabled = false); }
   };
 
-  private readonly clearError = () => {
-    $('.js-login-form--error').text('');
-  };
-
-  private readonly loginError = (e: JQuery.TriggeredEvent, xhr: JQuery.jqXHR<unknown>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    $('.js-login-form--error').text(xhrErrorMessage(xhr));
-    const captchaContainer = this.captcha.findContainer(e.currentTarget);
-
-    if (captchaContainer != null) {
-      // Timeout here is to let ujs events fire first, so that the disabling of the submit button
-      // in captcha.reset() happens _after_ the button has been re-enabled
-      window.setTimeout(() => {
-        const json = xhr.responseJSON as unknown;
-        if (isCaptchaTriggeredResponse(json) && json.captcha_triggered) {
-          this.captcha.trigger(captchaContainer);
-        }
-        this.captcha.reset(captchaContainer);
-      }, 0);
-    }
-  };
-
-  private readonly loginSuccess = (event: unknown, data: LoginSuccessJson, status: string, xhr: JQuery.jqXHR<unknown>) => {
-    // check if it's a js callback response and should be run instead
-    if (xhr.getResponseHeader('content-type') === 'application/javascript') {
-      return;
-    }
-    const callback = this.callback;
-
-    if (callback == null) {
-      reloadPage();
-      return;
-    }
-
-    this.reset();
-
-    this.refreshToken(data.csrf_token);
-
-    $.publish('user:update', data.user);
-
-    // To allow other ajax:* events attached to header menu
-    // to be triggered before the element is removed.
-    window.setTimeout(() => {
-      $('.js-user-login--menu')[0]?.click();
-      $('.js-user-header').replaceWith(data.header);
-      $('.js-user-header-popup').html(data.header_popup);
-      callback();
-    }, 0);
-  };
-
-  private readonly onError = (e: { target: unknown }, xhr: JQuery.jqXHR) => {
-    this.showOnError(xhr, createClickCallback(e.target));
-  };
-
-  private readonly refreshToken = (token: string) => {
-    $('[name="_token"]').attr('value', token);
-    $('[name="csrf-token"]').attr('content', token);
-  };
-
-  private readonly reset = () => {
-    this.callback = undefined;
-  };
-
-  private readonly showOnClick = (e: JQuery.Event) => {
-    e.preventDefault();
-    this.show();
-  };
-
-  // for pages which require authentication
-  // and being visited directly from outside
-  private readonly showOnLoad = () => {
-    if (!window.showLoginModal) {
-      return;
-    }
-
-    window.showLoginModal = undefined;
-    this.show();
-  };
-
-  private readonly showToContinue = (e: JQuery.ClickEvent) => {
-    if (core.currentUser != null) {
-      return;
-    }
-
-    e.preventDefault();
-    const callback = createClickCallback(e.target);
-    window.setTimeout(() => {
-      this.show(callback);
-    }, 0);
+  private readonly click = async (event: Event) => {
+    if (!(event.target instanceof Element) || event.target.closest('[data-oms-logout]') == null) return;
+    event.preventDefault();
+    try { await session.logout(); }
+    catch (error) { session.error = message(error); }
+    this.update();
   };
 }

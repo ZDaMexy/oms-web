@@ -1,69 +1,19 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
 // See the LICENCE file in the repository root for full licence text.
 
-import UserStatisticsJson from 'interfaces/user-statistics-json';
 import * as React from 'react';
-import { classWithModifiers } from 'utils/css';
-import { formatNumber } from 'utils/html';
-import { trans } from 'utils/lang';
-import { playTimeStrings } from './play-time';
+import { Performance } from 'oms/types';
 
-// sorted by display order
-const entryKeys = [
-  'ranked_score',
-  'hit_accuracy',
-  'play_count',
-  'play_time',
-  'total_score',
-  'total_hits',
-  'hits_per_play',
-  'maximum_combo',
-  'replays_watched_by_others',
-] as const;
-
-type EntryKey = typeof entryKeys[number];
-
-interface Props {
-  stats: UserStatisticsJson;
-  v2?: boolean;
-}
-
-function getHitsPerPlay(stats: UserStatisticsJson) {
-  return stats.play_count === 0
-    ? 0
-    : Math.floor(stats.total_hits / stats.play_count);
-}
-
-export default class Stats extends React.PureComponent<Props> {
-  render() {
-    return <div className='profile-stats'>{entryKeys.map(this.renderEntry)}</div>;
-  }
-
-  private formatValue(key: EntryKey) {
-    switch (key) {
-      case 'hit_accuracy':
-        return formatNumber(this.props.stats.accuracy, 2, { style: 'percent' });
-
-      case 'hits_per_play':
-        return formatNumber(getHitsPerPlay(this.props.stats));
-
-      case 'play_time': {
-        const { title, value } = playTimeStrings(this.props.stats.play_time);
-
-        return <span title={title}>{value}</span>;
-      }
-
-      default:
-        return formatNumber(this.props.stats[key]);
-    }
-  }
-
-  private readonly renderEntry = (key: EntryKey) => (
-    (key !== 'play_time' || this.props.v2) && (
-      <dl key={key} className={classWithModifiers('profile-stats__entry', `key-${key}`)}>
-        <dt className='profile-stats__key'>{trans(`users.show.stats.${key}`)}</dt>
-        <dd className='profile-stats__value'>{this.formatValue(key)}</dd>
-      </dl>
-    )
-  );
+type Lane = Performance['lanes'][number];
+export default function Stats({ metrics, rankings }: Pick<Lane, 'metrics' | 'rankings'>) {
+  const entries: [string, React.ReactNode][] = [
+    ['公开谱面数', metrics.public_chart_count.toLocaleString('zh-CN')],
+    ['公开最佳数', metrics.public_best_count.toLocaleString('zh-CN')],
+  ];
+  if (metrics.cleared_chart_count != null) entries.push(['通关谱面数', metrics.cleared_chart_count.toLocaleString('zh-CN')]);
+  if (metrics.best_total_score != null) entries.push(['最佳总分合计', BigInt(metrics.best_total_score).toLocaleString('zh-CN')]);
+  for (const rank of rankings) entries.push([rank.metric === 'best_total_score' ? '同条件总分名次' : '同条件通关名次',
+    rank.rank == null ? '未进入此范围' : `#${rank.rank.toLocaleString('zh-CN')} / ${rank.total_players.toLocaleString('zh-CN')}`]);
+  return <div className='profile-stats'>{entries.map(([key, value]) =>
+    <dl key={key} className='profile-stats__entry'><dt className='profile-stats__key'>{key}</dt><dd className='profile-stats__value'>{value}</dd></dl>)}</div>;
 }

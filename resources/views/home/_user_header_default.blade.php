@@ -2,35 +2,11 @@
     Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
     See the LICENCE file in the repository root for full licence text.
 --}}
-@php
-    $currentRoute = app('route-section')->getCurrent();
-    $currentActive = $currentRoute['controller'].'.'.$currentRoute['action'];
-@endphp
 @include('layout._page_header_v4', ['params' => [
-    'backgroundExtraClass' => 'u-current-user-cover',
-    'currentActive' => $currentActive,
-    'theme' => $themeOverride ?? 'home',
-
+    'theme' => 'home',
     'links' => [
-        [
-            'active' => $currentActive === 'home_controller.index',
-            'title' => osu_trans('home.user.title'),
-            'url' => route('home'),
-        ],
-        [
-            'active' => $currentActive === 'friends_controller.index',
-            'title' => osu_trans('friends.title_compact'),
-            'url' => route('friends.index'),
-        ],
-        [
-            'active' => $currentActive === 'follows_controller.index',
-            'title' => osu_trans('follows.index.title_compact'),
-            'url' => route('follows.index', ['subtype' => App\Models\Follow::DEFAULT_SUBTYPE]),
-        ],
-        [
-            'active' => $currentActive === 'account_controller.edit',
-            'title' => osu_trans('accounts.edit.title_compact'),
-            'url' => route('account.edit'),
-        ],
+        ['active' => request()->routeIs('home'), 'title' => '首页', 'url' => route('home')],
+        ['active' => request()->routeIs('news.*'), 'title' => '新闻', 'url' => route('news.index')],
+        ['active' => request()->routeIs('download'), 'title' => '下载', 'url' => route('download')],
     ],
 ]])

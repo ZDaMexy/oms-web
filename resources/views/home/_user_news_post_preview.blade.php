@@ -3,39 +3,20 @@
     See the LICENCE file in the repository root for full licence text.
 --}}
 @php
-    $publishedAt = $post->published_at;
-    $firstImage = $post->firstImageWith2x();
+    $publishedAt = Carbon\Carbon::parse($post['published_at']);
 @endphp
-<div class="news-post-preview{{$collapsed ? ' news-post-preview--collapsed' : ''}}">
-    <a
-        class="news-post-preview__image"
-        href="{{ route('news.show', $post->slug) }}"
-        style="
-            --bg: url('{{ $firstImage['1x'] }}');
-            --bg-2x: url('{{ $firstImage['2x'] }}');
-        "
-    ></a>
+<div class="news-post-preview{{ $collapsed ? ' news-post-preview--collapsed' : '' }}">
+    @if (!empty($post['image']))
+        <a class="news-post-preview__image" href="{{ route('news.show', $post['slug']) }}" style="--bg: url('{{ $post['image'] }}')"></a>
+    @endif
     <div class="news-post-preview__body">
-        <div class="news-post-preview__post-date js-tooltip-time" title="{{ json_time($publishedAt) }}">
-            <div class="news-post-preview__date">
-                {{ i18n_date_auto($publishedAt, 'd') }}
-            </div>
-
-            <div class="news-post-preview__month-year">
-                @if ($collapsed)
-                    &nbsp;{{ i18n_date_auto($publishedAt, 'MMM') }}
-                @else
-                    {{ i18n_date_auto($publishedAt, 'yMMM') }}
-                @endif
-            </div>
+        <div class="news-post-preview__post-date">
+            <div class="news-post-preview__date">{{ $publishedAt->format('d') }}</div>
+            <div class="news-post-preview__month-year">{{ $publishedAt->format('Y.m') }}</div>
         </div>
         <div class="news-post-preview__post-right">
-            <a href='{{ route('news.show', $post->slug) }}' class='news-post-preview__post-title'>
-                {{ $post->title() }}
-            </a>
-            <div class="news-post-preview__post-content">
-                <p>{!! $post->previewText() !!}</p>
-            </div>
+            <a href="{{ route('news.show', $post['slug']) }}" class="news-post-preview__post-title">{{ $post['title'] }}</a>
+            <div class="news-post-preview__post-content"><p>{{ $post['excerpt'] }}</p></div>
         </div>
     </div>
 </div>

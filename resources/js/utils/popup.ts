@@ -6,6 +6,11 @@ import { htmlElementOrNull } from './html';
 type PopupType = 'danger' | 'info' | 'warning';
 const persistentPopupClasses: `alert-${PopupType}`[] = ['alert-danger', 'alert-warning'];
 
+$(document).on('click', '#popup-container, #overlay', () => {
+  $('#overlay').fadeOut();
+  $('.popup-active').fadeOut(function () { this.remove(); });
+});
+
 export function applyPopupEffects(popupEl: HTMLElement) {
   const $overlay = $('#overlay');
   $overlay.fadeIn();
@@ -28,7 +33,7 @@ export function popup(message: string, type: PopupType = 'info') {
   $alert
     .addClass(`alert-${type} popup-active`)
     .removeClass('popup-clone');
-  $alert.find('.popup-text').html(message);
+  $alert.find('.popup-text').text(message);
   $alert.appendTo($popup).fadeIn();
 
   applyPopupEffects($alert[0]);

@@ -3,8 +3,5 @@
     See the LICENCE file in the repository root for full licence text.
 --}}
 <script data-turbo-eval="always">
-    var csrf = "{{ csrf_token() }}";
-    var canonicalUrl = "{{ $canonicalUrl ?? '' }}";
+    var canonicalUrl = {!! json_encode($canonicalUrl ?? '', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!};
 </script>
-
-@include ('layout._current_user')

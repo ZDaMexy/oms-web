@@ -2,26 +2,18 @@
 // See the LICENCE file in the repository root for full licence text.
 
 import HeaderV4 from 'components/header-v4';
-import { observer } from 'mobx-react';
+import { ModeFilters, Sources } from 'oms/components';
 import * as React from 'react';
-import Controller from './controller';
-import GameModeSwitcher from './game-mode-switcher';
-import headerLinks from './header-links';
+import { Controller } from './controller';
 
-interface Props {
-  controller: Controller;
-}
-
-@observer
-export default class Header extends React.Component<Props> {
-  render() {
-    return (
-      <HeaderV4
-        backgroundImage={this.props.controller.displayCoverUrl}
-        links={headerLinks(this.props.controller.state.user, 'show')}
-        linksAppend={<GameModeSwitcher controller={this.props.controller} />}
-        theme='users'
-      />
-    );
-  }
+export default function Header({ controller }: { controller: Controller }) {
+  const { mode, keymode, query, update, id } = controller;
+  return <HeaderV4 theme='users' links={[
+    { title: '个人', url: '/users/' + id, active: true },
+    { title: '帖子', url: '/community?author_id=' + id },
+    { title: '玩家榜', url: '/rankings?' + new URLSearchParams({ ruleset: mode, keymode }) },
+  ]} contentAppend={controller.section==='history'?undefined:<div className='beatmapsets-search__filters'>
+    <ModeFilters mode={mode} keymode={keymode} onChange={changes => update(changes)} />
+    <Sources mode={mode} live value={query.get('sources')} onChange={sources => update({ sources, condition: null })} />
+  </div>} />;
 }

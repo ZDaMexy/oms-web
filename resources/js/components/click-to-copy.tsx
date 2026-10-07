@@ -1,9 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
 // See the LICENCE file in the repository root for full licence text.
 
-import * as clipboard from 'clipboard-polyfill';
 import * as React from 'react';
-import { trans } from 'utils/lang';
 
 interface Props {
   className?: string;
@@ -25,8 +23,8 @@ export default class ClickToCopy extends React.Component<Props> {
   private readonly linkRef = React.createRef<HTMLAnchorElement>();
   private timer?: number;
   private readonly titles = {
-    default: trans('common.buttons.click_to_copy'),
-    onClick: trans('common.buttons.click_to_copy_copied'),
+    default: '点击复制',
+    onClick: '已复制',
   } as const;
 
   private get api() {
@@ -62,11 +60,15 @@ export default class ClickToCopy extends React.Component<Props> {
     );
   }
 
-  private readonly onClick = (e: React.MouseEvent) => {
+  private readonly onClick = async (e: React.MouseEvent) => {
     e.preventDefault();
 
     // copy url to clipboard
-    clipboard.writeText(this.props.value);
+    try { await navigator.clipboard.writeText(this.props.value); }
+    catch (error) {
+      window.popup(error instanceof Error ? error.message : String(error), 'danger');
+      return;
+    }
 
     const api = this.api;
 
