@@ -41,6 +41,8 @@ wsl -d oms-web-dev --cd /mnt/f/zdamexy-workspace/websites/oms-web -- bash script
 
 停止入口按工作区 PID 文件及进程命令行核对归属，发送 SIGTERM 并等待自己的进程退出。它不删除测试库或缓存，也不停止其他 WSL 分发或服务。停止失败先保留日志与数据诊断，不用全局 `killall` 或 `wsl --shutdown` 代替本任务的停止。
 
+Nginx / PHP-FPM 正常退出会自行移除 PID 文件，不能把停止后的缺失文件判成服务故障。收尾需核对运行实例的实际归属和已停止目录没有残留进程，不凭 PID 文件单独推定存活。
+
 主要日志为 `artifacts/nginx-error.log`、`php-fpm.log`、`php-errors.log`、`local-backend.log`、`local-catalog.log` 及 `storage/logs/laravel.log`。记录失败的页面、操作、发生时间和日志位置；不要把密码、cookie 或一次显示的接入秘密放入公开反馈。
 
 构建、类型检查、安装和格式化由主执行者串行安排，检查期间冻结对应源码。恢复包包含当次 `vendor`、实际 `public/assets`、后端 venv 与适配器资源，恢复本身不重新安装依赖、不生成假 manifest。若必须重建，按 `composer.lock` / `package-lock.json` 与后端锁定依赖重建并重新检查；不能使用旧资源证明新源码，也不以 `--ignore-platform-reqs`、`--force`、忽略类型错误或临时换版本绕过失败。

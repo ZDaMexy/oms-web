@@ -97,6 +97,8 @@ r10最终原工作区已重新启动并实际暖检查；浏览器退出隔离�
 
 命令和范围取 [恢复说明](local-use-and-recovery.md)。快照 / 状态 / 新目标均在仅当前Windows所有者和SYSTEM可访问的F盘目录，实际11处NTFS权限核对取 `artifacts/recovery-acl-final.json`，不能用chmod代签。两个恢复实例已用自身入口停止；文件恢复、实际HTTP、同一现存OS和真人分别记录，不称两次OS重装。
 
+最终原工作区四服务的实际PID归属及两个恢复目录无残留master已核对，取 `artifacts/handoff-runtime-r2.json`。第一份临时收尾探针误要求停止后的Nginx PID文件存在，遇正常删除而失败；原探针与错误记录保留在 `.dev-cache/temp/verify-handoff-processes.py` / `artifacts/handoff-runtime-r1-failure.txt`。修正后按原工作区PID和恢复目录实际进程命令行核对，不重标原失败，也不把检查工具问题当网站故障。
+
 ## 未完成门
 
 用户视觉认可、普通刷新、真实BMS / mania原包下载入库、账号 / 一次秘密、自己 / 他人 / 旧身份及OMS同谱来源 / 条件 / 首末页待真人；客户端由VS Code非调试启动。指定ED7K先导P后完整固定宿主 / 30玩法C未签收，单插件或合成成绩不结项。
