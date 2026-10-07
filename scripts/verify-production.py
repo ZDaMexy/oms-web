@@ -1585,7 +1585,9 @@ def renew_synthetic_sessions(context, service):
                 finally:
                     client.close()
         with context.p.readonly(context.database) as connection:
-            remaining = connection.execute("SELECT MIN(access_expires)-? FROM sessions WHERE revoked=0", (int(time.time()),)).fetchone()[0]
+            placeholders = ",".join("?" for _ in sessions)
+            remaining = connection.execute(f"SELECT MIN(access_expires)-? FROM sessions WHERE id IN ({placeholders})",
+                (int(time.time()), *(session for session, _, _ in sessions))).fetchone()[0]
             require(all(tuple(connection.execute("SELECT user_id,transport,revoked FROM sessions WHERE id=?", (session,)).fetchone())
                         == (owner, transport, 0) for session, owner, transport in sessions), "same_session_ownership_after_refresh")
         require(remaining >= 3590, "real_normal_session_lifetime_before_long_phase")
