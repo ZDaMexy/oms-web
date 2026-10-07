@@ -2,10 +2,6 @@
     Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
     See the LICENCE file in the repository root for full licence text.
 --}}
-@php
-    $currentLocale = App::getLocale();
-    $fallbackLocale = config('app.fallback_locale');
-@endphp
 <meta charset="utf-8">
 <meta name="description" content="{{ $pageDescription ?? 'OMS：BMS 与 mania。下载客户端、查找谱面和成绩。' }}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,10 +19,6 @@
     <meta name="robots" content="noindex">
 @endif
 <link rel="stylesheet" media="all" href="{{ unmix('css/app.css') }}" data-turbo-track="reload">
-<script>
-    var currentLocale = {!! json_encode($currentLocale) !!};
-    var fallbackLocale = {!! json_encode($fallbackLocale) !!};
-</script>
 <script src="{{ unmix('js/runtime.js') }}" data-turbo-eval="false" data-turbo-track="reload"></script>
 <script src="{{ unmix('js/vendor.js') }}" data-turbo-eval="false" data-turbo-track="reload"></script>
 <script src="{{ unmix('js/commons.js') }}" data-turbo-eval="false" data-turbo-track="reload"></script>

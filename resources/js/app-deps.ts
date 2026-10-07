@@ -1,6 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
 // See the LICENCE file in the repository root for full licence text.
 
+import 'oms/locale';
 import 'setup-turbo';
 import 'setup-jquery';
 import { configure as mobxConfigure } from 'mobx';
@@ -27,7 +28,6 @@ declare global {
 }
 window.moment = moment;
 moment.locale('zh-cn');
-window.currentLocale = 'zh-CN';
 window.popup = popup;
 window.reloadPage = reloadPage;
 window._styles = { header: { height: 90, heightMobile: 50, heightSticky: 50 } };

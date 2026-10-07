@@ -11,7 +11,7 @@ const keep = new Set([
   'layout/_nav2.blade.php', 'layout/_header_mobile.blade.php', 'layout/_header_user.blade.php',
   'layout/_popup_user.blade.php', 'layout/_popup_login.blade.php', 'layout/_sticky_header.blade.php',
   'layout/header_mobile/nav.blade.php', 'layout/_page_header_v4.blade.php',
-  'layout/_react_js.blade.php', 'layout/_global_variables.blade.php',
+  'layout/_react_js.blade.php',
   'layout/_loading_overlay.blade.php', 'layout/popup-container.blade.php', 'layout/error.blade.php',
   'home/user.blade.php', 'home/_user_header_default.blade.php',
   'home/_user_news_post_preview.blade.php', 'home/_user_giant_button.blade.php',

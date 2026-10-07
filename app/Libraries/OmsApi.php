@@ -30,7 +30,7 @@ class OmsApi
 
     private Client $client;
 
-    public function __construct(string $baseUrl)
+    public function __construct(string $baseUrl, private readonly Request $incomingRequest)
     {
         $parts = parse_url($baseUrl);
         if (!is_array($parts)
@@ -140,6 +140,14 @@ class OmsApi
         if (!$isApi && !$isAdapter) {
             throw new OmsApiException(400, 'invalid_api_path', 'API 地址不符合约定。');
         }
+
+        // FastCGI REMOTE_ADDR is set by our Nginx peer boundary. Never use an
+        // incoming forwarding header, cookie or authorization for public SSR.
+        $clientIp = $this->incomingRequest->server->get('REMOTE_ADDR');
+        if (!is_string($clientIp) || filter_var($clientIp, FILTER_VALIDATE_IP) === false) {
+            throw new InvalidArgumentException('OMS 页面请求缺少可信的客户端地址。');
+        }
+        $headers['X-Forwarded-For'] = $clientIp;
 
         try {
             return $this->client->request($method, ltrim($path, '/'), [

@@ -40,7 +40,6 @@
         <div id="estimate-min-lines" class="estimate-min-lines" data-turbo-permanent>
             <div class="estimate-min-lines__content js-estimate-min-lines"></div>
         </div>
-        @include('layout._global_variables')
         @include('layout._loading_overlay')
         @include('layout.popup-container')
         <script id="json-route-section" type="application/json">{!! json_encode($currentRoute, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>

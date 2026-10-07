@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton('assets-manifest', AssetsManifest::class);
         $this->app->singleton('route-section', RouteSection::class);
-        $this->app->singleton(OmsApi::class, fn () => new OmsApi(config('oms.api_base')));
+        $this->app->singleton(OmsApi::class, fn ($app) => new OmsApi(config('oms.api_base'), $app['request']));
     }
 
     public function boot(): void

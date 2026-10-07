@@ -87,6 +87,8 @@ composer-installer
 # OMS local tools, runtime and evidence stay on the development drive.
 /.dev-cache/
 /artifacts/
+__pycache__/
+*.pyc
 
 /database/ip2asn/*.idx
 /database/ip2asn/*.tsv

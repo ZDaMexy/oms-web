@@ -89,11 +89,13 @@ http {
     index index.php;
     add_header X-Content-Type-Options nosniff always;
     add_header Referrer-Policy same-origin always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://gingerrush.com https://pixeldrain.net https://bms.alvorna.com https://a.sayobot.cn; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" always;
     location ~ "^/assets/.*\.[0-9a-f]{8}\.(js|css|woff2?|png|jpg|svg)$" {
       try_files \$uri =404;
       add_header Cache-Control "public, max-age=31536000, immutable";
       add_header X-Content-Type-Options nosniff always;
       add_header Referrer-Policy same-origin always;
+      add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://gingerrush.com https://pixeldrain.net https://bms.alvorna.com https://a.sayobot.cn; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" always;
     }
     location ^~ /api/ir/ {
       error_page 413 = @body_too_large;
@@ -115,6 +117,7 @@ http {
       add_header Cache-Control "no-cache";
       add_header X-Content-Type-Options nosniff always;
       add_header Referrer-Policy same-origin always;
+      add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://gingerrush.com https://pixeldrain.net https://bms.alvorna.com https://a.sayobot.cn; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" always;
     }
     location = /index.php {
       include /etc/nginx/fastcgi_params;
@@ -124,6 +127,7 @@ http {
       add_header Cache-Control "no-cache";
       add_header X-Content-Type-Options nosniff always;
       add_header Referrer-Policy same-origin always;
+      add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://gingerrush.com https://pixeldrain.net https://bms.alvorna.com https://a.sayobot.cn; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" always;
     }
     location ~* \.php(?:/|$) { return 404; }
     location ~ /\. { deny all; }

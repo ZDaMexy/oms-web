@@ -38,7 +38,3 @@ declare const docsUrl: string;
 
 // our helpers
 declare const tooltipDefault: import('legacy-modules').TooltipDefault;
-
-// external (to typescript) classes
-declare const fallbackLocale: string;
-declare const currentLocale: string;
