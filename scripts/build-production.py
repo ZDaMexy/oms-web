@@ -92,6 +92,7 @@ def main():
     sources['source-manifest.json'] = json.dumps({'backend_commit': heads['backend'], 'website_commit': heads['website'], 'adapter_backend_commit': old_manifest['backend_commit'], 'files': {name: hashlib.sha256(data).hexdigest() for name, data in sources.items()}}, indent=2).encode()
     files['web/public/oms-web-source.tar.gz'] = tar_bytes(sources)
     runtime = WEB / 'artifacts/production/php85-alpine3242.tar.gz'
+    file_map = json.dumps({'files': {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())}, 'file_bytes': {name: len(data) for name, data in sorted(files.items())}}, separators=(',', ':')).encode()
     manifest = {
         'format': 3, 'runtime_kind': 'native-osu-web-1', 'database_schema_version': 3,
         'release_id': heads['backend'][:12] + '-' + heads['website'][:12],
@@ -101,10 +102,11 @@ def main():
         'php_runtime': {'sha256': hashlib.file_digest(runtime.open('rb'), 'sha256').hexdigest(), 'bytes': runtime.stat().st_size, 'php': '8.5.11', 'alpine_base': '3.24.2', 'apk_packages': (WEB / 'artifacts/production/php-packages.txt').read_text().splitlines()},
         'compiled_input_sha256': hashlib.sha256((WEB / 'artifacts/production/compiled-inputs.json').read_bytes()).hexdigest(),
         'created_at': datetime.now(timezone.utc).isoformat(),
-        'files': {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())},
-        'file_bytes': {name: len(data) for name, data in sorted(files.items())},
+        'files_manifest': {'path': 'runtime-files.json', 'sha256': hashlib.sha256(file_map).hexdigest(), 'bytes': len(file_map), 'count': len(files)},
     }
+    files['runtime-files.json'] = file_map
     files['release.json'] = json.dumps(manifest, ensure_ascii=False, indent=2).encode()
+    assert len(files['release.json']) < 1024 * 1024, 'The fixed maintenance helper caps release metadata at 1 MiB'
     args.output.mkdir(parents=True, exist_ok=False)
     package = args.output / ('oms-native-' + manifest['release_id'] + '.tar.gz')
     package.write_bytes(tar_bytes(files))

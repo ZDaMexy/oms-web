@@ -22,14 +22,21 @@ with tarfile.open(args.package) as archive:
         if not entry.isfile() or path.is_absolute() or '..' in path.parts or entry.size > 64 * 1024 * 1024:
             raise ValueError('No links, special files or unbounded files in a release')
     manifest = json.load(archive.extractfile('release.json'))
+    assert archive.getmember('release.json').size < 1024 * 1024
+    binding = manifest['files_manifest']
+    assert binding['path'] == 'runtime-files.json'
+    file_map_bytes = archive.extractfile(binding['path']).read()
+    assert len(file_map_bytes) == binding['bytes'] and hashlib.sha256(file_map_bytes).hexdigest() == binding['sha256']
+    file_map = json.loads(file_map_bytes)
+    assert len(file_map['files']) == binding['count'] and set(file_map['files']) == set(file_map['file_bytes'])
     assert manifest['format'] == 3 and manifest['runtime_kind'] == 'native-osu-web-1' and manifest['database_schema_version'] == 3
     rid = manifest['release_id']
     assert re.fullmatch(r'[0-9a-f]{12}-[0-9a-f]{12}', rid)
     for key in ('backend_commit', 'website_commit', 'client_commit'):
         assert re.fullmatch(r'[0-9a-f]{40}', manifest[key])
     assert rid == manifest['backend_commit'][:12] + '-' + manifest['website_commit'][:12]
-    assert {e.name for e in entries} == {'release.json', *manifest['files']}
-    for name, checksum in manifest['files'].items():
+    assert {e.name for e in entries} == {'release.json', 'runtime-files.json', *file_map['files']}
+    for name, checksum in file_map['files'].items():
         allowed = name.startswith(('backend/oms_ir/', 'backend/deploy/', 'backend/scripts/', 'web/app/', 'web/config/', 'web/routes/', 'web/bootstrap/', 'web/resources/views/', 'web/resources/lang/', 'web/resources/oms/', 'web/deploy/', 'web/scripts/', 'web/vendor/', 'web/public/assets/', 'web/public/images/', 'web/ir/adapters/')) or name in {
             'backend/pyproject.toml', 'backend/uv.lock', 'backend/adapters/sdk-manifest.json',
             'web/artisan', 'web/composer.json', 'web/composer.lock', 'web/LICENCE', 'web/THIRD_PARTY_NOTICES.md',
@@ -37,7 +44,7 @@ with tarfile.open(args.package) as archive:
         }
         assert allowed and '/.env' not in name and '/node_modules/' not in name and '/.dev-cache/' not in name and not name.startswith('web/bootstrap/cache/')
         data = archive.extractfile(name).read()
-        assert len(data) == manifest['file_bytes'][name] and hashlib.sha256(data).hexdigest() == checksum
+        assert len(data) == file_map['file_bytes'][name] and hashlib.sha256(data).hexdigest() == checksum
     versions = json.load(archive.extractfile('web/ir/adapters/versions.json'))
     assert not manifest['adapter_source']['artifacts_rebuilt']
     assert all(item['backend_commit'] == manifest['adapter_source']['backend_commit'] for item in versions['items'])
