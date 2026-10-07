@@ -2,10 +2,15 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import tarfile
+
+# Public immutable sources are read by the unprivileged PHP/Nginx user even
+# when the owner launches this installer from a private 0077 maintenance unit.
+os.umask(0o022)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--package', type=Path, required=True)
