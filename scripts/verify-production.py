@@ -1179,6 +1179,11 @@ def sustained(context, service):
     records, started = [], time.monotonic()
 
     def php_load():
+        def request(path, peer, planned):
+            metric, body, _ = context.web.request(path, peer=peer, scheduled_at=planned)
+            require(metric["status"] == 200 and b"<html" in body.lower(), "sustained_actual_native_PHP_success")
+            return metric
+
         with ThreadPoolExecutor(max_workers=8) as executor:
             jobs = []
             count = math.ceil(seconds / 2)
@@ -1187,11 +1192,9 @@ def sustained(context, service):
                 if planned > time.monotonic():
                     time.sleep(planned - time.monotonic())
                 path = routes[index % len(routes)]
-                jobs.append(executor.submit(context.web.request, path, peer=f"127.0.0.{2 + index % 50}", scheduled_at=planned))
+                jobs.append(executor.submit(request, path, f"127.0.0.{2 + index % 50}", planned))
             for job in jobs:
-                metric, body, _ = job.result()
-                require(metric["status"] == 200 and b"<html" in body.lower(), "sustained_actual_native_PHP_success")
-                records.append(metric)
+                records.append(job.result())
 
     with Observation(context, "sustained", service._budget) as observer:
         with ThreadPoolExecutor(max_workers=2) as executor:
@@ -1201,20 +1204,25 @@ def sustained(context, service):
             api_result = api.result()
             frontend.result()
         actual_http_completed = time.monotonic() - started
+        php_summary = summary(records)
+        http_result = {"requested_seconds": seconds, "actual_HTTP_completion_seconds": actual_http_completed,
+                       "direct_API": api_result, "PHP_Nginx_full_stack": php_summary,
+                       "PHP_request_rate_per_second": 0.5, "distinct_actual_loopback_source_peers": 50,
+                       "visitor_forwarding_headers_used_to_choose_quota": False,
+                       "same_interval_includes_original_UUID_external_best_and_community_writes": True}
         # Keep actual measurement alive to the complete requested window; do not
         # relabel the last request at (seconds - 0.2) as a 1800-second sample span.
         while observer.first is None or time.monotonic() - observer.first["monotonic"] < seconds:
             time.sleep(0.05)
+        context.evidence.stage("sustained-HTTP-measurements", {
+            **http_result, "actual_API_latency_and_write_gate_passed": api_result["traffic_gate_passed"],
+            "actual_PHP_1s_gate_passed": php_summary["p95_confirmation_ms"] <= 1000,
+            "resource_gate_consumed": False})
     require(api_result["traffic_gate_passed"], "actual_5_per_second_overlap_API_latency_and_write_gate")
-    php_summary = summary(records)
     require(php_summary["p95_confirmation_ms"] <= 1000, "sustained_php_page_p95_1s")
-    return {"requested_seconds": seconds, "actual_HTTP_completion_seconds": actual_http_completed,
+    return {**http_result,
             "resource_sample_span_seconds": observer.result()["sample_span_seconds"],
-            "actual_measured_1800_seconds": seconds >= 1800 and observer.result()["sample_span_seconds"] >= 1800,
-            "direct_API": api_result, "PHP_Nginx_full_stack": php_summary,
-            "PHP_request_rate_per_second": 0.5, "distinct_actual_loopback_source_peers": 50,
-            "visitor_forwarding_headers_used_to_choose_quota": False,
-            "same_interval_includes_original_UUID_external_best_and_community_writes": True}
+            "actual_measured_1800_seconds": seconds >= 1800 and observer.result()["sample_span_seconds"] >= 1800}
 
 
 def quota_probe(context, service):
@@ -1653,16 +1661,27 @@ def run(context):
             context.evidence.stage("original-API-latency", {"API": api, "directory": directory, "native": native})
             require(directory["p95_gate_passed"] and native["under_10_seconds"]
                     and native["gzip_wire_and_complete_decoded_bodies_verified"], "original_directory_and_full_native_latency")
-            key = p.key_for(context.keys, 3, "lr2oraja_ed")
             with p.readonly(context.database) as connection:
-                prior = connection.execute("SELECT metric,lamp_value FROM external_bests WHERE user_id=3 AND source=? AND chart_md5=?",
-                                           ("lr2oraja_ed", context.metadata["chart"]["md5"])).fetchone()
+                owners = [user["id"] for user in context.users]
+                placeholders = ",".join("?" for _ in owners)
+                prior = connection.execute(
+                    f"SELECT id,user_id,metric,lamp_value FROM external_bests WHERE source=? AND chart_md5=? "
+                    f"AND user_id IN ({placeholders}) AND metric>120 AND lamp_value<8 ORDER BY user_id,id LIMIT 1",
+                    ("lr2oraja_ed", context.metadata["chart"]["md5"], *owners)).fetchone()
+            require(prior is not None, "existing_owned_state_with_score_above_120_and_lamp_below_8")
+            key = p.key_for(context.keys, prior["user_id"], "lr2oraja_ed")
             metric, body = service.client.request("POST", p.V2 + "/external/update", key=key,
                                                   body=p.external_payload(context.metadata["chart"], "lr2oraja_ed", 120, lamp=8))
-            require(metric["status"] == 200 and body["best_state"]["ex_score"] == prior["metric"]
-                    and body["best_state"]["lamp"]["value"] == 8, "independent_best_score_and_lamp")
+            context.evidence.stage("independent-lamp-HTTP", {"HTTP": metric, "prior": dict(prior), "synthetic_only": True})
+            require(metric["status"] == 200 and body["updated"] is True
+                    and body["best_state"]["id"] == prior["id"] and body["best_state"]["ex_score"] == prior["metric"]
+                    and body["best_state"]["lamp"]["value"] == 8, "independent_best_score_and_actual_lamp_improvement")
+            with p.readonly(context.database) as connection:
+                after = connection.execute("SELECT metric,lamp_value FROM external_bests WHERE id=?", (prior["id"],)).fetchone()
+            require(after["metric"] == prior["metric"] and after["lamp_value"] == 8, "persisted_independent_lamp_improvement")
+            lamp_result = {"prior": dict(prior), "after": dict(after), "updated": True, "synthetic_only": True}
         context.evidence.stage("original-API", {"API": api, "directory": directory, "native": native,
-                                                "independent_best_lamp_checked": True})
+                                                "independent_best_lamp_checked": True, "independent_lamp": lamp_result})
         context.evidence.stage("full-max-board", full_pagination(context, service, "full-max-board"))
         with Observation(context, "burst", service._budget):
             burst = p.traffic_stage(service, context.metadata, context.users, context.keys, 10, 25, phase="burst")
