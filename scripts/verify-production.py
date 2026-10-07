@@ -952,8 +952,9 @@ def player_checks(context, service, *, fresh=False, label="player-checks"):
         first_bodies = {}
         for ruleset in ("bms", "mania"):
             values, hashes = [], []
-            for _ in range(10 if fresh else 1):
+            for number in range(10 if fresh else 1):
                 metric, body = service.client.request("GET", personal_path(p, owner["id"], "performance", ruleset), user=owner)
+                context.evidence.stage(f"profile-HTTP-{label}-{ruleset}-{number}", metric)
                 require(metric["status"] == 200 and body["lanes"] and body["totals"]["public_chart_count"] >= 2000,
                         "real_nonempty_large_player_profile")
                 require(metric["ms"] <= 300, "first_and_repeated_profile_300ms")
