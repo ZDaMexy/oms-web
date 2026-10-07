@@ -772,7 +772,7 @@ class Context:
             require(runtime["prefix"] == str(backend / ".venv") and runtime["module"] == str(backend / "oms_ir/__init__.py")
                     and tuple(map(int, runtime["sqlite"].split("."))) >= (3, 51, 3), "actual_API_venv_and_source_directory")
             command = [str(python), "-B", "-m", "oms_ir", "serve", "--db", str(service.database),
-                       "--archive", str(context.archive), "--port", str(context.port), "--public-origin", context.base,
+                       "--archive", str(context.archive_path), "--port", str(context.port), "--public-origin", context.base,
                        "--trusted-loopback-proxy", "--web-directory", str(release / "web/ir")]
             with socket.socket() as listener:
                 listener.bind(("127.0.0.1", context.port))
