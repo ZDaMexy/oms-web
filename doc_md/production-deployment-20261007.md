@@ -105,6 +105,16 @@ F 盘四份已关闭失败轮的可再生成 raw 解包副本已定点退役，�
 
 第八失败轮现已完整保存在服务器 `stopped-staging-277-r9-complete.tar.gz`，106,208,929 B，SHA `73d818f886c7c8ed55e2e3aa5007ebf9035bacfa49f9387a602bfd8b0f43a83b`；实际 128 MiB / 50% CPU worker 的 275.180 秒资源观察通过，最低 MemAvailable 787,116,032 B、最低磁盘 2,811,510,784 B。完整 171 成员 SHA / gzip EOF 和 CRC、全 22 表、integrity / FK 已实测。新 controller 只接受原 PID / starttime 的正常退出状态，随后等待真实 MainPID 0；本次 controller / worker 均实际成功终态，原 R7 保全 observer 失败与 R8 run 失败保持。F 的 `run-r8-actual` 已保留本次完整归档 receipt 与最终控制报告 / 日志，完整 gzip 仍待 F 空间，不记作已导出。
 
-第九轮在新 `r6` 接续同一候选与四个合成文件，准备 / 缓存与同盘转移已实际完成，缓存峰值 54,837,248 B；四个保全 / 准备 / 转移有限单元的实际 loaded 成功终态在 `staging-preparation-r9`。新检查入口从 Web `1a9d8d23bcc02e6e17cc1117cecf6a6a86e463ae` 的 Git blob 导出，SHA `a2e00a461f2705e67ebebf566eec87ac6601d5fcd4382e3bd71290ac0e89ebb1`，probe 仍为 `6fb0c2b7` / `aaa551ab…`；已按 binding 明确复制到 r6 后注册 native11，真实 driver / 外部 owner 已启动，完整门尚未结束。新控制源在 `runtime-source-controls-r9`；服务、包和预算不改，旧 r5 工具字节及失败报告不改。
+第九轮在新 `r6` 接续同一候选与四个合成文件，准备 / 缓存与同盘转移已实际完成，缓存峰值 54,837,248 B；四个保全 / 准备 / 转移有限单元的实际 loaded 成功终态在 `staging-preparation-r9`。新检查入口从 Web `1a9d8d23bcc02e6e17cc1117cecf6a6a86e463ae` 的 Git blob 导出，SHA `a2e00a461f2705e67ebebf566eec87ac6601d5fcd4382e3bd71290ac0e89ebb1`，probe 仍为 `6fb0c2b7` / `aaa551ab…`；已按 binding 明确复制到 r6 后注册 native11。本轮于 UTC 00:48 失败结束，实际 driver / 外部 owner 均 loaded、MainPID 0、exit 1；服务、包和预算不改，旧 r5 工具字节及失败报告不改。
 
-两空恢复预备源按本轮准确 r6 / 工具 SHA 和独立 restore09 / export09 / retire09 / rest09 单元绑定，五份新源在 `recovery-protocol-r9`。AST 与只读审查通过，原 R7 / R8 预备源及所有 SHA 保留；成功 run 终态、ready / close、完整 F 证明后退役及原资源 / 空间门保持。实际恢复仍**未执行**，不能消费失败的 R8 run；第九轮实际运行通过及 F / 共享日志条件满足前不启动恢复。
+第九轮首次 BMS / mania 个人页 295.085 / 64.735 ms、目录 p95 123.953 ms、四来源完整原生 8.96～9.35 秒及 1,464 次完整分页通过；全来源人数 29,251，分页 p95 79.563 ms。1,801.152 秒 / 6,654 帧持续阶段的 API、PHP 和资源门均通过：9,000 读取、250 OMS UUID 新局、250 外部状态更新、50 社区写全为预期状态，确认 p95 108.872 / 44.278 / 23.692 / 51.808 ms；900 PHP 页面全 200，确认 p95 303.477 ms。最低 MemAvailable 538,857,472 B（513.895 MiB），余量仅约 1.895 MiB，不能宣称宽裕。
+
+随后同出口读榜 / 登录检查的 68.604 秒 / 254 帧资源门失败，最低 MemAvailable 472,223,744 B（450.348 MiB），最后一次低于门槛的连续区间为约 61.998～68.604 秒。全部阶段的 host / cgroup swap 与 OOM 均零；该阶段最低磁盘 2,765,701,120 B。最低内存同帧的 driver PSS 144,124 KiB、backend PSS 194,392 KiB；后者确实执行原单槽 Argon2 验证，不能删除密码检查或降低安全成本。原同出口 HTTP 汇总在资源断言后才保存，本次未落下，不从数据库或其它分项重建登录 / 配额成功。真实 peer 配额、结束投影指纹与两空恢复未到达；整轮 `staging_host_gate=false`，正式 current 仍为旧发布。
+
+F 的 `run-r9-actual` 保留原失败报告 / 日志、两个实际 loaded 终态和全部 17 段资源流，共 7,754 帧；每段原 SHA / 行数及完整 gzip EOF / CRC 均已核对，压缩合计 1,667,979 B。检查程序同出口阶段的 650 个 Future 原结果仍含已读完的 sources 正文，直到登录重试结束才释放；现保持 650 请求、50 线程、同一 planned 时间与全部指标，只在任务内返回 metric。同出口 HTTP 汇总改在资源断言前真实保存并标 `resource_gate_consumed=false`，最终资源及配额断言保持；修订尚未签新运行门。
+
+实际 driver PSS 从 original-API 阶段约 59 MiB 升至 128 MiB，持续阶段仅再增加约 8 MiB；当前源码未发现完整原生解码图跨阶段持有，不能用 PSS 推断泄漏或保证 Future 修订解决缺口。有限标量诊断源 `runtime-source-controls-r10/diagnose-r9-native-memory.py` 已通过 AST 与只读审查，绑定原 a2 / aaa 冻结源，在各完整数学 / 目录 / 原生校验前后记录单帧栈 tracemalloc 及实际 PSS / cgroup；诊断开销计入原 256 MiB / high240 / 50% CPU 范围，不补签延迟或容量。只在完整 R9 保全成功后使用合成副本，普通会话刷新保留真实生命周期，不改 SQL 到期时间；实际诊断尚未执行。
+
+完整 R9 失败目录正在由新 `preserve-staging-r10.py` 保全，来源 SHA `9be12ee957a289b13f68ec742a1e02229acb23120263380079091c9aa7539498`，只重绑定实际 r6 / a2 / 原失败 r9 与新保全 r10；128 MiB / 50% CPU、全 22 表、成员 SHA / gzip CRC 与真实终态规则不变。原 native11 已实际关闭，保全 controller / worker 仍运行；不能把正在生成的归档当作完成或 F 全件证明。
+
+两空恢复预备源按本轮准确 r6 / 工具 SHA 和独立 restore09 / export09 / retire09 / rest09 单元绑定，五份新源在 `recovery-protocol-r9`。AST 与只读审查通过，原 R7 / R8 预备源及所有 SHA 保留；成功 run 终态、ready / close、完整 F 证明后退役及原资源 / 空间门保持。实际恢复仍**未执行**，不能消费失败的 R8 或 R9 run；须待新完整运行通过及 F / 共享日志条件满足后，按新实际绑定修订恢复源再执行。

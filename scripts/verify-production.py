@@ -1692,6 +1692,8 @@ def run(context):
         context.evidence.stage("sustained", sustained(context, service))
         with Observation(context, "direct-trusted-egress", service._budget):
             same = p.same_egress_stage(service, context.users)
+            context.evidence.stage("direct-trusted-egress-HTTP-measurements", {
+                **same, "resource_gate_consumed": False})
         context.evidence.check(same["read_quota_rejection_observed"] and same["queue_drained"], "direct_trusted_proxy_same_egress_queue")
         context.evidence.stage("direct-trusted-egress", same)
         context.evidence.stage("real-peer-quota", quota_probe(context, service))
