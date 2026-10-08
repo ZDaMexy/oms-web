@@ -1751,18 +1751,48 @@ def run_check_worker(context, phase, service, *, source_case=None):
         command.extend(("--source-case", str(source_case)))
     with Observation(context, label + "-worker", service._budget):
         with log.open("xb") as output:
+            worker_started_at = time.monotonic()
+            worker_deadline = worker_started_at + 600
             process = subprocess.Popen(command, cwd=context.backend, stdout=output, stderr=subprocess.STDOUT,
                                        env={**os.environ, "PYTHONPATH": "", "PYTHONDONTWRITEBYTECODE": "1",
                                             "TMPDIR": str(context.work / "tmp")})
             try:
-                started = identity(process.pid)
-                require(started["argv"] == command and started["cwd"] == str(context.backend)
-                        and cgroup_path(process.pid) == context.driver.location,
-                        "actual_complete_verification_child_source_and_cgroup")
+                identity_deadline = min(worker_deadline, worker_started_at + 10)
+                first, last, started = None, None, None
+                polls = 0
+                while True:
+                    try:
+                        observed = {"identity": identity(process.pid), "cgroup": str(cgroup_path(process.pid))}
+                    except FileNotFoundError as error:
+                        last = {"actual_pid": process.pid, "missing_proc_file": str(error.filename)}
+                        break
+                    polls += 1
+                    if first is None:
+                        first = observed
+                    last = observed
+                    current = observed["identity"]
+                    same_lifetime = current["starttime_ticks"] == first["identity"]["starttime_ticks"]
+                    live = current["state"] not in ("Z", "X", "x") and process.poll() is None
+                    if same_lifetime and live and current["argv"] == command \
+                            and current["cwd"] == str(context.backend) \
+                            and observed["cgroup"] == str(context.driver.location) \
+                            and time.monotonic() < identity_deadline:
+                        started = current
+                        break
+                    if not same_lifetime or not live or time.monotonic() >= identity_deadline:
+                        break
+                    time.sleep(0.01)
+                context.evidence.stage(label + "-worker-start-observation", {
+                    "expected_argv": command, "expected_cwd": str(context.backend),
+                    "expected_cgroup": str(context.driver.location), "first": first, "last": last,
+                    "polls": polls, "elapsed_seconds": time.monotonic() - worker_started_at,
+                    "identity_wait_limit_seconds": 10, "total_worker_limit_seconds": 600,
+                    "exact_identity_confirmed": started is not None})
+                require(started is not None, "actual_complete_verification_child_source_and_cgroup")
                 context.evidence.stage(label + "-worker-start", {"actual_identity": started,
                     "verification_harness_sha256": file_hash(Path(__file__).resolve()),
                     "same_driver_cgroup_and_memory_CPU_budget": True})
-                process.wait(timeout=600)
+                process.wait(timeout=max(0, worker_deadline - time.monotonic()))
             finally:
                 if process.poll() is None:
                     process.terminate()
