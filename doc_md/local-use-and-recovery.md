@@ -1,5 +1,8 @@
 # OMS Web 本地使用与恢复
 
+2026-10-09 客户端迁至 F:/zdamexy-workspace/oms，本页当前命令及脚本的保全 / archive 目录已接续；历史来源和生产原始证据仍保留原日期。开发环境迁移与原路径映射见 [客户端日志](../../../oms/doc_md/mainline/CHANGELOG.md#2026-10-09)。本轮只验证脚本语法，没有启动本地网站、执行恢复或刷新生产验收。
+
+
 本文维护隔离[本地工作区](http://127.0.0.1:8090/)的使用方法，并保留 2026-10-07 本地迁移的恢复流程。该本地阶段没有替换线上网站；2026-10-08 原版站已部署，线上维护取[生产维护](production-maintenance.md)。线上账号和成绩没有迁入本地测试库。
 
 本地视觉已获用户认可；性能及两次空目录恢复的当次结果取[迁移记录](oms-web-migration-20261007.md)，线上未完成门取[真人验收](production-maintenance.md#真人验收)。本文命令是维护步骤，执行示例不能代签实际结果，本地证据不提升为线上通过。
@@ -14,7 +17,7 @@
 | 玩家网页 | Nginx `127.0.0.1:8090`；PHP-FPM 只监听 `127.0.0.1:9070` |
 | 本地 API / 目录 worker | `127.0.0.1:8081` / `127.0.0.1:8082`，只使用本任务测试库 |
 | 活跃测试数据 | 网站 `.dev-cache/local-runtime/live.db`；账号、OMS UUID 记录、外部最佳状态与社区写入都在此库 |
-| 公开历史 | 固定只读引用 `F:/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db` |
+| 公开历史 | 固定只读引用 `F:/zdamexy-workspace/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db` |
 | 日志 / 检查证据 | 网站 `artifacts/`；临时状态和缓存在 `.dev-cache/` |
 
 本地环境不访问 LR2IR 母库或其他私有数据库；只挂载已授权的完整公开投影。恢复包不复制该投影，恢复时仍需要原固定文件。读取范围和投影完整性由实际检查报告证明，不能用样例成绩或旧十万条合成容量结果代替。
@@ -84,7 +87,7 @@ wsl -d oms-web-dev --cd /mnt/f/zdamexy-workspace/websites/oms-web -- bash build.
 
 旧 `/ir/#history` 进入本人完整记录；未登录先到 `/account?section=history`，登录后使用“我的完整记录”链接。旧 `/ir/#keys` 进入账号页。当前没有成绩删除接口，网站不提供虚构的删除记录操作。
 
-网页验证须与真实 OMS 上传和读榜核对。同一 MD5、来源、条件、页码下，两端应显示一致的参考榜和同条件榜；账号切换不能接管旧待交内容或改变保存后的 UUID。客户端日常验收仍由用户通过 VS Code 非调试启动当前 `F:/oms`，主动使用已有按需 IR 设置；默认 endpoint 不改。本任务无需生成 Windows 发行包、`publish` 或额外安装副本。外部宿主真实交分与原生读榜及 P/C 其他真人门沿原专项继续记录，不能用网页或接口检查代签。
+网页验证须与真实 OMS 上传和读榜核对。同一 MD5、来源、条件、页码下，两端应显示一致的参考榜和同条件榜；账号切换不能接管旧待交内容或改变保存后的 UUID。客户端日常验收仍由用户通过 VS Code 非调试启动当前 `F:/zdamexy-workspace/oms`，主动使用已有按需 IR 设置；默认 endpoint 不改。本任务无需生成 Windows 发行包、`publish` 或额外安装副本。外部宿主真实交分与原生读榜及 P/C 其他真人门沿原专项继续记录，不能用网页或接口检查代签。
 
 ## 本地快照与两次空目录恢复
 
@@ -114,7 +117,7 @@ r1 捕获已提交的策略；r2 先核实实际 checkpoint 为 `(0,0,0)`，固�
 ```powershell
 . F:/zdamexy-workspace/websites/oms-web/UseDevelopmentStorage.ps1
 $OmsRecoveryBackup = '/mnt/f/zdamexy-workspace/websites/oms-web/artifacts/local-recovery'
-$OmsFreshRecovery = '/mnt/f/oms/artifacts/oms-web-migration-20261007/local-native-restores/local-restore-r1-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
+$OmsFreshRecovery = '/mnt/f/zdamexy-workspace/oms/artifacts/oms-web-migration-20261007/local-native-restores/local-restore-r1-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
 wsl -d oms-web-dev --cd /mnt/f/zdamexy-workspace/websites/oms-web -- node scripts/restore-local.mjs $OmsRecoveryBackup $OmsFreshRecovery
 ```
 
@@ -138,7 +141,7 @@ wsl -d oms-web-dev --cd ($OmsFreshRecovery + '/websites/oms-web') -- .dev-cache/
 
 ## 旧设计保全与后续回退
 
-旧设计存档位于 `F:/oms/artifacts/oms-web-migration-20261007/legacy-r3`，没有在资源受限的服务器上另建备份。组成包括 `legacy.bundle` 全历史、当前工作区实际字节与差异/状态、原介绍页/已发布源码/捕获 HEAD 的独立归档、原发布运行包，以及相应 SHA 和恢复报告。原介绍页的历史取证提交不代表当前源码或生产版本。
+旧设计存档位于 `F:/zdamexy-workspace/oms/artifacts/oms-web-migration-20261007/legacy-r3`，没有在资源受限的服务器上另建备份。组成包括 `legacy.bundle` 全历史、当前工作区实际字节与差异/状态、原介绍页/已发布源码/捕获 HEAD 的独立归档、原发布运行包，以及相应 SHA 和恢复报告。原介绍页的历史取证提交不代表当前源码或生产版本。
 
 原 Google Fonts 是外部资源，另存 `offline-fonts/` 的公开字体、许可、CSS 和取得时间；离线旧介绍页在 `restore-original-offline/`。这是当次重新取得的公开字体，不证明历史上线时字节完全相同。原存档不改写，字体及离线版的证据见各自报告；文件核对不代签实际视觉效果。
 

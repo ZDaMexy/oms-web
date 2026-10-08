@@ -1931,7 +1931,7 @@ def local_seed(args):
         if name.startswith("backend/"):
             path = backend / name.removeprefix("backend/")
             require(path.is_file() and not path.is_symlink() and file_hash(path) == checksum, "local_seed_exact_backend_source")
-    public = Path("/mnt/f/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db")
+    public = Path("/mnt/f/zdamexy-workspace/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db")
     require(release.joinpath("archive.db").resolve() == public, "only_fixed_F_public_projection")
     sys.path.insert(0, str(backend))
     p = importlib.import_module("scripts.multisource_probe")

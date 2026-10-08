@@ -73,7 +73,7 @@ for (const relative of ['index.html', 'assets/styles/site.css', 'assets/scripts/
   const original = git(['show', `${revisions.original}:${relative}`]);
   if (hash(readFileSync(path.join(originalRestore, relative))) !== hash(original)) throw new Error(`Original recovery differs: ${relative}`);
 }
-const production = 'F:/oms/artifacts/oms-deai-20261007/oms-ir-d1f052b93a81-e6fdf914cb04.tar.gz';
+const production = 'F:/zdamexy-workspace/oms/artifacts/oms-deai-20261007/oms-ir-d1f052b93a81-e6fdf914cb04.tar.gz';
 copyFileSync(production, path.join(destination, 'published-runtime.tar.gz'));
 if (hash(readFileSync(production)) !== 'b2bc5c490b5f2e6bddb72bb4cdb35ab0b7412507d4ae8b9ac8bc3cd59b78e62b') throw new Error('Published runtime hash differs.');
 if (hash(git(['status', '--porcelain=v1', '-z'])) !== hash(status) || JSON.stringify(snapshot()) !== JSON.stringify(before)) throw new Error('Original work changed during capture.');

@@ -5,7 +5,7 @@ web_root="$(cd "$(dirname "$0")/.." && pwd)"
 control="$web_root/.dev-cache/local-runtime"
 backend_root="$(cd "$web_root/../../oms-server/oms-backend" && pwd)"
 python="$web_root/.dev-cache/backend-venv/bin/python"
-archive="/mnt/f/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db"
+archive="/mnt/f/zdamexy-workspace/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db"
 mkdir -p "$control" "$web_root/artifacts" "$control/nginx-tmp"
 export TMPDIR="$web_root/.dev-cache/temp"
 export PYTHONDONTWRITEBYTECODE=1

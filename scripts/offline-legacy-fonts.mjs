@@ -6,7 +6,7 @@ import { copyFile, cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promi
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const designatedRoot = 'F:/oms/artifacts/oms-web-migration-20261007/legacy-r3';
+const designatedRoot = 'F:/zdamexy-workspace/oms/artifacts/oms-web-migration-20261007/legacy-r3';
 const legacyRoot = path.resolve(process.argv[2] ?? designatedRoot);
 if (legacyRoot !== path.resolve(designatedRoot) || path.parse(legacyRoot).root.toLowerCase() !== 'f:\\') {
   throw new Error('Only the designated F-drive legacy-r3 recovery directory is accepted.');

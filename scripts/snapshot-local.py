@@ -18,7 +18,7 @@ import tarfile
 WEB = Path('/mnt/f/zdamexy-workspace/websites/oms-web')
 BACKEND = Path('/mnt/f/zdamexy-workspace/oms-server/oms-backend')
 BACKUP = WEB / 'artifacts/local-recovery'
-PUBLIC = Path('/mnt/f/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db')
+PUBLIC = Path('/mnt/f/zdamexy-workspace/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db')
 LIVE = WEB / '.dev-cache/local-runtime/live.db'
 WEB_PREFIX = 'websites/oms-web/'
 BACKEND_PREFIX = 'oms-server/oms-backend/'

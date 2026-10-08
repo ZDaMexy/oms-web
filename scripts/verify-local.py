@@ -57,7 +57,7 @@ def play(md5, ruleset="bms"):
 
 
 def main():
-    archive = Path("/mnt/f/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db")
+    archive = Path("/mnt/f/zdamexy-workspace/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db")
     with sqlite3.connect(archive.as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
         metadata = dict(connection.execute("SELECT key,value FROM metadata"))
         counts = {"charts": connection.execute("SELECT COUNT(*) FROM charts").fetchone()[0],

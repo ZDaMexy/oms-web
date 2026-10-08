@@ -19,7 +19,7 @@ import httpx
 
 WEB = Path('/mnt/f/zdamexy-workspace/websites/oms-web')
 BACKUP = WEB / 'artifacts/local-recovery'
-PUBLIC = Path('/mnt/f/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db')
+PUBLIC = Path('/mnt/f/zdamexy-workspace/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db')
 BASE = 'http://127.0.0.1:8090'
 V1 = '/api/ir/v1'
 WEB_HEADERS = {'Origin': BASE, 'X-OMS-IR': '1'}

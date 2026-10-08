@@ -18,7 +18,7 @@ if (process.platform !== 'linux' || Number(process.versions.node.split('.')[0]) 
   throw new Error('Run recovery with Node 24 inside the existing Alpine WSL.');
 }
 const designatedBackup = '/mnt/f/zdamexy-workspace/websites/oms-web/artifacts/local-recovery';
-const publicArchive = '/mnt/f/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db';
+const publicArchive = '/mnt/f/zdamexy-workspace/oms/artifacts/oms-ir-multisource-20261004/archive/lr2ir-public-v1.db';
 const backupRoot = path.resolve(backupArg);
 const targets = targetArgs.map((target) => path.resolve(target));
 const webPrefix = 'websites/oms-web/';

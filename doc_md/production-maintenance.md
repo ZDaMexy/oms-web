@@ -17,7 +17,7 @@
 | 本次可写缓存 / 日志 | `/var/cache/oms-web/b879e4233818-b0feceae22e4/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
-上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端账号 UI 软件来源仍为 `6168791`，默认 endpoint 空、旧在线总开关 false；用户通过 VS Code 非调试启动 F:\oms 验收，不生成 Windows 发行包、publish 或安装副本。
+上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端账号 UI 软件来源仍为 `6168791`，默认 endpoint 空、旧在线总开关 false；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
 
@@ -67,7 +67,7 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 3. 真正恢复先在新空目录进行，冻结包 / 依赖与 fresh缓存独立还原，公开投影只读引用；签收正常读写、撤销 / 隐藏、全量榜 / 非空原生 / 分页及实际资源和F全件交接后，才准确退役自己的恢复数据。本次两轮已有完整证据，未变时不重复制造恢复副本。
 4. SQLite一致备份仅包含业务库；全量公开投影、对应源码 / 依赖包和当前配置各有独立完整F来源，不拿241,664 B的真实业务raw冒充1.6 GB历史投影已保全，也不以只读投影代替账号 / 会话备份。
 
-本次发布前正式对和发布后正式对分别在 F:\oms\artifacts\oms-web-production-20261007\fixed-production-backup-pre-switch-f3f004b6adaa 与 `fixed-production-backup-post-switch-7be5768366c7`。两者完整核验且同实例运行观察通过。旧R6 observer false及其另行完整对保全仍保持，不能重标成功。后端原备份命令与权限说明见[运行维护](../../../oms-server/oms-backend/deploy/README.md)；其中旧b520回退段仅属原时点，本次回退按下节。
+本次发布前正式对和发布后正式对分别在 F:\zdamexy-workspace\oms\artifacts\oms-web-production-20261007\fixed-production-backup-pre-switch-f3f004b6adaa 与 `fixed-production-backup-post-switch-7be5768366c7`。两者完整核验且同实例运行观察通过。旧R6 observer false及其另行完整对保全仍保持，不能重标成功。后端原备份命令与权限说明见[运行维护](../../../oms-server/oms-backend/deploy/README.md)；其中旧b520回退段仅属原时点，本次回退按下节。
 
 ## 保留当前库的设计与源码回退
 
@@ -81,7 +81,7 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 
 本次第一forward曾在reload之后立即读到旧worker而误判，继而因未允许已批准两索引使自动恢复停在服务关闭；已独立恢复并修订，完整失败原件保留。正式R4同库往返及后续最终发布证明本节具体范围，不表示任意旧源码均兼容。
 
-旧设计完整Git / 工作区差异 / 原发布 / 字体与两恢复只在 F:\oms\artifacts\oms-web-migration-20261007\legacy-r3；原D1/e6运行包在 F:\oms\artifacts\oms-deai-20261007。新包、两实际恢复、正式对、原旧配置和最终新配置均在 F:\oms\artifacts\oms-web-production-20261007；服务器只保留所需不可变运行 / 维护 / 回退目录，不另增旧设计备份。
+旧设计完整Git / 工作区差异 / 原发布 / 字体与两恢复只在 F:\zdamexy-workspace\oms\artifacts\oms-web-migration-20261007\legacy-r3；原D1/e6运行包在 F:\zdamexy-workspace\oms\artifacts\oms-deai-20261007。新包、两实际恢复、正式对、原旧配置和最终新配置均在 F:\zdamexy-workspace\oms\artifacts\oms-web-production-20261007；服务器只保留所需不可变运行 / 维护 / 回退目录，不另增旧设计备份。
 
 系统日志的46原件已完整保存并核验到F后，才按用户授权清理。默认namespace480 MiB加原OMS32 MiB，合计512 MiB；完整原件及失败传输保留F，不重复清理其他日志或其他私有目录。
 
@@ -95,6 +95,6 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 2. `/beatmapsets?ruleset=bms` 搜索并查看详情，确认Ginger / 616自动推荐与人工换源，实际下载原包并在OMS入库打开；mania选对应玩法及Sayobot实际包，核原生mania / 混合包边界。
 3. `/account` 使用原OMS账号，检查我的记录、真实公开个人页、密钥一次展示 / 归属 / 撤销。不要提交密码或token作反馈；旧LR2IR同名账号不认领为OMS。
 4. `/ir` 按谱面选一个 / 多个 / 全部 / 空来源，比较分数、独立灯、人数、全局名次及跨页；参考混榜后主动收窄到真实存在的同条件。OMS原用户按钮 / 登录页 / 个人页、选谱奖杯与网页同谱同范围对照。
-5. 用户在VS Code非调试启动F:\oms，手动完整保存新局；断网、重启、原账号重登及旧待交补交核UUID不重造、归属不变。先导P先验OMS＋全量公开历史＋ED7K，再继续指定beatoraja / LR2oraja / ED / OpenLR2版本与完整玩法 / 架构矩阵，实际交分和宿主原生读榜逐格留证。
+5. 用户在VS Code非调试启动F:\zdamexy-workspace\oms，手动完整保存新局；断网、重启、原账号重登及旧待交补交核UUID不重造、归属不变。先导P先验OMS＋全量公开历史＋ED7K，再继续指定beatoraja / LR2oraja / ED / OpenLR2版本与完整玩法 / 架构矩阵，实际交分和宿主原生读榜逐格留证。
 
 本次公网HTTP通过，浏览器工具读取线上页仍30秒超时，未取得线上DOM / 截图或普通点击 / 登录验收。用户已认可本地原版视觉；该认可和本地浏览器证据不提升为本次线上真人通过。遇到问题记录入口、操作、发生时间及页面提示，按反馈修复后只重验受影响范围。PP / 地力、聊天、presence、多人与官网谱包托管不在本次交付。

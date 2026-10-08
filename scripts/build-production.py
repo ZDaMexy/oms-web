@@ -12,8 +12,8 @@ import tarfile
 
 WEB = Path(__file__).resolve().parent.parent
 BACKEND = WEB.parent.parent / 'oms-server/oms-backend'
-CLIENT = Path('/mnt/f/oms')
-LEGACY = Path('/mnt/f/oms/artifacts/oms-deai-20261007/oms-ir-d1f052b93a81-e6fdf914cb04.tar.gz')
+CLIENT = Path('/mnt/f/zdamexy-workspace/oms')
+LEGACY = Path('/mnt/f/zdamexy-workspace/oms/artifacts/oms-deai-20261007/oms-ir-d1f052b93a81-e6fdf914cb04.tar.gz')
 LEGACY_SHA = 'b2bc5c490b5f2e6bddb72bb4cdb35ab0b7412507d4ae8b9ac8bc3cd59b78e62b'
 
 def git(repo, *args):
