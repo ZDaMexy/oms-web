@@ -313,3 +313,15 @@ R3只将空root path与 `/` 视为等价，仍保留其他path / 查询 / fragme
 最终瞬时MemAvailable868,077,568 B（约828 MiB）、root空闲4,645,654,528 B（约4.33 GiB）、swap0，loadavg0.07 / 0.03 / 0.02。真实阶段门取上方完整窗口，瞬时值不代替它们。F原旧路由文件为 `production-before-switch-r4/08-39.105.55.78.conf` / `09-oms-ir.conf`，新路由 / PHP / cache / 主IR / catalog / fixed backup / timer及default journal设置另完整保全，维护步骤取[当前维护](production-maintenance.md)。系统日志原件完整F保全与default480＋OMS32 MiB合计512 MiB限制保持，不扫描母库或其他私有数据，不增服务器旧设计备份。
 
 线上浏览器初次创建30秒超时；inventory实际取得标题“首页 | OMS”的已存在tab，但绑定读取再次30秒超时，未取得线上DOM / 截图。工具结果保留F `production-browser-observation-r1.json`，不把tab标题 / HTTP / 本地截图代签线上视觉、普通浏览器刷新、点击、真实登录 / 密钥或下载入库。用户本地视觉认可保持原范围；接续[真人路径](production-maintenance.md#真人验收)，先OMS＋全量公开历史＋ED7K的P，再逐格完成指定宿主和玩法矩阵C。当前结论仅 **已部署待验收**，P/C、非调试客户端和原发行 / 设备 / 皮肤门均未关闭。
+
+## 2026-10-08 本地缓存清理补记
+
+此前被自动审批拦截、未由代理执行的本地清理，现已由用户在PowerShell 7.6.6手动完成。用户运行此前提供的限定路径脚本，逐项反馈“已清理”，范围仅为：
+
+- `F:\zdamexy-workspace\websites\oms-web\.dev-cache\temp\bms-statistics-focused-r2`
+- `F:\zdamexy-workspace\websites\oms-web\.dev-cache\temp\bms-statistics-full-r2`
+- `F:\zdamexy-workspace\websites\oms-web\.dev-cache\npm`
+
+用户输出F盘剩余4.95 GiB。2026-10-08 22:05:56 CST代理只读复核三个原目录均不存在，实际空闲5,318,930,432 B（约4.95 GiB）；回执为F:\oms\artifacts\oms-web-production-20261007\user-local-cache-cleanup-r1.json。删除前文件逻辑大小约144 MiB，不能将其等同于空闲空间净增；本次未复跑已通过的软件检查。该清理待办关闭，历史自动审批拒绝及当时未执行的事实保留。
+
+该命令未将源码、验收证据、数据库、恢复备份、WSL磁盘或其他缓存纳入删除范围；代理本次仅复核和补记，没有删除文件或改变生产。后续开发入口和依赖安装可重新生成缓存。网站仍为**已部署待验收**，真人及P/C门保持未完成。

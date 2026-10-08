@@ -79,6 +79,8 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 
 共享主机变更分别在[Homepage记录](../../homepage-website/doc_md/other/shared-journal-budget-20261008.md)和[旧OMS Website记录](../../oms-website/doc_md/other/shared-journal-budget-20261008.md)留链接；原件与当前事实仍只由本次生产记录维护。
 
+2026-10-08用户已手动完成此前被自动审批拦截的本地pytest临时目录与npm缓存清理，F盘剩余约4.95 GiB；三处目录已只读复核不存在，该清理待办关闭。具体路径、执行者与复核证据见[本地清理补记](production-deployment-20261007.md#2026-10-08-本地缓存清理补记)。后续开发入口及依赖安装会重新生成相应缓存。
+
 ## 真人验收
 
 1. 普通浏览器打开首页并正常刷新，核新闻、菜单、桌面 / 窄屏，再到 `/download` 与 `/help` 按步骤进入游戏。公开发行仍为页面明确标注的20260626，开发工作区IR不冒充已发行能力。
