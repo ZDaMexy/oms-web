@@ -10,10 +10,10 @@ export default function Info({detail}:{detail:BmsDetail|ManiaDetail}) {
     <div className='beatmapset-info__box'><div className='beatmapset-info__scrollable'><div className='beatmapset-info__row'>
       <h3 className='beatmapset-info__header'>谱包</h3>
       {detail.ruleset==='bms'?detail.candidates.map(candidate=><p key={candidate.source}>{candidate.package.name} · {candidate.package.size_bytes==null?'大小未知':formatBytes(candidate.package.size_bytes)}</p>):
-        <p>{detail.mixed_modes?'混合谱包；OMS 只导入其中原生 mania 难度。':'原生 mania 谱包。'}</p>}
+        <p>{detail.mixed_modes?'这个谱包包含多种玩法，OMS 只导入其中的 mania 谱面。':'mania 谱包。'}</p>}
     </div></div></div>
     <div className='beatmapset-info__box'><div className='beatmapset-info__scrollable'><div className='beatmapset-info__row'><h3 className='beatmapset-info__header'>来源</h3>
-      {detail.ruleset==='bms'?detail.candidates.map(candidate=>candidate.source_url!=null&&<p key={candidate.source}><a className='beatmapset-info__link' href={candidate.source_url} target='_blank' rel='noopener noreferrer'>{candidate.source}</a></p>):
+      {detail.ruleset==='bms'?detail.candidates.map(candidate=>candidate.source_url!=null&&<p key={candidate.source}><a className='beatmapset-info__link' href={candidate.source_url} target='_blank' rel='noopener noreferrer'>{sourceNames[candidate.source]??candidate.source}</a></p>):
         detail.set.source_url!=null&&<a className='beatmapset-info__link' href={detail.set.source_url} target='_blank' rel='noopener noreferrer'>Sayobot</a>}
       <p>谱包由原站提供。下载后在 OMS 中添加谱库。</p>
     </div></div></div>

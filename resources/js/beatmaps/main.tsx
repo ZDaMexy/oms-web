@@ -10,6 +10,6 @@ export function Main() {
   const initial = pageData<IrSearchData>();
   const [query,update] = useQuery();
   const ir = initial.page === 'ir';
-  return <><HeaderV4 theme='beatmapsets' links={[{title:ir?'成绩谱面':'谱面',url:ir?'/ir':'/beatmapsets',active:true}]}/>
+  return <><HeaderV4 theme='beatmapsets' links={[{title:ir?'谱面榜':'谱面',url:ir?'/ir':'/beatmapsets',active:true}]}/>
     {ir ? <IrSearchContent query={query} update={update} initial={initial.data}/> : <SearchContent query={query} update={update} mode={ruleset(query)}/>}</>;
 }

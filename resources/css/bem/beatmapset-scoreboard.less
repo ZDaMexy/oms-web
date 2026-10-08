@@ -31,6 +31,22 @@
     text-align: center;
     padding-top: 10px;
     font-size: @font-size--title-small;
+    line-height: 1.7;
+  }
+
+  &__details {
+    font-size: @font-size--title-small;
+
+    summary {
+      cursor: pointer;
+    }
+
+    pre {
+      max-height: 22rem;
+      max-width: 100%;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
   }
 
   &__supporter-text {

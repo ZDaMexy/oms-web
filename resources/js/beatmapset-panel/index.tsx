@@ -36,7 +36,7 @@ export default function BeatmapsetPanel({ beatmapset }: { beatmapset: CatalogSet
         {beatmapset.source_url != null && <a className='beatmapset-panel__menu-item' href={beatmapset.source_url} rel='noopener noreferrer' target='_blank' title='来源页面'><span className='fas fa-external-link-alt' /></a>}
       </div></div>
     </div>
-    <button type='button' className='beatmapset-panel__mobile-expand' onClick={() => setExpanded(!expanded)} aria-expanded={expanded}><span className={expanded ? 'fas fa-angle-up' : 'fas fa-angle-down'} /></button>
+    <button type='button' className='beatmapset-panel__mobile-expand' onClick={() => setExpanded(!expanded)} aria-expanded={expanded} aria-label={expanded ? '收起谱面信息' : '展开谱面信息'}><span className={expanded ? 'fas fa-angle-up' : 'fas fa-angle-down'} /></button>
   </div>;
 }
 
@@ -63,6 +63,6 @@ export function IrChartPanel({detail}:{detail:IrChart}) {
       </div>
       <div className='beatmapset-panel__menu-container'><div className='beatmapset-panel__menu'><a className='beatmapset-panel__menu-item' href={href} title='查看成绩榜'><span className='fas fa-list-ol'/></a></div></div>
     </div>
-    <button type='button' className='beatmapset-panel__mobile-expand' onClick={()=>setExpanded(!expanded)} aria-expanded={expanded}><span className={expanded?'fas fa-angle-up':'fas fa-angle-down'}/></button>
+    <button type='button' className='beatmapset-panel__mobile-expand' onClick={()=>setExpanded(!expanded)} aria-expanded={expanded} aria-label={expanded?'收起谱面信息':'展开谱面信息'}><span className={expanded?'fas fa-angle-up':'fas fa-angle-down'}/></button>
   </div>;
 }

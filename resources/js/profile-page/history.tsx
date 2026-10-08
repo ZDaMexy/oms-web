@@ -12,7 +12,7 @@ export default function History({controller}:{controller:Controller}) {
   const {history,update} = controller;
   return <section className='page-extra' id='history'>
     <h2 className='title title--page-extra'>我的完整记录</h2>
-    <p className='beatmapset-scoreboard__notice'>OMS 已上传的 BMS / mania 游玩，每局保留原 UUID，也包含不进入公开榜的记录。按接收顺序显示全部游玩，不受公开来源、键型和条件筛选影响。</p>
+    <p className='beatmapset-scoreboard__notice'>仅你可见。这里列出已上传的 OMS 游玩记录，包括未进入公开榜的成绩，按网站收到成绩的顺序排列。上方的公开成绩筛选不影响此列表。</p>
     <Status error={history.error} ready={history.data!=null}/>
     {history.data!=null && <>
       <p>{history.data.total.toLocaleString('zh-CN')} 局 OMS 游玩</p>
@@ -36,9 +36,8 @@ export default function History({controller}:{controller:Controller}) {
           <div className='play-detail__more'><Details value={score}/></div>
         </div>
         <div className='play-detail__beatmap-and-time'>
-          <span>UUID {score.submission_id}</span>
           <span className='play-detail__time'>接收 <time dateTime={score.received_at} className='js-localtime'>{score.received_at}</time></span>
-          <span>{score.public_board?'公开榜条件':'不进入公开榜'}</span>
+          <span>{score.public_board?'符合公开榜条件':'不进入公开榜'}</span>
         </div>
       </div>)}</div>
       {history.data.items.length===0 && <p>{history.data.total===0?'尚未上传 OMS 游玩记录。':'本页没有记录，请返回第一页。'}</p>}

@@ -516,7 +516,7 @@ function page_title(): string
         'help' => '帮助',
         'account' => '账号',
         'credits' => '源码与许可',
-        'ir' => '谱面排行',
+        'ir' => '谱面榜',
     ][request()->attributes->get('oms_page')] ?? 'OMS';
 }
 

@@ -2,7 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 import { message, ownedWrite, request, session } from './api';
-import { pageData } from './page';
+import { pageData, sourceNames } from './page';
 import { Ranking } from './types';
 
 interface Fields { body: string; title?: string; category?: string }
@@ -64,7 +64,7 @@ function updatePermissions() {
     for (const button of form.querySelectorAll<HTMLButtonElement>('button[type=submit]')) button.disabled = busy.has(form) || user == null || mismatch || wrongOwner;
     const rebind = form.querySelector<HTMLButtonElement>('[data-oms-rebind-draft]');
     if (rebind != null) { rebind.hidden = !mismatch || form.dataset.kind?.endsWith('-edit') === true; rebind.disabled = busy.has(form); }
-    if (mismatch) show(form, '草稿与提交 ID 属于 ' + draft.actorName + '（OMS #' + draft.actorId + '）。上次提交可能已经发布；先查看原账号帖子，再切回重试或主动用当前账号发布。');
+    if (mismatch) show(form, '这份草稿由 ' + draft.actorName + '（OMS #' + draft.actorId + '）提交过，帖子可能已发布。请先查看原账号的帖子；你可以切回该账号重试，或选择“用当前账号发布”。');
   }
   const keyForm = document.querySelector<HTMLFormElement>('#oms-key-create');
   if (keyForm != null) for (const button of keyForm.querySelectorAll<HTMLButtonElement>('button[type=submit]')) button.disabled = user == null || busy.has(keyForm);
@@ -118,7 +118,7 @@ async function loadKeys() {
     for (const key of response.items) {
       const row = document.createElement('tr');
       row.className = 'ranking-page-table__row';
-      for (const value of [key.source, key.label, key.revoked ? '已撤销' : '有效']) {
+      for (const value of [sourceNames[key.source] ?? key.source, key.label, key.revoked ? '已撤销' : '有效']) {
         const cell = document.createElement('td');
         cell.className = 'ranking-page-table__column';
         cell.textContent = value;
@@ -153,7 +153,7 @@ async function rankingMe() {
     const response = await request<Ranking>('/api/ir/v1/rankings/players?' + parameters);
     if (revision !== session.revision || !target.isConnected) return;
     target.replaceChildren();
-    if (response.me == null) { target.textContent = '你尚未进入此范围。'; return; }
+    if (response.me == null) { target.textContent = '你在所选条件下还没有公开成绩。'; return; }
     const me = response.me;
     const link = document.createElement('a');
     link.href = '/users/' + me.user.id;
@@ -223,7 +223,7 @@ document.addEventListener('submit', event => {
         form.reset();
         void loadKeys();
       },
-      error => { if (revision === session.revision && form.isConnected) show(form, message(error) + ' 若请求中断，请先查看列表；无法找回已创建的秘密，可撤销后重新创建。'); },
+      error => { if (revision === session.revision && form.isConnected) show(form, message(error) + ' 如果连接中断，请先检查密钥列表。密钥无法再次显示；丢失后可撤销并重新创建。'); },
     ).finally(() => { setBusy(form, false); });
     return;
   }
@@ -252,7 +252,7 @@ document.addEventListener('submit', event => {
       if (target == null) throw new Error('社区返回缺少真实帖子 ID。');
       Turbo.visit('/community/' + target + (response.reply == null ? '' : '#reply-' + response.reply.id), { action: 'replace' });
     },
-    error => { if (revision === session.revision && form.isConnected) show(form, message(error) + ' 草稿与提交 ID 已保留，可以重试。'); },
+    error => { if (revision === session.revision && form.isConnected) show(form, message(error) + ' 草稿已保留，可以重试；内容未改动时不会重复发帖。'); },
   ).finally(() => { setBusy(form, false); });
 }, true);
 
@@ -276,7 +276,7 @@ document.addEventListener('click', event => {
     if (form == null || session.user == null || busy.has(form)) return;
     const value = fields(form);
     drafts.set(formKey(form), { uuid: crypto.randomUUID(), actorId: session.user.id, actorName: session.user.username, fields: value, signature: JSON.stringify(value) });
-    show(form, '已用当前账号建立新的提交 ID。');
+    show(form, '这份草稿将以当前账号发布。');
     updatePermissions();
     return;
   }

@@ -11,7 +11,60 @@
 
   &__content {
     min-width: 0;
-    padding: 20px @gutter-v2;
+    padding: 28px @gutter-v2 40px;
+
+    .wiki-content,
+    .news-show {
+      font-size: @font-size--title-small-2;
+      line-height: 1.75;
+      overflow-wrap: anywhere;
+
+      h1 {
+        font-size: 28px;
+        line-height: 1.4;
+        margin: 0 0 24px;
+      }
+
+      h2 {
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 32px 0 14px;
+      }
+
+      p,
+      ol,
+      ul {
+        margin-bottom: 16px;
+      }
+
+      ol,
+      ul {
+        padding-left: 1.5em;
+      }
+
+      li + li {
+        margin-top: 6px;
+      }
+
+      details {
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid hsl(var(--hsl-b3));
+
+        summary {
+          cursor: pointer;
+          margin-bottom: 12px;
+        }
+      }
+
+      th,
+      td {
+        padding: 10px 16px 10px 0;
+        border-bottom: 1px solid hsl(var(--hsl-b3));
+        text-align: left;
+      }
+    }
 
     @media @desktop {
       padding-left: @gutter-sidebar-desktop;
@@ -24,6 +77,7 @@
     border-radius: @border-radius-large;
     padding: 10px @gutter-v2;
     margin: 10px @gutter-v2;
+    align-self: start;
 
     @media @desktop {
       border-radius: 0;
@@ -34,5 +88,10 @@
       overflow-y: scroll;
       max-height: calc(100vh - @nav2-height--pinned);
     }
+  }
+
+  &__table-container {
+    overflow-x: auto;
+    margin-bottom: 16px;
   }
 }

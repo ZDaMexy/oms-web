@@ -7,8 +7,8 @@
     $context = $omsData['context'];
     $ranking = $omsData['ranking'];
     $scopes = $omsData['scopes'];
-    $metrics = $context['ruleset'] === 'mania' ? ['best_total_score' => '累计公开最佳分', 'coverage' => '公开谱面覆盖'] : ['coverage' => '公开谱面覆盖', 'cleared_charts' => '同条件通关谱面'];
-    $sources = $context['ruleset'] === 'mania' ? ['oms' => 'OMS'] : ['oms' => 'OMS', 'beatoraja' => 'beatoraja', 'lr2oraja' => 'LR2oraja', 'lr2oraja_ed' => 'LR2oraja ED', 'openlr2' => 'OpenLR2'];
+    $metrics = $context['ruleset'] === 'mania' ? ['best_total_score' => '最佳总分合计', 'coverage' => '有成绩的谱面数'] : ['coverage' => '有成绩的谱面数', 'cleared_charts' => '同条件通关数'];
+    $sources = $context['ruleset'] === 'mania' ? ['oms' => 'OMS'] : ['oms' => 'OMS', 'beatoraja' => 'beatoraja', 'lr2oraja' => 'LR2oraja', 'lr2oraja_ed' => 'Endless Dream', 'openlr2' => 'OpenLR2'];
     $keymodes = $context['ruleset'] === 'mania' ? array_combine(array_map(fn($n) => 'mania_'.$n.'k', range(1, 18)), array_map(fn($n) => $n.'K', range(1, 18))) : ['bms_5k' => 'BMS 5K', 'bms_7k' => 'BMS 7K', 'bms_9k' => 'BMS 9K', 'pms_9k' => 'PMS 9K', 'bms_14k' => 'BMS 14K'];
 @endphp
 @section('content')
@@ -30,7 +30,7 @@
             <label class="ranking-filter"><span class="ranking-filter__title">来源</span><select class="form-control" name="source">
                 @foreach ($sources as $key => $label)<option value="{{ $key }}" @selected($context['source'] === $key)>{{ $label }}</option>@endforeach
             </select></label>
-            <label class="ranking-filter"><span class="ranking-filter__title">指标</span><select class="form-control" name="metric">
+            <label class="ranking-filter"><span class="ranking-filter__title">排名依据</span><select class="form-control" name="metric">
                 @foreach ($metrics as $key => $label)<option value="{{ $key }}" @selected($context['metric'] === $key)>{{ $label }}</option>@endforeach
             </select></label>
             <label class="ranking-filter"><span class="ranking-filter__title">条件</span><select class="form-control" name="condition">
@@ -44,9 +44,9 @@
         @endif
     </div>
     <div class="osu-page osu-page--generic">
-        <p>{{ $metrics[$context['metric']] }}：按所选来源和规则的当前公开最佳统计。不是 PP 或地力评级。</p>
+        <p>{{ $metrics[$context['metric']] }}：只统计所选来源、键型和条件下的公开成绩。<a href="/help#scores">了解榜单</a></p>
         @if ($ranking === null)
-            <p>通关榜需要先选择已公布的实际条件。</p>
+            <p>先在上方选择比较条件，再查看通关排名。</p>
         @else
             @isset($ranking['scope']['condition_scope'])<p>{{ $ranking['scope']['condition_scope']['label'] }}</p>@endisset
             <p>{{ number_format($ranking['total']) }} 位玩家</p>

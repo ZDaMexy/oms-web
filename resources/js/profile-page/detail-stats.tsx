@@ -16,14 +16,14 @@ export default function DetailStats({ data }: { data: Performance }) {
           <dl className='profile-stats__entry'><dt className='profile-stats__key'>公开最佳</dt><dd className='profile-stats__value'>{data.totals.public_best_count.toLocaleString('zh-CN')}</dd></dl>
         </div>
       </div>
-      <p>所选来源的公开概况</p>
+      <p>所选来源中的公开成绩</p>
     </div>
     <div className='profile-detail-stats__separator' />
     <div>{data.lanes.length === 0 ? <p>这个范围还没有公开成绩。</p> : data.lanes.map(lane =>
       <div key={lane.condition_scope.id}>
         <p>{sourceNames[lane.source] ?? lane.source} · {lane.condition_scope.label}</p>
         <Stats metrics={lane.metrics} rankings={lane.rankings} />
-        <Details value={lane.condition_scope} />
+        <Details value={lane.condition_scope} label='查看规则详情' />
       </div>)}</div>
   </div>;
 }

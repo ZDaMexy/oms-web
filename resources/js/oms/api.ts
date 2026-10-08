@@ -13,7 +13,7 @@ async function decode<T>(response: Response): Promise<T> {
   const body: unknown = await response.json();
   if (!response.ok) {
     const problem = (body as { error?: { code: string; message: string } }).error;
-    if (problem == null) throw new Error('服务器错误格式不符合 OMS 约定。');
+    if (problem == null) throw new Error('请求失败，服务器没有返回错误详情。');
     throw new ApiError(response.status, problem.code, problem.message);
   }
   return body as T;
@@ -141,12 +141,12 @@ export async function request<T>(path: string, signal?: AbortSignal): Promise<T>
   }
 }
 export async function ownedWrite<T>(path: string, body: unknown, actorId: number): Promise<T> {
-  if (session.user?.id !== actorId) throw new Error('账号已改变，请切回原账号或主动确认草稿归属。');
+  if (session.user?.id !== actorId) throw new Error('登录账号已切换，请切回原账号后重试。');
   try { return await write<T>(path, body, undefined, actorId); }
   catch (error) {
     if (!(error instanceof ApiError) || error.status !== 401) throw error;
     await session.refresh();
-    if (session.user?.id !== actorId) throw new Error('原账号未登录；草稿与原提交 ID 已保留。');
+    if (session.user?.id !== actorId) throw new Error('原账号已退出，请重新登录后重试。');
     return write<T>(path, body, undefined, actorId);
   }
 }

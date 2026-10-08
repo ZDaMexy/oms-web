@@ -7,7 +7,7 @@ import { Ruleset, Source } from './types';
 
 export function Status({ error, ready }: { error?: string; ready: boolean }) {
   if (error != null) return <p role='alert' className='beatmapset-scoreboard__notice'>{error}</p>;
-  if (!ready) return <p className='beatmapset-scoreboard__notice'><Spinner /> 正在读取…</p>;
+  if (!ready) return <p className='beatmapset-scoreboard__notice' role='status'><Spinner /> 正在加载…</p>;
   return null;
 }
 export function Paginator({ page, limit, total, onPage }: { page: number; limit: number; total: number; onPage: (page: number) => void }) {
@@ -35,11 +35,11 @@ export function Sources({ value, onChange, live = false, single = false, mode = 
     <SearchFilter title='成绩来源' options={sources.map(source=>({id:source.code,name:source.label+(source.available?'':'（未开放）'),disabled:!source.available}))}
       selected={single ? selected.slice(0,1) : selected} multiselect={!single} onChange={ids=>onChange(ids.join(','))}/>
     {!single && <div className='beatmapsets-search-filter__items'>
-      <button type='button' className='beatmapsets-search-filter__item' onClick={()=>onChange(sources.filter(source=>source.available).map(source=>source.code).join(','))}>全部可用</button>
+      <button type='button' className='beatmapsets-search-filter__item' onClick={()=>onChange(sources.filter(source=>source.available).map(source=>source.code).join(','))}>全选</button>
       <button type='button' className='beatmapsets-search-filter__item' onClick={()=>onChange('')}>清空</button>
     </div>}
   </>;
 }
-export function Details({ value }: { value: unknown }) {
-  return <details><summary>原始条件与记录</summary><pre className='u-fancy-scrollbar'>{JSON.stringify(value,null,2)}</pre></details>;
+export function Details({ value, label = '查看成绩详情' }: { value: unknown; label?: string }) {
+  return <details className='beatmapset-scoreboard__details'><summary>{label}</summary><pre className='u-fancy-scrollbar'>{JSON.stringify(value,null,2)}</pre></details>;
 }

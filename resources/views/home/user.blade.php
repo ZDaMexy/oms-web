@@ -23,7 +23,12 @@
                     @include('home._user_giant_button', ['href' => route('forum.forums.index'), 'label' => '社区', 'icon' => 'comments', 'colour' => 'c-darkorange'])
                 </div>
                 <h3 class="user-home__beatmap-list-header">当前公开版本</h3>
-                <div class="user-home__beatmapsets"><p>20260626 · Windows</p><p>支持 BMS 与 mania。IR 可在开发版中使用，公开版本尚未包含。</p><a href="/help">开始游玩</a></div>
+                <div class="user-home__beatmapsets">
+                    <p>20260626 · Windows</p>
+                    <p>支持 BMS 与 mania。下载后解压、放入谱面，即可离线游玩。</p>
+                    <p>IR 目前仅在开发版试运行。</p>
+                    <a href="/help">第一次使用？从这里开始</a>
+                </div>
             </div>
         </div>
     </div>

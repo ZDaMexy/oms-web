@@ -10,7 +10,7 @@
     ]]])
     <div class="osu-page osu-page--forum-topic">
         <div class="forum-topic-title"><h1 class="forum-topic-title__title">发布帖子</h1></div>
-        <p data-oms-auth="guest">请先从右上角登录 OMS 账号。</p>
+        <p data-oms-auth="guest">登录 OMS 账号后即可发帖。登录入口在导航中。</p>
         @include('forum.topics._post_edit_form', ['kind' => 'post', 'id' => '', 'owner' => '', 'content' => '', 'postTitle' => '', 'category' => 'discussion'])
     </div>
     @include('oms._page_data')

@@ -25,13 +25,13 @@ export default function Main(_props: {container:HTMLElement}) {
   const metadata=useApi<BmsDetail|ManiaDetail>(!irOnly&&initial.catalog==null?endpoint:null);
   const detail=initial.catalog??metadata.data;
   return <div className='osu-layout osu-layout--full'>
-    <HeaderV4 theme='beatmapset' links={[{title:irOnly?'成绩谱面':'谱面',url:irOnly?'/ir':'/beatmapsets'},{title:'详情',url:location.pathname+location.search,active:true}]}/>
+    <HeaderV4 theme='beatmapset' links={[{title:irOnly?'谱面榜':'谱面',url:irOnly?'/ir':'/beatmapsets'},{title:'详情',url:location.pathname+location.search,active:true}]}/>
     <div className='osu-page osu-page--generic-compact'>
       {irOnly?<><Status error={irMetadata.error} ready={ir!=null}/>{ir!=null&&<><IrHeader detail={ir}/><IrInfo detail={ir}/></>}</>:
-        <>{endpoint==null?<p>{mode==='mania'&&md5!=null?'当前只有原 .osu MD5，尚未关联 Sayobot 谱包。':'缺少原 MD5 或镜像谱包 ID。'}</p>:<Status error={metadata.error} ready={detail!=null}/>}
+        <>{endpoint==null?<p>{mode==='mania'&&md5!=null?'这张谱面尚未找到对应的 Sayobot 谱包。':'地址缺少谱面 MD5 或谱面集编号，请重新选择谱面。'}</p>:<Status error={metadata.error} ready={detail!=null}/>}
           {detail!=null&&<><Header detail={detail} md5={md5} sha256={sha256} selectedSource={query.get('download_source')} onSource={source=>update({download_source:source})}/><Info detail={detail}/></>}</>}
       <div className='user-profile-pages user-profile-pages--no-tabs'>
-        {md5!=null?(!irOnly||ir!=null)&&<div className='page-extra'><ScoreboardMain md5={md5} mode={mode}/></div>:<div className='page-extra page-extra--compact'><p>镜像未提供原 .osu MD5，暂未关联 OMS 同谱榜。</p></div>}
+        {md5!=null?(!irOnly||ir!=null)&&<div className='page-extra'><ScoreboardMain md5={md5} mode={mode}/></div>:<div className='page-extra page-extra--compact'><p>来源未提供原 .osu 文件的 MD5，暂时无法显示这张谱面的成绩榜。</p></div>}
       </div>
     </div>
   </div>;

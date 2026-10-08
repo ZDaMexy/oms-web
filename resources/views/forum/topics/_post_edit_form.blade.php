@@ -10,7 +10,8 @@
             @foreach (['discussion' => '讨论', 'help' => '求助', 'showcase' => '分享', 'development' => '开发记录'] as $key => $label)<option value="{{ $key }}" @selected($category === $key)>{{ $label }}</option>@endforeach
         </select></label>
     @endif
-    <textarea class="bbcode-editor__body" aria-label="正文" placeholder="正文（纯文本）" name="body" rows="8" maxlength="{{ str_starts_with($kind, 'reply') ? 6000 : 12000 }}" required>{{ $content }}</textarea>
+    <textarea class="bbcode-editor__body" aria-label="正文" placeholder="{{ str_starts_with($kind, 'reply') ? '写下你的回复…' : '写下想讨论的内容…' }}" name="body" rows="8" maxlength="{{ str_starts_with($kind, 'reply') ? 6000 : 12000 }}" required>{{ $content }}</textarea>
+    <p>支持文字、换行和链接，暂不支持图片或 Markdown 排版。</p>
     <p data-oms-message role="status"></p>
     <div class="bbcode-editor__buttons-bar"><div class="bbcode-editor__buttons bbcode-editor__buttons--actions">
         <div class="bbcode-editor__button"><button type="button" class="btn-osu-big btn-osu-big--forum-secondary" data-oms-rebind-draft hidden><span class="btn-osu-big__content">用当前账号发布</span></button></div>

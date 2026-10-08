@@ -44,7 +44,7 @@ export default function Header({detail,md5,sha256,selectedSource,onSource}:Props
       {detail.ruleset==='bms'&&<SearchFilter title='下载来源' options={[{id:'auto',name:'自动'},...detail.candidates.map(value=>({id:value.source,name:sourceNames[value.source]??value.source,disabled:!value.eligible}))]} selected={[selectedSource??'auto']} onChange={values=>onSource(values[0]==='auto'?null:values[0])}/>}
       <div className='beatmapset-header__buttons'>
         <BigButton href={download??undefined} disabled={download==null||(detail.ruleset==='bms'&&detail.candidates.every(value=>!value.eligible))} icon='fas fa-download' modifiers='beatmapset-download'
-          isBusy={downloading} text={{top:'下载谱包',bottom:detail.ruleset==='mania'?'Sayobot':selectedSource==null?'自动选择合格来源':sourceNames[selectedSource]??selectedSource}}
+          isBusy={downloading} text={{top:'下载谱包',bottom:detail.ruleset==='mania'?'Sayobot':selectedSource==null?'自动选择来源':sourceNames[selectedSource]??selectedSource}}
           props={{'data-turbo':'false',onClick:detail.ruleset==='bms'&&selectedSource==null?event=>{
             event.preventDefault();
             if (downloading) return;
@@ -57,7 +57,7 @@ export default function Header({detail,md5,sha256,selectedSource,onSource}:Props
         {detail.ruleset==='mania'&&<BigButton href={detail.download.novideo_url} modifiers='beatmapset-download' text='下载（无视频）' icon='fas fa-download' props={{'data-turbo':'false'}}/>}
       </div>
       {downloadError!=null&&<p role='alert' className='beatmapset-header__availability-info'>{downloadError}</p>}
-      {detail.ruleset==='bms'&&candidate!=null&&<p className='beatmapset-header__availability-info'>{candidate.identity==='md5-only'?'仅确认原 MD5，SHA256 未知':'来源提供 SHA256'} · {candidate.availability==='unchecked'?'下载连通性尚未确认':candidate.availability}{candidate.reason==null?'':' · '+candidate.reason}</p>}
+      {detail.ruleset==='bms'&&candidate!=null&&<p className='beatmapset-header__availability-info'>{candidate.identity==='md5-only'?'按谱面 MD5 找到，来源未提供 SHA256':'来源提供了 SHA256'} · {candidate.availability==='unchecked'?'下载链接尚未检查':candidate.availability}{candidate.reason==null?'':' · '+candidate.reason}</p>}
       {detail.ruleset==='bms'&&<details><summary>其他来源与状态</summary>{detail.source_status.map(status=><p key={status.source}>{sourceNames[status.source]??status.source}：{status.message??status.status}</p>)}</details>}
     </div>
     <div className='beatmapset-header__box beatmapset-header__box--stats'><Stats chart={chart??null}/></div>

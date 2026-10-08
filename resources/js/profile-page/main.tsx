@@ -36,7 +36,7 @@ export default function Main(_props: { container: HTMLElement }) {
               {performance.data?.lanes.map(lane => <option key={lane.condition_scope.id} value={lane.condition_scope.id}>{lane.condition_scope.label}</option>)}
             </select>
           </label>
-          {section === 'recent' && <p className='beatmapset-scoreboard__notice'>按公开最佳的接收时间排列。外部播放器为最佳状态更新，OMS 为保留 UUID 的游玩；这里不提供逐局历史。</p>}
+          {section === 'recent' && <p className='beatmapset-scoreboard__notice'>按网站收到最佳成绩的时间排列。这里只显示最佳成绩的更新；每次 OMS 游玩的记录在本人登录后的“我的完整记录”中查看。</p>}
           <Status error={records.error} ready={records.data != null} />
           {records.data != null && <>
             <p>{records.data.total.toLocaleString('zh-CN')} 条公开最佳</p>

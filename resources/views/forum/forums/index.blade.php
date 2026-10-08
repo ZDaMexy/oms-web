@@ -27,7 +27,7 @@
                 @include('forum.forums._topic')
             @endforeach
         </ul></div>
-        @if (count($posts['items']) === 0)<p>暂无符合筛选的帖子。</p>@endif
+        @if (count($posts['items']) === 0)<p>{{ $posts['total'] === 0 ? '还没有找到帖子，可以换个关键词或分类再试。' : '本页没有帖子，请返回第一页。' }}</p>@endif
         @include('oms._pagination', ['pagination' => $posts])
     </div>
     @include('oms._page_data')
