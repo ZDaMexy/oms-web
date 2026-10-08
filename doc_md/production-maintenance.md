@@ -2,24 +2,36 @@
 
 2026-10-08 原版网站已部署，状态 **已部署待验收**。玩家可从[首页](https://oms.zdamexy.work/)进入新闻、独立下载与帮助、谱面浏览、跨来源榜、账号、个人页、玩家榜和社区。真人下载入库、账号 / 密钥、OMS 对照及固定播放器 P/C 尚未签收。具体运行、恢复、失败与发布证据只取[生产记录](production-deployment-20261007.md#正式发布与收尾)。
 
+2026-10-09 文案与阅读体验审改已发布，软件 / 公网检查和发布前后完整备份通过；具体范围、失败尝试与新增证据取[本轮审改记录](deai-review-20261009.md)。下文2026-10-08的完整压力 / 恢复 / 旧设计往返证据保留原日期，不因这次网页更新重标。产品真人门继续待验收。
+
 ## 当前来源与运行位置
 
 | 对象 | 当前实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/b879e4233818-b0feceae22e4`，2026-10-08 20:35:11 CST 最终切入 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/b879e4233818-2b240a44fd5c`，2026-10-09 03:56:10 CST 切入 |
 | 服务源码 | Backend `b879e42338183bed3a5b7de057817152a23de46c`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
-| 原版页面源码 | Web `b0feceae22e4af55dc9c974f39e4b5f40a02bfd1`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
+| 原版页面源码 | Web `2b240a44fd5c8b166cd28a10ace43f772965fe3d`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | 源码 / 旧设计回退目标 | `/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04`；原设计完整外存备份在 F 盘，服务器没有另打旧设计备份包 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；本次保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-ed3f014e02a9`，Alpine / PHP8.5；独立 oms-web 用户，只读 `/app`，不升级宝塔共享 PHP |
-| 本次可写缓存 / 日志 | `/var/cache/oms-web/b879e4233818-b0feceae22e4/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/b879e4233818-2b240a44fd5c/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
 上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端账号 UI 软件来源仍为 `6168791`，默认 endpoint 空、旧在线总开关 false；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
+
+## 2026-10-09 网页更新与回退范围
+
+本次仅更新网页源码 / 散列资源及其对应源码包，Backend、vendor、插件、PHP运行环境和schema3保持原完整字节；主 IR / catalog未重启，实际库 dev / inode保持。两个网页unit与OMS Nginx include只改版本绑定，正式新缓存已实际生成，FPM已清旧OPcache。当前8个资源与8个批准插件文件的HTTP字节已核对；HTML仍重新验证，资源immutable，插件no-store。
+
+发布前后配置与准确日备份对在 `F:\zdamexy-workspace\websites\oms-web\artifacts\deai-20261009\production-private`；`before/` 与 `after/` 保留完整配对站点配置、unit / timer和manifest原件，`backup-pre/` 与 `backup-post/` 保留完整gzip / sidecar、private raw及核验结果。本次终态备份 / 缓存峰不可用，记null；timer恢复enabled / active / waiting，收尾当次下一触发为2026-10-09 04:15:11 CST，不承诺以后秒数。
+
+直接回到上一网页版本时，目标为 `b879e4233818-b0feceae22e4`，并保留当前业务库。未来操作先取得新的准确一致备份与配置保全，再按本轮F盘 `before/` 的已核对原件原子恢复OMS include和两个Web单元，检查BT Nginx、切回current、重载路由并重新生成上一版缓存 / 重启FPM，核双站和实际资源。Backend / catalog / 固定维护不换源、不回灌旧raw。此目标是本次发布前实际运行版，本轮没有重做往返；旧静态设计D1/e6的2026-10-08兼容与回退范围仍取下方历史步骤。
+
+共享配置变化在[Homepage镜像](../../homepage-website/doc_md/other/oms-web-copy-review-20261009.md)与[旧Website镜像](../../oms-website/doc_md/other/oms-web-copy-review-20261009.md)同步，完整事实与证据取本轮审改记录。
 
 ## 新闻与内容维护
 
@@ -71,7 +83,7 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 
 ## 保留当前库的设计与源码回退
 
-本次新→旧D1/e6→新已实际通过。恢复旧设计时保留同一业务库、当前UUID / 账号 / 会话 / 密钥 / 隐藏 / 社区及真实限流变化，不回灌旧raw。以下属于本次schema3兼容范围，后续变更先核当前实际状态和新兼容证据。
+2026-10-08新→旧D1/e6→新已实际通过。恢复旧设计时保留同一业务库、当前UUID / 账号 / 会话 / 密钥 / 隐藏 / 社区及真实限流变化，不回灌旧raw。以下属于该次schema3兼容范围，后续变更先核当前实际状态和新兼容证据。
 
 1. 完整保全当前实际配置、manifest、unit / timer状态和故障证据至F。暂停timer前记录其活动 / 启用状态，等待原worker关闭，以固定helper取得新一致备份并完整F核验。恢复串行，不能复用2026-10-08冻结绑定去执行未来发布。
 2. 停当前主IR和新PHP后再核同一DB身份 / schema。旧全部定义保留；本次仅允许已采用的 `scores_directory` 与 `score_groups_public_directory` 两条普通目录索引，不因它们拒绝已证明兼容的旧源码，也不为过门删除索引或任何数据。出现其他结构差异时保全实际停点并向前修复。
@@ -97,4 +109,4 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 4. `/ir` 按谱面选一个 / 多个 / 全部 / 空来源，比较分数、独立灯、人数、全局名次及跨页；参考混榜后主动收窄到真实存在的同条件。OMS原用户按钮 / 登录页 / 个人页、选谱奖杯与网页同谱同范围对照。
 5. 用户在VS Code非调试启动F:\zdamexy-workspace\oms，手动完整保存新局；断网、重启、原账号重登及旧待交补交核UUID不重造、归属不变。先导P先验OMS＋全量公开历史＋ED7K，再继续指定beatoraja / LR2oraja / ED / OpenLR2版本与完整玩法 / 架构矩阵，实际交分和宿主原生读榜逐格留证。
 
-本次公网HTTP通过，浏览器工具读取线上页仍30秒超时，未取得线上DOM / 截图或普通点击 / 登录验收。用户已认可本地原版视觉；该认可和本地浏览器证据不提升为本次线上真人通过。遇到问题记录入口、操作、发生时间及页面提示，按反馈修复后只重验受影响范围。PP / 地力、聊天、presence、多人与官网谱包托管不在本次交付。
+2026-10-08公网HTTP通过，但线上浏览器工具30秒超时。2026-10-09新增33项公网HTTP核对通过，生产下载页浏览器导航 / 读取35秒及截图15秒仍超时，未取得线上DOM / 截图或真人点击 / 登录验收；本轮桌面 / 手机与普通刷新证据属于本地。用户先前认可的原版视觉也不提升为线上真人通过。遇到问题记录入口、操作、发生时间及页面提示，按反馈修复后只重验受影响范围。PP / 地力、聊天、presence、多人与官网谱包托管不在本次交付。
