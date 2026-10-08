@@ -113,8 +113,12 @@ F 盘四份已关闭失败轮的可再生成 raw 解包副本已定点退役，�
 
 F 的 `run-r9-actual` 保留原失败报告 / 日志、两个实际 loaded 终态和全部 17 段资源流，共 7,754 帧；每段原 SHA / 行数及完整 gzip EOF / CRC 均已核对，压缩合计 1,667,979 B。检查程序同出口阶段的 650 个 Future 原结果仍含已读完的 sources 正文，直到登录重试结束才释放；现保持 650 请求、50 线程、同一 planned 时间与全部指标，只在任务内返回 metric。同出口 HTTP 汇总改在资源断言前真实保存并标 `resource_gate_consumed=false`，最终资源及配额断言保持；修订尚未签新运行门。
 
-实际 driver PSS 从 original-API 阶段约 59 MiB 升至 128 MiB，持续阶段仅再增加约 8 MiB；当前源码未发现完整原生解码图跨阶段持有，不能用 PSS 推断泄漏或保证 Future 修订解决缺口。有限标量诊断源 `runtime-source-controls-r10/diagnose-r9-native-memory.py` 已通过 AST 与只读审查，绑定原 a2 / aaa 冻结源，在各完整数学 / 目录 / 原生校验前后记录单帧栈 tracemalloc 及实际 PSS / cgroup；诊断开销计入原 256 MiB / high240 / 50% CPU 范围，不补签延迟或容量。只在完整 R9 保全成功后使用合成副本，普通会话刷新保留真实生命周期，不改 SQL 到期时间；实际诊断尚未执行。
+实际 driver PSS 从 original-API 阶段约 59 MiB 升至 128 MiB，持续阶段仅再增加约 8 MiB；不能用 PSS 推断泄漏或保证 Future 修订解决缺口。有限标量诊断已完成，来源 SHA `6a3fc2cd392a1b189122cd564bee2cd34cbae1b6cba68c8247f316fc6500abfe`，使用原 a2 / aaa 冻结源；原 native11 已真实关闭，诊断不补签延迟或容量。完整数学校验后 traced current 为 1,194,592 B；四份原生数组每次完整解码约 58 MB、释放后约 1.2 MB，最终 current 1,238,339 B、tracer 内部 485,360 B，但 PSS 仍为 166,688 KiB。这排除了这些已追踪完整图继续存活的解释，未证明底层分配器是唯一原因。
 
-完整 R9 失败目录正在由新 `preserve-staging-r10.py` 保全，来源 SHA `9be12ee957a289b13f68ec742a1e02229acb23120263380079091c9aa7539498`，只重绑定实际 r6 / a2 / 原失败 r9 与新保全 r10；128 MiB / 50% CPU、全 22 表、成员 SHA / gzip CRC 与真实终态规则不变。原 native11 已实际关闭，保全 controller / worker 仍运行；不能把正在生成的归档当作完成或 F 全件证明。
+诊断实际 76.779 秒 / 191 帧、最低 MemAvailable 628,199,424 B、最低磁盘 2,657,734,656 B，driver 峰值 216,043,520 B；同 256 MiB / high240 / 50% CPU / swap0，实际 loaded 成功终态。F 的 `memory-diagnostic-r9` 保存真实报告 / 日志 / 终态、完整原 SHA / 行数 / gzip CRC 的资源流。普通合成会话刷新保留真实生命周期，不改 SQL 到期时间；该步骤确实更新合成会话与配额，发生在原 R9 完整归档之后，后续转移须明确绑定当前状态，不能假称仍与归档原 raw / 凭据一致。
+
+完整 R9 失败目录已在诊断前完成保全：`stopped-staging-277-r10-complete.tar.gz`，106,346,316 B，SHA `1559c3a5d5a3a6f1de1d97e553ef1d5958285c3d5b9fc46b0d50905bc5d0d61b`，178 成员完整 SHA / gzip EOF / CRC、全 22 表 / integrity / FK 均已核验。保全源 SHA `9be12ee957a289b13f68ec742a1e02229acb23120263380079091c9aa7539498`；128 MiB / 50% CPU worker 的 286.390 秒 / 1,062 帧资源门通过，最低 MemAvailable 819,716,096 B、最低磁盘 2,658,586,624 B，controller / worker 均真实 loaded / MainPID 0 / exit 0。F 的 `run-r9-actual` 保存 receipt、真实终态 / 日志及全部保全资源流；完整 gzip 仍受 F 空间限制，未记作外存全件成功。
+
+下一轮将完整数学 / 目录 / 原生 / 独立灯与全部分页校验移到临时 `api-core` 子进程，完成后实际 wait / 回收；原断言、真实 HTTP、人数与数据不缩减。子复用 Context 的完整来源与归属边界，只借用经原 argv / cwd / 预算核对的父后端，不启停后端或前端。父子所有导入、来源复核、CPU、PSS、memory.current / peak 均在原 driver cgroup 及连续观察内；子报告完成、实际 exit0 与父资源门分别消费。分页汇总 / digest 于内层资源断言前保存；超时 / 异常先回收子，再关闭父拥有的后端。AST 与只读源码审查通过，实际共同峰值与完整运行仍待；不从进程拆分推导新门通过。
 
 两空恢复预备源按本轮准确 r6 / 工具 SHA 和独立 restore09 / export09 / retire09 / rest09 单元绑定，五份新源在 `recovery-protocol-r9`。AST 与只读审查通过，原 R7 / R8 预备源及所有 SHA 保留；成功 run 终态、ready / close、完整 F 证明后退役及原资源 / 空间门保持。实际恢复仍**未执行**，不能消费失败的 R8 或 R9 run；须待新完整运行通过及 F / 共享日志条件满足后，按新实际绑定修订恢复源再执行。

@@ -681,7 +681,17 @@ class Context:
         driver_properties = properties(unit_name)
         require(unit_name.startswith("oms-web-verify-") and driver_properties["RemainAfterExit"] == "yes"
                 and driver_properties["Restart"] == "no", "finite_owned_driver_unit")
-        self.driver = BudgetUnit(unit_name, os.getpid(), 256, 0.5, 240)
+        driver_pid = os.getpid()
+        if args.phase == "api-core":
+            driver_pid = int(driver_properties["MainPID"])
+            parent = identity(driver_pid)
+            require(driver_pid == os.getppid() and cgroup_path(driver_pid) == cgroup_path(os.getpid())
+                    and str(script_path) in parent["argv"] and "api-core" not in parent["argv"],
+                    "verification_child_of_same_source_and_driver_cgroup")
+            self.evidence.data["actual_child_identity"] = identity(os.getpid())
+            self.evidence.data["actual_parent_driver_identity"] = parent
+            self.evidence.data["child_cost_is_in_parent_driver_budget"] = True
+        self.driver = BudgetUnit(unit_name, driver_pid, 256, 0.5, 240)
         self.frontend = {}
         for name, prefix, maximum, quota, high in (("php", "oms-web-accept-", 200, 0.5, 160),
                                                   ("nginx", "oms-web-nginx-", 96, 0.25, None)):
@@ -1079,9 +1089,11 @@ def full_pagination(context, service, label):
             require(metric["status"] == 200 and metric["ms"] <= 300, "full_board_all_pages_300ms")
             p.check_board(body, expected, selected, page, mine=context.users[(page - 1) % 50]["id"])
             records.append(metric)
-    return {"people": len(expected), "pages_with_rows": math.ceil(len(expected) / 20), "outside_page_verified": True,
-            "all_pages_rank_best_lamp_source_identity_checked": True, "http": summary(records),
-            "ordered_result_sha256": digest(expected), "personal_rows_in_report": False}
+        result = {"people": len(expected), "pages_with_rows": math.ceil(len(expected) / 20), "outside_page_verified": True,
+                  "all_pages_rank_best_lamp_source_identity_checked": True, "http": summary(records),
+                  "ordered_result_sha256": digest(expected), "personal_rows_in_report": False}
+        context.evidence.stage(label + "-HTTP-measurements", {**result, "resource_gate_consumed": False})
+    return result
 
 
 def fresh_source_queries(context):
@@ -1637,6 +1649,113 @@ def renew_synthetic_sessions(context, service, *, label="real-owned-session-refr
             "expiry_extended_by_SQL": False, "credentials_remain_private": True})
 
 
+def run_api_core(context):
+    """Validate complete graphs without retaining their process after the phase."""
+    context.load_state()
+    unit = context.args.backend_unit
+    require(unit is not None and unit.startswith("oms-web-ir-"), "explicit_parent_owned_backend_unit")
+    values = properties(unit)
+    backend = BudgetUnit(unit, int(values["MainPID"]), 500, 1.5, 384)
+    command = [str(context.python), "-B", "-m", "oms_ir", "serve", "--db", str(context.database),
+               "--archive", str(context.archive_path), "--port", str(context.port), "--public-origin", context.base,
+               "--trusted-loopback-proxy", "--web-directory", str(context.release / "web/ir")]
+    require(backend.identity["argv"] == command and backend.identity["cwd"] == str(context.backend),
+            "borrow_only_the_same_synthetic_candidate_backend")
+    p = context.p
+    service = p.Service(context.data, context.database, context.archive, context.port, "api-core")
+    service.client.origin = context.base
+    service._budget = backend
+    context.evidence.stage("api-core-borrowed-backend", {"actual_identity": backend.identity,
+        "actual_properties": backend.initial, "started_or_stopped_by_child": False})
+    with Observation(context, "original-API", service._budget):
+        api = p.api_checks(service, context.metadata, context.users, context.keys, context.fixtures)
+        directory = p.directory_stage(service, context.metadata)
+        native = p.native_stage(service, context.metadata, context.keys)
+        context.evidence.stage("original-API-latency", {"API": api, "directory": directory, "native": native})
+        require(directory["p95_gate_passed"] and native["under_10_seconds"]
+                and native["gzip_wire_and_complete_decoded_bodies_verified"], "original_directory_and_full_native_latency")
+        with p.readonly(context.database) as connection:
+            owners = [user["id"] for user in context.users]
+            placeholders = ",".join("?" for _ in owners)
+            prior = connection.execute(
+                f"SELECT id,user_id,metric,lamp_value FROM external_bests WHERE source=? AND chart_md5=? "
+                f"AND user_id IN ({placeholders}) AND metric>120 AND lamp_value<8 ORDER BY user_id,id LIMIT 1",
+                ("lr2oraja_ed", context.metadata["chart"]["md5"], *owners)).fetchone()
+        require(prior is not None, "existing_owned_state_with_score_above_120_and_lamp_below_8")
+        key = p.key_for(context.keys, prior["user_id"], "lr2oraja_ed")
+        metric, body = service.client.request("POST", p.V2 + "/external/update", key=key,
+                                              body=p.external_payload(context.metadata["chart"], "lr2oraja_ed", 120, lamp=8))
+        context.evidence.stage("independent-lamp-HTTP", {"HTTP": metric, "prior": dict(prior), "synthetic_only": True})
+        require(metric["status"] == 200 and body["updated"] is True
+                and body["best_state"]["id"] == prior["id"] and body["best_state"]["ex_score"] == prior["metric"]
+                and body["best_state"]["lamp"]["value"] == 8, "independent_best_score_and_actual_lamp_improvement")
+        with p.readonly(context.database) as connection:
+            after = connection.execute("SELECT metric,lamp_value FROM external_bests WHERE id=?", (prior["id"],)).fetchone()
+        require(after["metric"] == prior["metric"] and after["lamp_value"] == 8, "persisted_independent_lamp_improvement")
+        lamp_result = {"prior": dict(prior), "after": dict(after), "updated": True, "synthetic_only": True}
+    context.evidence.stage("original-API", {"API": api, "directory": directory, "native": native,
+                                            "independent_best_lamp_checked": True, "independent_lamp": lamp_result})
+    context.evidence.stage("full-max-board", full_pagination(context, service, "full-max-board"))
+    context.evidence.data["staging_host_gate"] = False
+    context.evidence.data["run_scope"] = "complete API/native/pagination child checks; actual wait and parent resource gate required"
+
+
+def run_core_worker(context, service):
+    """All child costs remain inside the original observed driver cgroup."""
+    report = context.work / "verification-api-core.json"
+    log = context.work / "api-core-worker.log"
+    require(not os.path.lexists(report) and not os.path.lexists(log), "new_complete_verification_child_files")
+    command = [str(context.python), "-B", str(Path(__file__).resolve()), "--phase", "api-core",
+               "--release", str(context.release), "--work", str(context.work), "--base", context.base,
+               "--seconds", str(context.args.seconds), "--backend-unit", service.unit]
+    with Observation(context, "core-worker", service._budget):
+        with log.open("xb") as output:
+            process = subprocess.Popen(command, cwd=context.backend, stdout=output, stderr=subprocess.STDOUT,
+                                       env={**os.environ, "PYTHONPATH": "", "PYTHONDONTWRITEBYTECODE": "1",
+                                            "TMPDIR": str(context.work / "tmp")})
+            try:
+                started = identity(process.pid)
+                require(started["argv"] == command and started["cwd"] == str(context.backend)
+                        and cgroup_path(process.pid) == context.driver.location,
+                        "actual_complete_verification_child_source_and_cgroup")
+                context.evidence.stage("api-core-worker-start", {"actual_identity": started,
+                    "verification_harness_sha256": file_hash(Path(__file__).resolve()),
+                    "same_driver_cgroup_and_memory_CPU_budget": True})
+                process.wait(timeout=600)
+            finally:
+                if process.poll() is None:
+                    process.terminate()
+                    try:
+                        process.wait(timeout=10)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                        process.wait(timeout=10)
+                # wait reaps the actual child; the parent unit remaining alive
+                # is not used as the child's terminal evidence.
+                actual_exit = process.wait(timeout=10)
+                context.evidence.stage("api-core-worker-terminal", {"actual_pid": process.pid,
+                    "actual_exit_code": actual_exit, "actually_reaped_by_wait": True,
+                    "log_sha256": file_hash(log),
+                    "report_sha256": file_hash(report) if report.is_file() else None})
+            require(report.is_file(), "actual_complete_verification_child_report")
+            child = read_json(report)
+            context.evidence.stage("api-core-worker-report", {"actual_status": child["status"],
+                "actual_report_sha256": file_hash(report),
+                "actual_child_identity": child.get("actual_child_identity"),
+                "child_completed_is_not_parent_resource_or_exit_gate": True})
+            for label, result in child["stages"].items():
+                if label != "cache-terminal":
+                    context.evidence.stage(label, result)
+            require(actual_exit == 0 and child["status"] == "completed"
+                    and child["verification_harness_sha256"] == context.evidence.data["verification_harness_sha256"]
+                    and child["verification_probe_sha256"] == context.evidence.data["verification_probe_sha256"]
+                    and child["manifest_sha256"] == context.evidence.data["manifest_sha256"]
+                    and child["actual_child_identity"]["pid"] == process.pid,
+                    "actual_complete_child_exit_source_and_checks")
+            require(same_process(service._budget.identity, identity(service._budget.pid)),
+                    "same_parent_backend_after_child_verification")
+
+
 def run(context):
     p = context.p
     context.load_state()
@@ -1656,35 +1775,7 @@ def run(context):
         context.evidence.stage("initial-PHP", frontend_checks(context, service, "initial-PHP"))
         context.evidence.stage("real-adapters", adapter_checks(context, service))
         context.evidence.stage("actual-browser-actor", actor_checks(context, service))
-        with Observation(context, "original-API", service._budget):
-            api = p.api_checks(service, context.metadata, context.users, context.keys, context.fixtures)
-            directory = p.directory_stage(service, context.metadata)
-            native = p.native_stage(service, context.metadata, context.keys)
-            context.evidence.stage("original-API-latency", {"API": api, "directory": directory, "native": native})
-            require(directory["p95_gate_passed"] and native["under_10_seconds"]
-                    and native["gzip_wire_and_complete_decoded_bodies_verified"], "original_directory_and_full_native_latency")
-            with p.readonly(context.database) as connection:
-                owners = [user["id"] for user in context.users]
-                placeholders = ",".join("?" for _ in owners)
-                prior = connection.execute(
-                    f"SELECT id,user_id,metric,lamp_value FROM external_bests WHERE source=? AND chart_md5=? "
-                    f"AND user_id IN ({placeholders}) AND metric>120 AND lamp_value<8 ORDER BY user_id,id LIMIT 1",
-                    ("lr2oraja_ed", context.metadata["chart"]["md5"], *owners)).fetchone()
-            require(prior is not None, "existing_owned_state_with_score_above_120_and_lamp_below_8")
-            key = p.key_for(context.keys, prior["user_id"], "lr2oraja_ed")
-            metric, body = service.client.request("POST", p.V2 + "/external/update", key=key,
-                                                  body=p.external_payload(context.metadata["chart"], "lr2oraja_ed", 120, lamp=8))
-            context.evidence.stage("independent-lamp-HTTP", {"HTTP": metric, "prior": dict(prior), "synthetic_only": True})
-            require(metric["status"] == 200 and body["updated"] is True
-                    and body["best_state"]["id"] == prior["id"] and body["best_state"]["ex_score"] == prior["metric"]
-                    and body["best_state"]["lamp"]["value"] == 8, "independent_best_score_and_actual_lamp_improvement")
-            with p.readonly(context.database) as connection:
-                after = connection.execute("SELECT metric,lamp_value FROM external_bests WHERE id=?", (prior["id"],)).fetchone()
-            require(after["metric"] == prior["metric"] and after["lamp_value"] == 8, "persisted_independent_lamp_improvement")
-            lamp_result = {"prior": dict(prior), "after": dict(after), "updated": True, "synthetic_only": True}
-        context.evidence.stage("original-API", {"API": api, "directory": directory, "native": native,
-                                                "independent_best_lamp_checked": True, "independent_lamp": lamp_result})
-        context.evidence.stage("full-max-board", full_pagination(context, service, "full-max-board"))
+        run_core_worker(context, service)
         with Observation(context, "burst", service._budget):
             burst = p.traffic_stage(service, context.metadata, context.users, context.keys, 10, 25, phase="burst")
         context.evidence.check(burst["traffic_gate_passed"], "actual_burst_read_write_confirmation")
@@ -1858,7 +1949,8 @@ def parse_args():
     parser.add_argument("--work", type=Path, required=True)
     parser.add_argument("--base", default="http://127.0.0.1:18090")
     parser.add_argument("--seconds", type=int, default=1800)
-    parser.add_argument("--phase", choices=("all", "seed", "seed-only", "run", "recovery", "maintenance"), default="run")
+    parser.add_argument("--phase", choices=("all", "seed", "seed-only", "run", "api-core", "recovery", "maintenance"), default="run")
+    parser.add_argument("--backend-unit")
     parser.add_argument("--accept-transferred-seed", action="store_true")
     parser.add_argument("--external-frontend-restores", action="store_true")
     parser.add_argument("--serial-export", action="store_true")
@@ -1887,6 +1979,8 @@ def main():
             seed(context)
         if args.phase in ("all", "run"):
             run(context)
+        if args.phase == "api-core":
+            run_api_core(context)
         if args.phase == "recovery":
             run_recovery(context)
         context.evidence.data["status"] = "completed"
@@ -1909,9 +2003,12 @@ def main():
             if hasattr(context, "driver"):
                 if getattr(context, "active_service", None) is not None:
                     context.active_service.stop()
-                context.evidence.data["actual_driver_before_exit"] = {"properties": properties(context.driver.unit),
-                                                                     "last_live": context.driver.frame(),
-                                                                     "loaded_terminal_not_yet_observable": True}
+                label = "actual_parent_driver_before_child_exit" if args.phase == "api-core" else "actual_driver_before_exit"
+                context.evidence.data[label] = {"properties": properties(context.driver.unit),
+                                                "last_live": context.driver.frame(),
+                                                "loaded_terminal_not_yet_observable": True}
+                if args.phase == "api-core":
+                    context.evidence.data["child_identity_before_exit_not_terminal"] = identity(os.getpid())
             context.evidence.save()
             print(canonical({"status": context.evidence.data["status"], "report": str(context.evidence.path),
                              "staging_host_gate": context.evidence.data.get("staging_host_gate", False),
