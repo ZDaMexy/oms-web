@@ -569,6 +569,7 @@ class Context:
     def __init__(self, args):
         require(sys.platform.startswith("linux") and os.geteuid() == 0, "actual_root_linux_systemd_host_required")
         os.umask(0o077)
+        require((args.phase == "fresh-source") == (args.source_case is not None), "explicit_source_case_only_for_source_child")
         self.args = args
         self.release = direct_path(args.release)
         manifest_path = self.release / "release.json"
@@ -675,18 +676,20 @@ class Context:
                    "data_scope": "synthetic task-owned staging DB plus immutable complete public projection",
                    "production_database_accessed": False, "browser_acceptance": False, "player_acceptance": False,
                    "fresh_operating_system_restore": False, "driver_terminal_owner_collection_required": True}
-        self.evidence = Evidence(self.work, args.phase, initial)
+        phase_label = args.phase + f"-{args.source_case}" if args.phase == "fresh-source" else args.phase
+        self.evidence = Evidence(self.work, phase_label, initial)
         unit_name = cgroup_path(os.getpid()).name
         require(unit_name.startswith("oms-web-verify-"), "own_finite_driver_scope")
         driver_properties = properties(unit_name)
         require(unit_name.startswith("oms-web-verify-") and driver_properties["RemainAfterExit"] == "yes"
                 and driver_properties["Restart"] == "no", "finite_owned_driver_unit")
         driver_pid = os.getpid()
-        if args.phase == "api-core":
+        if args.phase in CHILD_PHASES:
             driver_pid = int(driver_properties["MainPID"])
             parent = identity(driver_pid)
             require(driver_pid == os.getppid() and cgroup_path(driver_pid) == cgroup_path(os.getpid())
-                    and str(script_path) in parent["argv"] and "api-core" not in parent["argv"],
+                    and str(script_path) in parent["argv"]
+                    and all(phase not in parent["argv"] for phase in CHILD_PHASES),
                     "verification_child_of_same_source_and_driver_cgroup")
             self.evidence.data["actual_child_identity"] = identity(os.getpid())
             self.evidence.data["actual_parent_driver_identity"] = parent
@@ -1098,44 +1101,50 @@ def full_pagination(context, service, label):
 
 def fresh_source_queries(context):
     p, cases = context.p, []
-    selections = [["oms"], ["lr2ir.v3.lr2"], ["lr2ir.v3.sbmp"], ["lr2ir.v3.unknown"],
-                  ["oms", "lr2oraja_ed", "lr2ir.v3.lr2"], list(p.SOURCE_LABELS), []]
-    for index, selected in enumerate(selections):
+    for index in range(7):
         service = p.Service(context.data, context.database, context.archive, context.port, f"fresh-query-{index}")
         service.start()
         try:
-            with Observation(context, f"fresh-query-{index}", service._budget):
-                cache_advice = p.evict_advice((context.database, context.archive))
-                expected = p.expected_board(context.database, context.archive, context.metadata["chart"]["md5"], selected)
-                first = None
-                records = []
-                for repeat in range(5):
-                    for position, page in enumerate((1, max(1, math.ceil(len(expected) / 20)))):
-                        metric, body = service.client.request("GET", p.board_path(context.metadata["chart"]["md5"], selected, page=page),
-                                                              user=context.users[1])
-                        context.evidence.stage(f"fresh-source-HTTP-{index}-{repeat}-{position}",
-                            {"sources": selected, "page": page, "repeat": repeat, "position": position, "HTTP": metric})
-                        require(metric["status"] == 200, "fresh_source_board_HTTP_200")
-                        require(metric["ms"] <= 300, "fresh_and_warm_source_board_300ms")
-                        p.check_board(body, expected, selected, page, mine=2)
-                        if first is None:
-                            first = metric["ms"]
-                        records.append(metric)
-                metric, body = service.client.request("GET", p.board_path(context.metadata["chart"]["md5"], selected, browser=True),
-                                                      user=context.users[1], browser=True)
-                context.evidence.stage(f"fresh-source-browser-HTTP-{index}", {"sources": selected, "HTTP": metric})
-                require(metric["status"] == 200, "browser_source_board_HTTP_200")
-                require(metric["ms"] <= 300, "browser_and_game_source_board_300ms")
-                p.check_board(body, expected, selected, 1, mine=2)
-                records.append(metric)
-                cases.append({"sources": selected, "participants": len(expected), "first_process_request_ms": first,
-                              "summary": summary(records), "cache_advice": cache_advice,
-                              "physical_cold_cache_proven": False, "first_tail_and_browser_math_checked": True})
-                del expected
+            child = run_check_worker(context, "fresh-source", service, source_case=index)
+            cases.append(child["stages"][f"fresh-source-case-{index}"])
         finally:
             service.stop()
     return {"cases": cases, "seven_actual_fresh_process_source_selections": True,
             "full_projection_not_source_TopN": True}
+
+
+def fresh_source_case(context, service, index):
+    p = context.p
+    selections = [["oms"], ["lr2ir.v3.lr2"], ["lr2ir.v3.sbmp"], ["lr2ir.v3.unknown"],
+                  ["oms", "lr2oraja_ed", "lr2ir.v3.lr2"], list(p.SOURCE_LABELS), []]
+    selected = selections[index]
+    with Observation(context, f"fresh-query-{index}", service._budget):
+        cache_advice = p.evict_advice((context.database, context.archive))
+        expected = p.expected_board(context.database, context.archive, context.metadata["chart"]["md5"], selected)
+        first = None
+        records = []
+        for repeat in range(5):
+            for position, page in enumerate((1, max(1, math.ceil(len(expected) / 20)))):
+                metric, body = service.client.request("GET", p.board_path(context.metadata["chart"]["md5"], selected, page=page),
+                                                      user=context.users[1])
+                context.evidence.stage(f"fresh-source-HTTP-{index}-{repeat}-{position}",
+                    {"sources": selected, "page": page, "repeat": repeat, "position": position, "HTTP": metric})
+                require(metric["status"] == 200, "fresh_source_board_HTTP_200")
+                require(metric["ms"] <= 300, "fresh_and_warm_source_board_300ms")
+                p.check_board(body, expected, selected, page, mine=2)
+                if first is None:
+                    first = metric["ms"]
+                records.append(metric)
+        metric, body = service.client.request("GET", p.board_path(context.metadata["chart"]["md5"], selected, browser=True),
+                                              user=context.users[1], browser=True)
+        context.evidence.stage(f"fresh-source-browser-HTTP-{index}", {"sources": selected, "HTTP": metric})
+        require(metric["status"] == 200, "browser_source_board_HTTP_200")
+        require(metric["ms"] <= 300, "browser_and_game_source_board_300ms")
+        p.check_board(body, expected, selected, 1, mine=2)
+        records.append(metric)
+        return {"sources": selected, "participants": len(expected), "first_process_request_ms": first,
+                "summary": summary(records), "cache_advice": cache_advice,
+                "physical_cold_cache_proven": False, "first_tail_and_browser_math_checked": True}
 
 
 def adapter_checks(context, service):
@@ -1649,8 +1658,11 @@ def renew_synthetic_sessions(context, service, *, label="real-owned-session-refr
             "expiry_extended_by_SQL": False, "credentials_remain_private": True})
 
 
-def run_api_core(context):
-    """Validate complete graphs without retaining their process after the phase."""
+CHILD_PHASES = ("fresh-source", "first-player", "api-core", "full-board")
+
+
+def borrow_parent_backend(context):
+    """Each read worker uses the same actual backend for the whole host run."""
     context.load_state()
     unit = context.args.backend_unit
     require(unit is not None and unit.startswith("oms-web-ir-"), "explicit_parent_owned_backend_unit")
@@ -1665,8 +1677,29 @@ def run_api_core(context):
     service = p.Service(context.data, context.database, context.archive, context.port, "api-core")
     service.client.origin = context.base
     service._budget = backend
-    context.evidence.stage("api-core-borrowed-backend", {"actual_identity": backend.identity,
+    label = context.args.phase + f"-{context.args.source_case}" if context.args.phase == "fresh-source" else context.args.phase
+    context.evidence.stage(label + "-borrowed-backend", {"actual_identity": backend.identity,
         "actual_properties": backend.initial, "started_or_stopped_by_child": False})
+    return service
+
+
+def run_fresh_source(context):
+    service = borrow_parent_backend(context)
+    index = context.args.source_case
+    context.evidence.stage(f"fresh-source-case-{index}", fresh_source_case(context, service, index))
+    context.evidence.data["run_scope"] = "one original complete source range; actual wait and parent resource gate required"
+
+
+def run_first_player(context):
+    service = borrow_parent_backend(context)
+    context.evidence.stage("first-player", player_checks(context, service, fresh=True, label="first-player"))
+    context.evidence.data["run_scope"] = "original complete personal math and first HTTP; actual wait and parent resource gate required"
+
+
+def run_api_core(context):
+    """Release complete native decode allocations before the pagination phase."""
+    service = borrow_parent_backend(context)
+    p = context.p
     with Observation(context, "original-API", service._budget):
         api = p.api_checks(service, context.metadata, context.users, context.keys, context.fixtures)
         directory = p.directory_stage(service, context.metadata)
@@ -1695,20 +1728,28 @@ def run_api_core(context):
         lamp_result = {"prior": dict(prior), "after": dict(after), "updated": True, "synthetic_only": True}
     context.evidence.stage("original-API", {"API": api, "directory": directory, "native": native,
                                             "independent_best_lamp_checked": True, "independent_lamp": lamp_result})
-    context.evidence.stage("full-max-board", full_pagination(context, service, "full-max-board"))
     context.evidence.data["staging_host_gate"] = False
-    context.evidence.data["run_scope"] = "complete API/native/pagination child checks; actual wait and parent resource gate required"
+    context.evidence.data["run_scope"] = "complete API/native child checks; actual wait and parent resource gate required"
 
 
-def run_core_worker(context, service):
+def run_full_board(context):
+    service = borrow_parent_backend(context)
+    context.evidence.stage("full-max-board", full_pagination(context, service, "full-max-board"))
+    context.evidence.data["run_scope"] = "every complete board page; actual wait and parent resource gate required"
+
+
+def run_check_worker(context, phase, service, *, source_case=None):
     """All child costs remain inside the original observed driver cgroup."""
-    report = context.work / "verification-api-core.json"
-    log = context.work / "api-core-worker.log"
+    label = phase + f"-{source_case}" if phase == "fresh-source" else phase
+    report = context.work / ("verification-" + label + ".json")
+    log = context.work / (label + "-worker.log")
     require(not os.path.lexists(report) and not os.path.lexists(log), "new_complete_verification_child_files")
-    command = [str(context.python), "-B", str(Path(__file__).resolve()), "--phase", "api-core",
+    command = [str(context.python), "-B", str(Path(__file__).resolve()), "--phase", phase,
                "--release", str(context.release), "--work", str(context.work), "--base", context.base,
                "--seconds", str(context.args.seconds), "--backend-unit", service.unit]
-    with Observation(context, "core-worker", service._budget):
+    if source_case is not None:
+        command.extend(("--source-case", str(source_case)))
+    with Observation(context, label + "-worker", service._budget):
         with log.open("xb") as output:
             process = subprocess.Popen(command, cwd=context.backend, stdout=output, stderr=subprocess.STDOUT,
                                        env={**os.environ, "PYTHONPATH": "", "PYTHONDONTWRITEBYTECODE": "1",
@@ -1718,7 +1759,7 @@ def run_core_worker(context, service):
                 require(started["argv"] == command and started["cwd"] == str(context.backend)
                         and cgroup_path(process.pid) == context.driver.location,
                         "actual_complete_verification_child_source_and_cgroup")
-                context.evidence.stage("api-core-worker-start", {"actual_identity": started,
+                context.evidence.stage(label + "-worker-start", {"actual_identity": started,
                     "verification_harness_sha256": file_hash(Path(__file__).resolve()),
                     "same_driver_cgroup_and_memory_CPU_budget": True})
                 process.wait(timeout=600)
@@ -1733,19 +1774,21 @@ def run_core_worker(context, service):
                 # wait reaps the actual child; the parent unit remaining alive
                 # is not used as the child's terminal evidence.
                 actual_exit = process.wait(timeout=10)
-                context.evidence.stage("api-core-worker-terminal", {"actual_pid": process.pid,
+                context.evidence.stage(label + "-worker-terminal", {"actual_pid": process.pid,
                     "actual_exit_code": actual_exit, "actually_reaped_by_wait": True,
                     "log_sha256": file_hash(log),
                     "report_sha256": file_hash(report) if report.is_file() else None})
             require(report.is_file(), "actual_complete_verification_child_report")
             child = read_json(report)
-            context.evidence.stage("api-core-worker-report", {"actual_status": child["status"],
+            context.evidence.stage(label + "-worker-report", {"actual_status": child["status"],
                 "actual_report_sha256": file_hash(report),
                 "actual_child_identity": child.get("actual_child_identity"),
                 "child_completed_is_not_parent_resource_or_exit_gate": True})
             for label, result in child["stages"].items():
                 if label != "cache-terminal":
                     context.evidence.stage(label, result)
+            context.evidence.data["checks"].extend(child["checks"])
+            context.evidence.data["unit_terminals"].extend(child["unit_terminals"])
             require(actual_exit == 0 and child["status"] == "completed"
                     and child["verification_harness_sha256"] == context.evidence.data["verification_harness_sha256"]
                     and child["verification_probe_sha256"] == context.evidence.data["verification_probe_sha256"]
@@ -1754,6 +1797,7 @@ def run_core_worker(context, service):
                     "actual_complete_child_exit_source_and_checks")
             require(same_process(service._budget.identity, identity(service._budget.pid)),
                     "same_parent_backend_after_child_verification")
+    return child
 
 
 def run(context):
@@ -1771,11 +1815,12 @@ def run(context):
     service = p.Service(context.data, context.database, context.archive, context.port, "main")
     service.start()
     try:
-        context.evidence.stage("first-player", player_checks(context, service, fresh=True, label="first-player"))
+        run_check_worker(context, "first-player", service)
         context.evidence.stage("initial-PHP", frontend_checks(context, service, "initial-PHP"))
         context.evidence.stage("real-adapters", adapter_checks(context, service))
         context.evidence.stage("actual-browser-actor", actor_checks(context, service))
-        run_core_worker(context, service)
+        run_check_worker(context, "api-core", service)
+        run_check_worker(context, "full-board", service)
         with Observation(context, "burst", service._budget):
             burst = p.traffic_stage(service, context.metadata, context.users, context.keys, 10, 25, phase="burst")
         context.evidence.check(burst["traffic_gate_passed"], "actual_burst_read_write_confirmation")
@@ -1949,8 +1994,9 @@ def parse_args():
     parser.add_argument("--work", type=Path, required=True)
     parser.add_argument("--base", default="http://127.0.0.1:18090")
     parser.add_argument("--seconds", type=int, default=1800)
-    parser.add_argument("--phase", choices=("all", "seed", "seed-only", "run", "api-core", "recovery", "maintenance"), default="run")
+    parser.add_argument("--phase", choices=("all", "seed", "seed-only", "run", *CHILD_PHASES, "recovery", "maintenance"), default="run")
     parser.add_argument("--backend-unit")
+    parser.add_argument("--source-case", type=int, choices=range(7))
     parser.add_argument("--accept-transferred-seed", action="store_true")
     parser.add_argument("--external-frontend-restores", action="store_true")
     parser.add_argument("--serial-export", action="store_true")
@@ -1981,6 +2027,12 @@ def main():
             run(context)
         if args.phase == "api-core":
             run_api_core(context)
+        if args.phase == "fresh-source":
+            run_fresh_source(context)
+        if args.phase == "first-player":
+            run_first_player(context)
+        if args.phase == "full-board":
+            run_full_board(context)
         if args.phase == "recovery":
             run_recovery(context)
         context.evidence.data["status"] = "completed"
@@ -2003,11 +2055,11 @@ def main():
             if hasattr(context, "driver"):
                 if getattr(context, "active_service", None) is not None:
                     context.active_service.stop()
-                label = "actual_parent_driver_before_child_exit" if args.phase == "api-core" else "actual_driver_before_exit"
+                label = "actual_parent_driver_before_child_exit" if args.phase in CHILD_PHASES else "actual_driver_before_exit"
                 context.evidence.data[label] = {"properties": properties(context.driver.unit),
                                                 "last_live": context.driver.frame(),
                                                 "loaded_terminal_not_yet_observable": True}
-                if args.phase == "api-core":
+                if args.phase in CHILD_PHASES:
                     context.evidence.data["child_identity_before_exit_not_terminal"] = identity(os.getpid())
             context.evidence.save()
             print(canonical({"status": context.evidence.data["status"], "report": str(context.evidence.path),
