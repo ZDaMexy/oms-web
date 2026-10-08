@@ -1,8 +1,8 @@
 # 原版 osu-web 生产迁移：2026-10-07
 
-用户已认可本地视觉并授权部署。当前为部署进行中；实际生产切换、共享主机运行门和新恢复门尚未签收。下载入库、真实账号、OMS 对照和固定播放器 P/C 仍需真人验收。
+用户已认可本地视觉并授权部署。当前为部署进行中；共享主机完整运行门已通过，新恢复门与实际生产切换尚未签收。下载入库、真实账号、OMS 对照和固定播放器 P/C 仍需真人验收。
 
-2026-10-08 最新已结束运行 R13 使用原新候选 `b879e4233818-b0feceae22e4`；七来源、首次个人、目录、四完整原生和独立灯内容通过，但完整父观察最低可用内存 510.145 MiB，低于 512 MiB，driver / owner 实际失败。九次子进程启动身份均在首次轮询精确匹配，原 R12 失败原因仍未知；不补签旧失败。正式 current 仍为 `d1f052b93a81-e6fdf914cb04`，新站未切换。仅修订外置 probe 的完整原生解析，保留全部响应和原断言，针对性 24 项通过、只读源码审查无阻断；新实际完整运行、持续和两空恢复仍待。R13 停止现场已完整保全并在 F 独立逐件 / 完整 gzip 核验，细节取本文末段。
+2026-10-08 最新已结束运行为 R14，UTC `05:55:30.041243` 至 `06:39:18.348420`；原新候选 `b879e4233818-b0feceae22e4`、实际 R11 安装与 package SHA `01b2b54a…` 保持。七来源、首次个人、目录、四完整原生与独立灯、全部分页、burst、实际 1,800 秒持续、同出口登录 / 限流、真实 peer 配额和结束投影全部通过，driver / owner 均真实 loaded / MainPID 0 / exit0 / success，`staging_host_gate=true`。全部 29 资源流 / 10,462 原帧、SHA / 行数 / 完整 gzip EOF / CRC 与实际终态已独立保存至 F；最低可用内存 588,206,080 B（560.957 MiB），swap / OOM 均零。正式 current 仍为 `d1f052b93a81-e6fdf914cb04`，新站未切换；本轮成功不重标 R11～R13 失败，也不代签两新空恢复、八对 / raw / 2 GiB 预算或真人 P/C。准确分项及本轮完整保全见本文末段。
 
 ## 不可变来源与数据
 
@@ -182,3 +182,56 @@ api-core 子 PID 2687210 实际 exit1。完整父观察 `api-core-worker` 为 31
 Backend 的外置 `multisource_probe.py` 只在 `native_stage` 的四次完整原生请求启用对象解码钩子：每行全部字段都解析，立即释放不参与本阶段校验的重复 identity / lamp / conditions / native 图，保留原 `native_player_id / is_me / ex_score` 值；顶层元数据 / 灯汇总不变。原完整收包、gzip EOF / CRC、传输与解码字节上限、全部行数 / 身份唯一 / 本人一次 / 分数排序 / 并列名次 / OpenLR2 灯汇总 / 10 秒断言及观察范围保持；默认调用、独立灯和两个明确 413 使用原完整解析。真实产品 B879 / B0、API 和数据库未改。
 
 新增 loopback HTTP 测试覆盖 gzip / identity 编码、完整字节度量、全行 / 原值 / 元数据 / 灯汇总、默认完整字段、损坏 gzip 的明确失败，以及原 `native_stage` 的四版本 / 并列 / 两个 413。首条 focused 命令的相对 `--basetemp` 指向没有父目录的 Backend 临时路径，5 passed / 19 setup errors；原 `native-probe-decoding-focused-r1.xml` 保留，不作为有效 gate。改用入口实际创建的 F 盘 Web 临时目录后，24 项 / 10.49 秒通过，`native-probe-decoding-focused-r2.xml` 长期保留，既有 Starlette / httpx 弃用提示不变。只读 diff 审查无阻断；必须绑定新的 probe 提交和 SHA 再在原共享预算重跑，不能由软件结果宣布资源门通过。原五 R13 恢复源未执行，不能在新 probe 来源上复用其签收。
+
+### R14 新工具实际重跑与恢复预备来源
+
+外置 probe 从 Backend 已提交 `967af4d26248274a79f7ceee2b5f1bff8f323484` 导出，实际 SHA `85d396aab0770dcc3da6e41cb9aa3ce0911198a2af5e2aed4056ef66e49bbfc9`；harness 仍 Web `60e28ecba6378ca9086fd6f2c2a39460fe748de3` / `f46f33a1…`。产品来源 B879 / B0、实际 R11 安装和 package `01b2b54a…` 不改。九控制源在 F 全件 SHA / AST、只读复核后上传到新 `20261008-r14`；停止 R13 的全 F seal `bb118a3e…`、实际失败终态、全原成员和 main / WAL / SHM SHA 均先核验，才将同一四合成输入从 r3 同盘移动至新 r4，没有第二份 raw。原输入 / 失败 / 预备源不覆盖。
+
+实际 prepare PID 2703390 / transfer 2704009 均 loaded / MainPID 0 / exit0 / success，128 MiB / CPU50 / swap0；F 的 `staging-preparation-r14` 已保留两完整资源流 / 126 帧及真实缓存峰值 57,663,488 B。新核 SHA 后才登记 native16 PHP 2703623 / Nginx 2703625；真实 owner PID 2705880 / driver 2705884 于 UTC `2026-10-08T05:55:30.041243` 启动，1800 秒、全部请求、原 256 MiB / high240 / CPU50 / swap0 预算保持。R14 本地 retainer 原生成字段错误标为 F_R11，执行前修正为实际 F_R13 并同步 builder，旧回执不改；实际来源复核回执在 `runtime-source-controls-r14`。
+
+本段取截至 UTC 06:08 的运行中分项：七个来源 / 77 HTTP 与完整数学通过，首次个人 worker 实际 completed；对应完整父观察 324 帧，最低 MemAvailable 694,001,664 B。api-core 实际 completed，四份各 29,204 人完整原生为 9,925.515 / 9,421.013 / 9,624.943 / 9,097.898 ms，全部完整字节 / gzip / 身份 / 本人 / 并列名次 / 灯汇总及两种 413 通过；目录总数 338,121 / 九 HTTP / p95 138.198 ms。api-core 完整父观察 332 帧，最低 MemAvailable 596,721,664 B（569.078125 MiB），原 512 MiB 门通过；独立灯内容保留。尚未取得整轮成功终态，不能用这两段资源补签分页、burst、持续、同出口 / 配额或恢复。
+
+`recovery-protocol-r14` 五预备源已分别绑定实际新 r4 / native16 与 probe967af / 85d396，原 R11 package 实际路径保持。AST / SHA 和只读复核无剩余源码阻断；只签 prepared，未执行。实际 R14 run / owner 成功、独立恢复观察、原 22 表 / 非空 WAL 策略增量、完整 F 证明及八对 / 最大 raw / source-cache / 2 GiB 的真实预算仍是前置。原 R13 五源未执行、未替换成新来源。
+
+只读外存盘点未发现另一份可新计入的 GiB 级已保全 raw：早期 e801 / 3ae / CBA 包和首轮 raw 的实际退役回执已在相应完整 F tar 内，不能重复计净空闲。R12 / R13 / R14 三完整 B879 gzip 与旧 277 包记录合计 375,219,377 B 加 sidecar；旧 277 的 F 包现独立核验 9,600 成员 / 完整 gzip CRC，通过回执 `package-r6/independent-all-members-F-verification-r14.json`。其服务器实际存在、闲置、引用与净空闲还须在运行结束后复核，不先记退役或节省。通用 journal 授权仍待，未读取或修改，不自行购买资源。
+
+### R14 完整运行成功、R15 原件保全与实际压缩预测
+
+R14 于 UTC `2026-10-08T06:39:18.348420` 完成，`verification-run.json` 的 `staging_host_gate=true`；原 owner 2705880 / driver 2705884 均实际 loaded / MainPID 0 / exit0 / success，driver 峰值 252,444,672 B。七来源、首次个人、完整目录 / 原生与独立灯、全部 1,464 次分页及原始数学、burst 和结束投影均通过；原 public projection 的完整 SHA / 元数据保持。软件、产品包、外置 probe / harness 来源沿上一段，原 R11～R13 失败不改。
+
+| 实际阶段 | HTTP / 写入结果 | 资源观察 |
+| --- | --- | --- |
+| 持续读榜 / 交分 | 9,000 读取全 200；250 OMS UUID 新局、250 外部最佳更新、50 社区写全部确认，重复新局为 0；确认 p95 分别 109.736 / 49.305 / 25.668 / 51.816 ms | 1,801.188 秒 / 6,739 帧，最低 MemAvailable 645,066,752 B，最低磁盘 2,675,744,768 B |
+| 同期真实 PHP / Nginx 页 | 900 页全 200，确认 p95 304.875 ms / HTTP 最大 615.920 ms，满足原 PHP 1 秒门；50 个实际 loopback 来源 peer，访客转发头不选额度桶 | 与同一持续窗口、原 UUID / 外部 / 社区写重叠 |
+| 同出口读榜及密码登录 | 650 读为 600×200 / 50×429；50 账号遵守实际密码单槽 / Retry-After / 登录额度，66.792 秒从计划 burst 起全部确认，队列耗尽 | 68.819 秒 / 258 帧，最低 MemAvailable 588,206,080 B |
+| 真实 peer 配额 | Nginx API 与 PHP SSR 各 650 读均为 600×200 / 50×429；另一真实 peer 两请求 200，伪造 XFF 桶为 0 | 15.851 秒 / 59 帧，最低 MemAvailable 631,480,320 B |
+
+全部 29 资源流 / 10,462 原帧已独立导出至 `run-r14-actual`，每流原 SHA / 行数、报告最小值及完整本地 gzip EOF / CRC 一致，压缩合计 2,261,566 B。全阶段最低 MemAvailable 588,206,080 B（560.95703125 MiB），host / 每组 swap 和 OOM 均零，最低磁盘 2,675,744,768 B。保留实际 ExecStart、准确工具 SHA 和 loaded 终态；这一真实完整运行门不代签新空恢复、磁盘八对 / raw 预算、公开生产或真人门。
+
+原停止现场由 R15 成功保全源 `b1c43346495c3156fb47acfbad61373a094c803a00c488e544e976dd0f2e64e3` 处理；实际 controller 2739778 / worker 2739785 均 loaded / MainPID 0 / exit0 / success，128 MiB / CPU50 / swap0。源直接消费已在本轮关闭的真实 PHP / Nginx 终态，不对死 PID 重新建立 BudgetUnit、不重复关闭。F 的 `r15-actual-preservation` 完整 archive 107,025,395 B / SHA `52fb143d3fb2e6ab49c4a48b2578ed0977ed94138fa847fe2c568fe7ae833402`，257 成员逐项 size / SHA / 完整 gzip EOF / CRC、原 22 表按停止库全字节一致保全；全部 1,036 原资源帧及 SHA / CRC 保持。最低可用内存 639,082,496 B / 磁盘 2,568,843,264 B，无第二份 raw；原成功不改为失败，未访问正式库或通用日志。
+
+三旧失败 B879 gzip / tar.json 与历史 277 包在 F 再次整件 SHA 绑定，计划 SHA `8d9257796381cef6b79688f97947bda62a38fb74121f01ea31b0a9839bd8626e`，源 `915c72ac…`。所有实际停止单元、引用、确切路径 / SHA 和 lsof 在删除前核验；唯一七文件由有限单元 PID 2745214 实际退役，loaded / MainPID 0 / exit0 / success。净空闲变化 +375,312,384 B，完成时可用 2,944,094,208 B，完整 F 回执 `server-exact-duplicate-retirement-r2/independent-actual-retirement-receipt.json`；正式 current / 数据 / 公开投影 / 固定 helper / 当前 B879 package 保留。仅边界采样，不签恢复容量。
+
+随后有限单元 PID 2746669 仅测完整停止合成 main 的 level6 压缩，来源 `b3afc393f3b708c6fd959d1a3344291aca093c8ff4a7a57b630563ddc77a9c7d`。先消费真实七文件退役终态与相同 plan SHA，核原 main / WAL / SHM 的存在集合和逐 SHA，再比全 22 表；实际 checkpoint 为 `[0,0,0]`、原 WAL 0 B，显式 close 连接后完整逻辑指纹相同，main 仍 1,415,454,720 B / SHA `8a3ab7db1caa96bff8442bb4d15e934091ad9e6c3d1b52563cbd550b54c95a0e`。完整 gzip 为 103,017,163 B / SHA `8d45b0718667065db870daad6553cace956945cae9deddcbc22ee28067a2f0a1`，在 F 独立解码全部字节、核原 SHA / size / gzip EOF / CRC；无第二 raw。457.588 秒 / 1,706 原帧与真实 loaded 成功终态均保全，最低可用内存 811,220,992 B / 磁盘 2,838,175,744 B，128 MiB / CPU50 / swap0。
+
+`stopped-gzip-capacity-r1/independent-complete-F-capacity-forecast-receipt.json` 明确仅压缩预测，不是 `SQLite backup` 一致快照、两新空恢复或正式容量门。按完整压缩值、每 sidecar 1 MiB、八对、当前最大 raw 与 2 GiB，基础所需空闲预测为 4,395,464,280 B；尚须实际恢复源 / 缓存与非空 WAL 峰值。预测结束时当时空闲 2,838,183,936 B，差 1,557,280,344 B。完整 F 保全后的成功 / 预测两 gzip 已按确切路径、完整 SHA 和 lsof 核验退役；有限单元 PID 2753929 实际 loaded / MainPID 0 / exit0 / success，源 `2244ebea17124fe8530f54d2a6396754cfba80d9583c48136c84107d0f31d623` / plan `e5b5fa1c6304d138027f6c8e2ea9e7fe6eb50a5ef90859652c18c02e025bfd2f`，净空闲 +210,046,976 B，完成时可用 3,048,042,496 B。独立 F 回执 `server-success-forecast-duplicate-retirement-r1/independent-actual-retirement-receipt.json` 已保全真实终态、原报告 / 日志 SHA、两确切路径缺席和两份完整 F gzip；原 main / WAL / SHM、R15 sidecar、正式 current / helper / B879 package 保留。基础预测仍差 1,347,421,784 B，不能据压缩或退役签完整容量。
+
+### 系统日志原件完整 F 保全与实际 512 MiB 保留
+
+用户 2026-10-08 明确回复“同意，保全核验后清理旧日志”。授权范围是先完整保存并核验系统日志，再清理服务器旧日志；未购买或扩盘。原件实际为 46 个 journal / apparent 2,113,929,216 B / allocated 2,061,086,720 B，只有两个 active，合计 37,748,736 B；`/run/log/journal` 实际零文件。OMS namespace 原 `SystemMaxUse=32M / MaxRetentionSec=14day / MaxFileSec=1day` 保持，默认 namespace 480 MiB，两者合计上限 512 MiB。
+
+实际 systemd 255.4 的[官方 rotate 源码](https://raw.githubusercontent.com/systemd/systemd/v255/src/journal/journald-server.c)会自动 vacuum，不能先 rotate 再声称全原件保全。首次保全源 `8a7c3259…` 和独立 CONT 看门源 `129a4192…` 在固定 128 MiB / CPU50 / swap0 内分别 sync 两个 namespace，独立 ready 看门有效后短暂停写。44 个已封闭原件同盘硬链接、两个 active 复制；实际暂停 0.651124 秒，两原 PID 1482909 / 4007287 恢复 running 后全部 46 件 `journalctl --verify` 通过。首轮 owner 2768130 随后传输实际 BrokenPipeError / exit1，F gzip 为 0 B；全部原失败、1,842 资源帧与 snapshot 保留于 `journal-first-transport-failure-actual-r1`，失败原因没有被补推成 SSH idle。
+
+R2 只重新导出同一固定 cut，没有再暂停、旋转或重新生成原件。源 `e370635a…`、receiver `c7cdb618…` 经复核；有限 export owner 实际 loaded / MainPID 0 / exit0 / success，峰值 21,680,128 B。F 的 `journal-full-F-preservation-r2/complete-original-systemd-journals-r2.tar.gz` 为 547,802,803 B / SHA `7b0e14560ded5d32ac84eb6c1aa8ee0f823699b577f7569b7471f1a99336f38e`，46 原 journal / 52 成员逐 SHA、size、完整 gzip EOF / CRC 与原可读性证据全部核验。独立 F 回执 SHA `1518fdf0…`；全部 1,007 原资源帧也独立按 SHA / count 核验，最低可用内存 822,603,776 B，swap / OOM 零。原压缩件仅存受保护 F 证据目录，不进入 Git；服务器没有新增大 gzip。
+
+随后才执行 source `519a6b28…` / receiver `35480024…` / plan `67b1d0c3…`：先新核完整 F SHA 与原配置，再解除 46 个准确 snapshot pins / active 副本。仅添加默认 `/etc/systemd/journald.conf.d/90-oms-shared-host-budget.conf` 的 `[Journal] SystemMaxUse=480M`；一次 restart default 后 rotate / vacuum，分别 sync default 与 OMS。原 OMS 32 MiB 策略未改。真实 owner 2785801 loaded / MainPID 0 / exit0 / success，128 MiB / CPU50 / swap0；全部 61 原资源帧核验通过。日志实际 allocated 488,648,704 B，测得净空闲 +1,610,194,944 B，完成时 root 可用 4,614,737,920 B（约 4.30 GiB），完整 snapshot 目录实际已解除。实际原 report / config / log / raw frames / terminal 在 `journal-budget-actual-r1/independent-actual-journal-budget-receipt.json`。
+
+这些实际结果只签原件保全和已授权日志容量。基础恢复盘账 4,395,464,280 B 已可容纳，但恢复 source / cache / snapshot 与 WAL 峰值仍须实测。正式 current / 账号成绩库 / fixed helper / 公共投影保持原状态；两新空恢复、最终盘账和新站切换仍未签收。
+
+### 旧闲置候选的准确源码退役与两空恢复启动
+
+旧 277 原 F 包 58,251,923 B / SHA `fcf59e4a…` 的全部 9,600 成员、map与9,598个源码资源、完整 gzip EOF / CRC 在准备及执行前分别新核验。plan `73e89196…` 将原空 ready 的实际 dev / inode / size / mtime 保存 F；源 `5485d063…` 和 receiver `87903ae0…` 经只读复核，无剩余阻断。执行时正式 current 仍 D1 / e6，B879 环境独立；两次 `/proc` argv / cwd / maps / FD及OMS实际单元、正式配置检查均无 live 引用，才解除同一个空 ready 和全部固定 SHA / size 的 9,598 个普通文件，不跟随 symlink、不递归删除旧环境。
+
+真实 owner 2793879 loaded / MainPID 0 / exit0 / success，128 MiB / CPU50 / swap0；77 原资源帧逐 SHA / count 核验，最低 MemAvailable 846,622,720 B。净空闲实增 121,434,112 B，完成时 root 可用 4,735,619,072 B（约4.41 GiB）。`.venv`、非清单生成文件、map / release.json、archive symlink、uv / cache / managed python、当前正式发布、fixed helper、B879包及所有验收库 / 证据保留。F原包、原 empty-ready metadata、typed / raw terminal、全部原件和原帧在 `unused277-mapped-retirement-actual-r1/independent-actual-mapped-retirement-receipt.json`；不签恢复或部署门。
+
+`recovery-protocol-r14` 五源的准确 SHA 与既有只读复核保持；四主机源按各自 `__file__` 约束名上传 r4，并在启动前全件 SHA 核验。新 owner 2797323 于 UTC `2026-10-08T08:50:33` 以128 MiB / CPU50 / swap0实际启动，driver 2797345为256 MiB / high240 / CPU50 / swap0，只消费原成功R14运行及actual owner终态，原R11的B879完整包路径不改。两新空目录、原22表 / 撤钥隐藏增量WAL、完整前后端 / 原生 / 分页、F全件交接、source-cache峰值和真实盘账正在执行；该启动记录不是恢复通过。实际两门及最终切换仍待。
