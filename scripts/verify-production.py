@@ -1079,22 +1079,31 @@ def frontend_checks(context, service, label):
             "browser_JavaScript_executed": False, "browser_and_player_acceptance_pending": True}
 
 
-def full_pagination(context, service, label):
+def full_pagination(context, service, label, *, users):
     p = context.p
     selected = list(p.SOURCE_LABELS)
     with Observation(context, label, service._budget):
         expected = p.expected_board(service.database, context.archive, context.metadata["chart"]["md5"], selected)
         require(len(expected) >= 10000, "real_full_maximum_archive_board")
         records = []
-        for page in range(1, math.ceil(len(expected) / 20) + 2):
-            metric, body = service.client.request("GET", p.board_path(context.metadata["chart"]["md5"], selected, page=page),
-                                                  user=context.users[(page - 1) % 50])
-            require(metric["status"] == 200 and metric["ms"] <= 300, "full_board_all_pages_300ms")
-            p.check_board(body, expected, selected, page, mine=context.users[(page - 1) % 50]["id"])
-            records.append(metric)
+        measurements = context.work / (label + "-HTTP.jsonl")
+        with measurements.open("x", encoding="utf-8") as output:
+            for page in range(1, math.ceil(len(expected) / 20) + 2):
+                user = users[(page - 1) % len(users)]
+                metric, body = service.client.request("GET", p.board_path(context.metadata["chart"]["md5"], selected, page=page),
+                                                      user=user)
+                output.write(json.dumps({"page": page, "user_id": user["id"], "metric": metric}) + "\n")
+                if metric["status"] != 200 or metric["ms"] > 300:
+                    context.evidence.stage(label + "-failed-HTTP", {"page": page, "user_id": user["id"], "metric": metric,
+                                                                  "resource_gate_consumed": False})
+                require(metric["status"] == 200 and metric["ms"] <= 300, "full_board_all_pages_300ms")
+                p.check_board(body, expected, selected, page, mine=user["id"])
+                records.append(metric)
         result = {"people": len(expected), "pages_with_rows": math.ceil(len(expected) / 20), "outside_page_verified": True,
                   "all_pages_rank_best_lamp_source_identity_checked": True, "http": summary(records),
-                  "ordered_result_sha256": digest(expected), "personal_rows_in_report": False}
+                  "ordered_result_sha256": digest(expected), "personal_rows_in_report": False,
+                  "authenticated_account_ids": [user["id"] for user in users],
+                  "HTTP_measurements": measurements.name, "HTTP_measurements_sha256": file_hash(measurements)}
         context.evidence.stage(label + "-HTTP-measurements", {**result, "resource_gate_consumed": False})
     return result
 
@@ -1502,7 +1511,10 @@ def recovery(context, service):
                         require(metric["status"] == 200 and body["native_player_id"] == expected, "stable_native_identity_after_restore")
                 player = player_checks(context, recovered, label=f"recovered-player-{number}")
                 frontend = frontend_checks(context, recovered, f"recovered-frontend-{number}")
-                pages = full_pagination(context, recovered, f"recovered-full-pages-{number}")
+                # The second snapshot deliberately preserves users[0]'s revoked
+                # desktop session; its 401 is checked by api_checks above.
+                pages = full_pagination(context, recovered, f"recovered-full-pages-{number}",
+                                        users=context.users[1:] if number == 2 else context.users)
                 with Observation(context, f"recovered-native-{number}", recovered._budget):
                     native = p.native_stage(recovered, context.metadata, context.keys)
                     require(native["under_10_seconds"] and native["gzip_wire_and_complete_decoded_bodies_verified"],
@@ -1734,7 +1746,7 @@ def run_api_core(context):
 
 def run_full_board(context):
     service = borrow_parent_backend(context)
-    context.evidence.stage("full-max-board", full_pagination(context, service, "full-max-board"))
+    context.evidence.stage("full-max-board", full_pagination(context, service, "full-max-board", users=context.users))
     context.evidence.data["run_scope"] = "every complete board page; actual wait and parent resource gate required"
 
 

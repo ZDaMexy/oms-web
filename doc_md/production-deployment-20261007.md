@@ -235,3 +235,11 @@ R2 只重新导出同一固定 cut，没有再暂停、旋转或重新生成原�
 真实 owner 2793879 loaded / MainPID 0 / exit0 / success，128 MiB / CPU50 / swap0；77 原资源帧逐 SHA / count 核验，最低 MemAvailable 846,622,720 B。净空闲实增 121,434,112 B，完成时 root 可用 4,735,619,072 B（约4.41 GiB）。`.venv`、非清单生成文件、map / release.json、archive symlink、uv / cache / managed python、当前正式发布、fixed helper、B879包及所有验收库 / 证据保留。F原包、原 empty-ready metadata、typed / raw terminal、全部原件和原帧在 `unused277-mapped-retirement-actual-r1/independent-actual-mapped-retirement-receipt.json`；不签恢复或部署门。
 
 `recovery-protocol-r14` 五源的准确 SHA 与既有只读复核保持；四主机源按各自 `__file__` 约束名上传 r4，并在启动前全件 SHA 核验。新 owner 2797323 于 UTC `2026-10-08T08:50:33` 以128 MiB / CPU50 / swap0实际启动，driver 2797345为256 MiB / high240 / CPU50 / swap0，只消费原成功R14运行及actual owner终态，原R11的B879完整包路径不改。两新空目录、原22表 / 撤钥隐藏增量WAL、完整前后端 / 原生 / 分页、F全件交接、source-cache峰值和真实盘账正在执行；该启动记录不是恢复通过。实际两门及最终切换仍待。
+
+### R14 两空恢复失败与输入修订
+
+实际恢复于 UTC `2026-10-08T09:38:15.010236` 失败，driver / owner 均 loaded / MainPID 0 / exit1；原 `verification-recovery.json`、owner、源码和终态保持。第一轮新空目录的全22表、API / 玩家 / PHP、完整1,464页（最大126.335 ms）及四原生通过，完整F包 / snapshot pair共11,548项独立SHA / gzip EOF / CRC已核验，随后准确退役其恢复工作区。第二轮实际raw恢复1,415,491,584 B / SHA `627a3dd88c55837cbd8a5cc2a29f01ba71f5bf223c6a3338e432beceb1846e66`，一致gzip103,043,775 B，恢复前后22表比较、实际WAL撤销隐藏、9598源码及其API / 玩家 / PHP已到达；完整分页在首个请求的复合门 `full_board_all_pages_300ms` 失败，原请求状态未保存，不能据标签宣称慢于300 ms。四原生及第二轮完整F交接尚未执行。F的 `empty-recovery-r14-failed-actual` 保存全部29资源流 / 11,659原帧，完整SHA / 行数 / gzip EOF / CRC和真正失败终态；最低可用内存622,678,016 B，最低磁盘2,986,385,408 B，不能签恢复总门。
+
+源码审查发现第二轮主动注销 `users[0]` 桌面会话、并已检查其旧access / refresh401，随后分页第1页却重用该旧access。公开board带Authorization时按原合同验证登录，revoked session明确401。检查器现保存逐页请求度量及失败页身份 / 状态 / 耗时；第二轮完整200分页轮转其余49有效身份，`me`随同一身份校验，期望榜仍保留全部玩家 / 来源 / 人数 / 灯 / 名次，300 ms门保持。正常运行和第一轮仍使用全部50身份。下一步在同一个实际第二轮还原现场独立补验全部HTTP及四原生身份映射，绑定停止原件、前后业务 / schema指纹，再执行完整F交接和全部实际峰值盘账；不回写原失败报告、源码或owner为成功。
+
+恢复等待期间按既有“保全核验后清理旧日志”授权，又退役原完整F日志切面中的四个准确closed文件，两批实测净空闲变化95,559,680 / 98,832,384 B；不旋转或改上限 / 活跃文件。F的 `additional-two-closed-journals-actual-r1/r2` 保存各7帧、原实际成功终态、删除清单、完整F核验和原配置指纹。第二批原收集SSH连接超时，失败源保持；之后只补收同一已成功关闭单元的缺失证据，未重跑清理。最后恢复余量仍按实际全部采样另验。
