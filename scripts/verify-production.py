@@ -1032,6 +1032,7 @@ def player_checks(context, service, *, fresh=False, label="player-checks"):
             require(all(owner[transport][field] not in p.canonical(body)
                         for transport in ("desktop", "browser") for field in ("access", "refresh", "session")),
                     "no_tokens_in_public_player_body")
+            del oracle, expected_lanes, lane, charts, ordered, wanted
     return {"first_profile": result, "http": summary(records), "independent_complete_raw_core_math": True,
             "two_rulesets_distinct_primary_bests": context.metadata["distinct_additions_per_ruleset"]}
 
@@ -1118,6 +1119,7 @@ def fresh_source_queries(context):
                 cases.append({"sources": selected, "participants": len(expected), "first_process_request_ms": first,
                               "summary": summary(records), "cache_advice": cache_advice,
                               "physical_cold_cache_proven": False, "first_tail_and_browser_math_checked": True})
+                del expected
         finally:
             service.stop()
     return {"cases": cases, "seven_actual_fresh_process_source_selections": True,
