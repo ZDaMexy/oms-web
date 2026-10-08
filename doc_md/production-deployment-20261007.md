@@ -2,7 +2,7 @@
 
 用户已认可本地视觉并授权部署。当前为部署进行中；实际生产切换、共享主机运行门和新恢复门尚未签收。下载入库、真实账号、OMS 对照和固定播放器 P/C 仍需真人验收。
 
-2026-10-08 最新实际运行 R12 使用原新候选 `b879e4233818-b0feceae22e4`，七个来源、首次个人页、完整目录和四份完整原生通过；启动完整分页子进程时身份合取断言失败，整轮停止。原工具没有先记录不匹配字段，原因尚未证实，不能归因为启动竞态或内存不足。正式 current 仍为 `d1f052b93a81-e6fdf914cb04`，新站未切换。新工具保存首次与末次实际身份，在原总 600 秒内最多等待 10 秒，保留精确 argv / cwd / cgroup、同 PID / starttime、原资源门和失败回收；源码复核通过，实际重跑、持续与两空恢复仍待，细节取本文末段。
+2026-10-08 最新已结束运行 R13 使用原新候选 `b879e4233818-b0feceae22e4`；七来源、首次个人、目录、四完整原生和独立灯内容通过，但完整父观察最低可用内存 510.145 MiB，低于 512 MiB，driver / owner 实际失败。九次子进程启动身份均在首次轮询精确匹配，原 R12 失败原因仍未知；不补签旧失败。正式 current 仍为 `d1f052b93a81-e6fdf914cb04`，新站未切换。仅修订外置 probe 的完整原生解析，保留全部响应和原断言，针对性 24 项通过、只读源码审查无阻断；新实际完整运行、持续和两空恢复仍待。R13 停止现场已完整保全并在 F 独立逐件 / 完整 gzip 核验，细节取本文末段。
 
 ## 不可变来源与数据
 
@@ -164,3 +164,21 @@ R11 停止现场由实际 R12 preserve controller / worker 完整保全，二者
 检查器现记录预期身份及首次 / 末次实际字段、轮询数 / 耗时；成功须精确 command / cwd / 同 cgroup、同 PID / starttime 且进程存活，10 秒期限内才接受。600 秒总门从 Popen 前计时，身份等待只消费原剩余时间；失败仍 TERM → KILL → 实际 wait。父 Observation 从 Popen 前开始、子初始化 / 完整来源和投影哈希均在原 driver 256 MiB / high240 / CPU50 / swap0 内；父后端连续所有权、全部原请求与资源门保持。修正 SHA `f46f33a1e137a8f1a7cb6e3233540b3abe8bbbcba7dba2d12d7ca4d3a6567a1a` 的只读复核无剩余阻断，尚未实际重跑，不重标原 R12。
 
 此前 R5～R11 七份完整失败 archive / sidecar 在 F 重新逐件 SHA / size 核验，共 738,507,369 B gzip。首次退休入口在任何删除前因 R5 / R6 历史控制器实际 not-found 与预期不同失败，原源 / 日志保留；不是自动审批拒绝。r1b 将缺席控制器与实际 loaded 停止单元分别记录，核对确切十四路径 / 来源 / 停用 / 无 lsof 占用后仅退役服务器重复 gzip / sidecar，真实有限单元 MainPID 0 / exit0 / success，128 MiB / CPU50 / swap0。实际空闲变化 +738,672,640 B，完成时可用 2,965,970,944 B；F 全件保持，真实恢复预算仍未签。独立回执 `server-failure-duplicate-retirement-r1/independent-actual-retirement-receipt.json` 保存两入口真实终态和十四路径实际缺席，不把这一边界采样当作持续门。通用 journal 的外存及 512 MiB 保留决策仍待用户授权，未读取或修改。
+
+R12 完整失败现场随后由 R13 保全 controller PID 2673651 / worker 2673672 实际成功终态保存，源码 `a1d3f443…`、128 MiB / CPU50 / swap0。F 的 `r13-actual-preservation` 完整 archive 105,649,886 B / SHA `2ea977c42b1dd5497fb35d9e7ef389240255ed12f05b6c3a516e9b33c64615f4`，232 成员逐项 SHA / size / 完整 gzip EOF / CRC、原 22 表指纹按停止库字节一致保全；全部 976 帧 / 原 SHA / gzip 校验通过，最低 MemAvailable 792,317,952 B / 磁盘 2,854,600,704 B，没有第二份 raw。独立完整 F 回执 SHA `af93c5b8fde39928f7bf17671a70d6ce7a6009084da32598084e9b6ab52fc30c`。
+
+新检查目录 r3 / native15 的九控制源、完整 F 输入及准备 / 转移 / 启动脚本先只读复核再上传，全件实际 SHA 绑定。原 R11 安装及 package 的实际路径不改；准备和同盘停止数据转移均实际 loaded / MainPID 0 / exit0 / success，F `staging-preparation-r13` 保留两流 / 123 帧及实际缓存峰值 57,335,808 B。工具装入且核 SHA 后才登记实际 PHP 2679756 / Nginx 2679758；UTC `2026-10-08T05:12:37.503909` 启动 R13 owner 2682209 / driver 2682213，使用 Web `60e28ecba6378ca9086fd6f2c2a39460fe748de3` / `f46f33a1…` 和 probe `ee62d453…`，原 B879 / B0 产品包不变。该轮随后实际失败如下，不补签总门 / 原 R12 或两恢复。
+
+`recovery-protocol-r13` 的五预备源已 AST / SHA / 只读复核，原 R12 源及准备回执保留。仍必须先取得真实成功 R13 run / owner，再消费实际数据库 gzip / sidecar、raw / WAL、恢复 source / cache 峰值、八对和 2 GiB 余量；主 run 的子进程资源不代签恢复进程。两空恢复尚未执行，prepared 不能当部署或恢复通过。
+
+### R13 实际资源失败与完整原生解码修订
+
+R13 实际于 UTC `2026-10-08T05:20:43.988724` 结束，owner 2682209 / driver 2682213 均 loaded / MainPID 0 / exit1 / exit-code，driver 峰值 252,604,416 B。全部九次实际子进程启动在首次轮询精确匹配预期 argv / cwd / cgroup / PID / starttime 且存活，耗时 1.4～3.8 ms；不据此推断原 R12 的未记录失败原因。七独立来源 / 77 HTTP 和数学、首次个人、目录及四完整 29,204 人原生榜内容通过，目录九请求 / 338,121 张 / p95 127.589 ms。真实独立灯由 6 升至 8，EX 183 保持；最后记录在资源断言前，不把内容通过当 api-core 成功终态。
+
+api-core 子 PID 2687210 实际 exit1。完整父观察 `api-core-worker` 为 315 帧 / 87.769 秒，最低 MemAvailable 534,925,312 B（510.14453125 MiB），四帧共约 0.861 秒低于 512 MiB；内层 `original-API` 为 173 帧 / 49.673 秒，最低 536,379,392 B（511.53125 MiB），一帧低于门。同一内层最低帧 driver 两进程 PSS 178,791 KiB、backend PSS 111,516 KiB；swap / OOM 零、磁盘最低 2,843,197,440 B。实际总门 `shared_host_512MiB_no_swap_no_OOM_and_disk_margin` 失败，不能由两个观察中较高者补签。完整分页、burst、1,800 秒、同出口 / 配额、结束投影和两空恢复未到达。F 的 `run-r13-actual` 保留全部 22 流 / 1,992 原帧、SHA / 行数 / 完整 gzip EOF / CRC、报告 / 日志与实际终态；原 R13 工具字节和失败保持。
+
+停止现场由 R14 保全源 SHA `65a0bd1b20efcc45dc57fd83606a60b55effb5b97b8d6462dec0169d89bee5e5` 处理，实际 controller PID 2696654 / worker 2696673 均 loaded / MainPID 0 / exit0 / success。F 的 `r14-actual-preservation` 已完整保存 archive 105,662,318 B / SHA `09abb1535570cfce39ab899dc3081da3c9087c230783248e34f8918760a4bc9e`，239 成员逐项 SHA / size / 完整 gzip EOF / CRC 与停止库全 22 表指纹的字节一致证明通过；没有本地 SQLite 重读或第二份 raw。全部 984 原资源帧 / SHA / 行数 / gzip CRC 保全，最低可用内存 806,842,368 B / 磁盘 2,735,370,240 B；独立完整 F 回执 SHA `bb118a3e3de8cf8a1f6d22f809d95e1a2d9e1287625eda5b58e29a74dd11994b`。只证明失败保全，不补签运行或恢复；仅停止专用 staging，未访问正式数据或通用日志。
+
+Backend 的外置 `multisource_probe.py` 只在 `native_stage` 的四次完整原生请求启用对象解码钩子：每行全部字段都解析，立即释放不参与本阶段校验的重复 identity / lamp / conditions / native 图，保留原 `native_player_id / is_me / ex_score` 值；顶层元数据 / 灯汇总不变。原完整收包、gzip EOF / CRC、传输与解码字节上限、全部行数 / 身份唯一 / 本人一次 / 分数排序 / 并列名次 / OpenLR2 灯汇总 / 10 秒断言及观察范围保持；默认调用、独立灯和两个明确 413 使用原完整解析。真实产品 B879 / B0、API 和数据库未改。
+
+新增 loopback HTTP 测试覆盖 gzip / identity 编码、完整字节度量、全行 / 原值 / 元数据 / 灯汇总、默认完整字段、损坏 gzip 的明确失败，以及原 `native_stage` 的四版本 / 并列 / 两个 413。首条 focused 命令的相对 `--basetemp` 指向没有父目录的 Backend 临时路径，5 passed / 19 setup errors；原 `native-probe-decoding-focused-r1.xml` 保留，不作为有效 gate。改用入口实际创建的 F 盘 Web 临时目录后，24 项 / 10.49 秒通过，`native-probe-decoding-focused-r2.xml` 长期保留，既有 Starlette / httpx 弃用提示不变。只读 diff 审查无阻断；必须绑定新的 probe 提交和 SHA 再在原共享预算重跑，不能由软件结果宣布资源门通过。原五 R13 恢复源未执行，不能在新 probe 来源上复用其签收。
