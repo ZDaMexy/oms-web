@@ -2,6 +2,8 @@
 
 用户已认可本地视觉并授权部署。当前为部署进行中；实际生产切换、共享主机运行门和新恢复门尚未签收。下载入库、真实账号、OMS 对照和固定播放器 P/C 仍需真人验收。
 
+2026-10-08 最新实际完整运行 R10 在首次 BMS 个人 HTTP 319.090 ms 处失败，尚未进入 `api-core`、完整分页或持续阶段。正式 current 仍为 `d1f052b93a81-e6fdf914cb04`，新站未切换。失败现场已完整保全在服务器；F 已保存原报告、所有资源流和实际终态，完整压缩件仍因 F 空间不足待导出。BMS 统计的候选修订已通过软件回归，真实新包 / 运行 / 两空恢复与空间门仍待；细节取本文末段，不能将软件通过当成已部署。
+
 ## 不可变来源与数据
 
 - 新站从 OMS Web 当前已提交源码导出 Laravel / Blade / React / Less / Turbo 页面，附同一源码下载、Composer 锁定依赖和散列前端文件；不导出工作目录、环境、数据库或缓存。
@@ -122,3 +124,17 @@ F 的 `run-r9-actual` 保留原失败报告 / 日志、两个实际 loaded 终�
 下一轮将完整数学 / 目录 / 原生 / 独立灯与全部分页校验移到临时 `api-core` 子进程，完成后实际 wait / 回收；原断言、真实 HTTP、人数与数据不缩减。子复用 Context 的完整来源与归属边界，只借用经原 argv / cwd / 预算核对的父后端，不启停后端或前端。父子所有导入、来源复核、CPU、PSS、memory.current / peak 均在原 driver cgroup 及连续观察内；子报告完成、实际 exit0 与父资源门分别消费。分页汇总 / digest 于内层资源断言前保存；超时 / 异常先回收子，再关闭父拥有的后端。AST 与只读源码审查通过，实际共同峰值与完整运行仍待；不从进程拆分推导新门通过。
 
 两空恢复预备源按本轮准确 r6 / 工具 SHA 和独立 restore09 / export09 / retire09 / rest09 单元绑定，五份新源在 `recovery-protocol-r9`。AST 与只读审查通过，原 R7 / R8 预备源及所有 SHA 保留；成功 run 终态、ready / close、完整 F 证明后退役及原资源 / 空间门保持。实际恢复仍**未执行**，不能消费失败的 R8 或 R9 run；须待新完整运行通过及 F / 共享日志条件满足后，按新实际绑定修订恢复源再执行。
+
+R9 内存诊断后的实际合成状态已独立复核，来源 SHA `7e091ad7f3036414071d8fb1a940a303dccf027cf41f7188e6ba49bfc6eb0421`。完整 22 表对比只允许真实 `sessions / refresh_tokens / rate_limits` 变化，原账号 / 核心成绩 / 灯 / 社区 / schema / sequence 保持；实际停止、无持有者下的 `wal_checkpoint(TRUNCATE)` 返回 `[0,0,0]`，随后 immutable main 的完整指纹与 checkpoint 前逻辑状态相同，WAL 为空。原归档的 WAL / SHM 及归档后的保全控制文件分别登记，不虚称当前四文件仍与旧 archive 相同。该单元实际 exit0 / success，394.315 秒 / 1,503 帧，最低 MemAvailable 834,772,992 B / 磁盘 2,654,646,272 B；F 的 `post-diagnostic-reconciliation-r9` 保存所有原帧、SHA / 完整 gzip CRC、独立 ExecStart 和真实终态。
+
+第十轮在 `r7` 接续同一产品包 `2775faec4359-16d467e1a047`。停止后的合成数据同盘转移，dev / inode / size / SHA 在移动前后保持，无第二份 raw。准备、缓存、转移均取得真实 exit0 / success；缓存峰值 87,785,472 B。新工具独立输入位于 `/opt/oms-web/incoming/20261008-r10`，原 r4 同名脚本未覆盖；Web 检查器为 `f0ef69e60a2bf4b90c1eca461013316c4391c387` 的实际 blob / SHA `57b8fa540aea95f04a0823735c8b623545b7246e8ef8abb6e4935c9967f670ae`，probe 为 `a0bbfe23678b135864b79fb9bbd3dd1a5f976dba` / SHA `ee62d45390a587837baf42c5028dd37746c7e9db24629b143c35bd73d9a7e9c3`。实际原文件、注册和绑定在 F 的 `runtime-source-controls-r10-isolated-input`，源码提交、实际工具与产品包来源分开。
+
+R10 实际从 `2026-10-08T01:48:15.114141+00:00` 至 `01:48:57.193814+00:00`。七个独立来源范围检查完成后，首次 BMS 个人 HTTP 200 / 319.090 ms，超过 300 ms；单独度量在断言前已保存，整轮明确失败。九个后端均正常关闭；driver / owner 是实际 loaded / MainPID 0 / exit1，driver 峰值 252,366,848 B。F 的 `run-r10-actual` 保留原失败报告 / 日志、实际 ExecStart 和全部九段资源流共 53 帧，原 SHA / 行数 / 完整 gzip EOF / CRC 均通过，压缩合计 18,781 B。资源分项通过不能签延迟，mania / `api-core` / 原生整榜 / 分页 / burst / 1,800 秒 / 同出口与实际配额 / 两空恢复均未由本轮签收；`api-core` 子进程实际尚未运行，不宣称共同峰值已验证。
+
+R10 失败全件以 R11 实际保全：`stopped-staging-277-r11-complete.tar.gz`，105,232,733 B，SHA `93119c154254113a6b6cff7fbc5be0c34366585efdde0665d134c2d33ab27e12`，181 成员 SHA / 完整 gzip EOF / CRC、全 22 表 / integrity / FK 核验通过。source SHA `ff66981ffa2f71e466babc9be3ce1c76a1a2704ae9ab0b564a8c380ccb87092c`；controller / worker 均实际 loaded / MainPID 0 / exit0 / success，worker 280.307 秒 / 1,040 帧、最低 MemAvailable 778,362,880 B / 磁盘 2,545,750,016 B，128 MiB / 50% CPU / swap0。F 的 `r11-actual-preservation` 已保留 receipt、报告 / 日志、独立实际终态及所有原帧 SHA / 完整 gzip CRC，压缩 75,955 B；**完整 archive 尚未导出到 F**，不将服务器保全记成外存全件成功。停止后的 main 1,414,680,576 B / SHA `240bd1e68523336b47574a4bc0969367826bda6d44b61d2607c750d870461783`，WAL 实际 0 B。
+
+随后只读分段诊断以已保全、空 WAL 的合成 main 为输入，不读凭据、真实生产库或通用日志，不启动 PHP。source SHA `b0b645eb2caaa456154ef1342cc3317a9e3bc785a892e012f8eb72e9dbc96784`，实际有限单元 PID 2596473 / exit0 / success；F 的 `profile-cost-diagnostic-r10` 保留报告、实际终态及三个完整资源帧。OMS / ED / 两源 / 全源的 `totals / lanes` 全字段及 canonical JSON SHA 均与原记录计算一致；原最佳挑选为 48.312 / 1.194 / 34.975 / 86.994 ms，现有统计读取含名次为 8.092 / 1.499 / 3.081 / 61.955 ms。该 CPU50 的停止后只读测量不证明首次 HTTP、物理冷缓存或 300 ms 门；不能替代原 319.090 ms 失败，也不能据此断言唯一耗时原因。
+
+Backend 候选源码 `b879e42338183bed3a5b7de057817152a23de46c` 只将 BMS `performance` 在原 `public_population()` 一致快照内改用已维护的来源 / 条件统计，跨来源谱面仍按 MD5 去重，最佳家庭仍分别计数，名次用原方法；scope 贡献不匹配仍明确失败，不返回部分榜。mania 保留原最佳记录的真实 `passed`，个人最佳 / 最近记录及认证不改；没有新增表、索引、迁移、缓存或配额。F-backed Windows Python 3.12.14 / SQLite 3.53.1 下，针对性 87 项 / 21.86 秒与全服务 340 项 / 70.15 秒通过，JUnit `bms-statistics-{focused,full}-r2.xml`；新用例覆盖单 / 多 / 全 / 空来源的序列化等价、普通旧 SQLite writer 隐藏后的修复和部分统计缺行的明确失败。pytest 采用 `failed` 临时数据留存策略，实际结果与源 SHA 长期存 F；残留成功临时目录的显式清理被自动审批以 `blocked by policy` 拒绝，未执行，保留原目录继续非清理检查。本次不是客户端发行构建。候选尚未生成新运行包，必须另行绑定准确来源、实测真实主机、共同峰值与两空恢复。
+
+当前 F 仍仅约 33 MiB，专用 WSL 未重启，管理员压缩回执仍不存在；不能生成新的完整包或取得上述完整失败备份。共享主机空闲约 2.37 GiB，按最新压缩件、八日副本、额外恢复 raw 与 2 GiB 余量预估仍需约 4.11 GiB；实际恢复峰值尚未测得。F 释放与通用日志完整保全后限为 512 MiB 的选择仍待，尚未读取、导出或清理通用日志，资源门不降低。先前额外 npm 缓存回收的自动审批拒绝仍有效，没有执行或换路径绕过。正式服务、旧站、固定日备份 helper、全量公开投影与所有失败证据保持原状态。
