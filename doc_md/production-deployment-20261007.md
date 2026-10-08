@@ -102,3 +102,9 @@ F 盘四份已关闭失败轮的可再生成 raw 解包副本已定点退役，�
 两空恢复预备入口另保留为 `recovery-protocol-r8`，消费 `r5` 与本轮准确工具 SHA；在任何重启前读实际已关闭完整 run driver / 外部 owner 成功状态。ExecStart 不在原工具的属性列表内，预执行只读审查发现直接索引会失败，已改为恢复 owner 单独实测执行定义，原终态不补字段、运行中工具不改。正常退出仅接受原 PID / starttime 的 zombie 或确实消失，再等待 systemd 实际 MainPID 0，所有原终态 / 预算断言保持。五份修订源 AST 与只读审查通过，旧源和修订前 receipt 保留；两次恢复仍**未执行**，F 空间和共享日志决策仍待。
 
 当前未宣称部署成功。切换后应登记“已部署待验收”，给出正式首页、谱面、个人、来源筛选与客户端账号对照路径；保留公开发行版尚未包含 IR 的说明。P/C 完整闭环仍需真实播放器交分与原生读榜及指定玩法矩阵的人工作证。
+
+第八失败轮现已完整保存在服务器 `stopped-staging-277-r9-complete.tar.gz`，106,208,929 B，SHA `73d818f886c7c8ed55e2e3aa5007ebf9035bacfa49f9387a602bfd8b0f43a83b`；实际 128 MiB / 50% CPU worker 的 275.180 秒资源观察通过，最低 MemAvailable 787,116,032 B、最低磁盘 2,811,510,784 B。完整 171 成员 SHA / gzip EOF 和 CRC、全 22 表、integrity / FK 已实测。新 controller 只接受原 PID / starttime 的正常退出状态，随后等待真实 MainPID 0；本次 controller / worker 均实际成功终态，原 R7 保全 observer 失败与 R8 run 失败保持。F 的 `run-r8-actual` 已保留本次完整归档 receipt 与最终控制报告 / 日志，完整 gzip 仍待 F 空间，不记作已导出。
+
+第九轮在新 `r6` 接续同一候选与四个合成文件，准备 / 缓存与同盘转移已实际完成，缓存峰值 54,837,248 B；四个保全 / 准备 / 转移有限单元的实际 loaded 成功终态在 `staging-preparation-r9`。新检查入口从 Web `1a9d8d23bcc02e6e17cc1117cecf6a6a86e463ae` 的 Git blob 导出，SHA `a2e00a461f2705e67ebebf566eec87ac6601d5fcd4382e3bd71290ac0e89ebb1`，probe 仍为 `6fb0c2b7` / `aaa551ab…`；已按 binding 明确复制到 r6 后注册 native11，真实 driver / 外部 owner 已启动，完整门尚未结束。新控制源在 `runtime-source-controls-r9`；服务、包和预算不改，旧 r5 工具字节及失败报告不改。
+
+两空恢复预备源按本轮准确 r6 / 工具 SHA 和独立 restore09 / export09 / retire09 / rest09 单元绑定，五份新源在 `recovery-protocol-r9`。AST 与只读审查通过，原 R7 / R8 预备源及所有 SHA 保留；成功 run 终态、ready / close、完整 F 证明后退役及原资源 / 空间门保持。实际恢复仍**未执行**，不能消费失败的 R8 run；第九轮实际运行通过及 F / 共享日志条件满足前不启动恢复。
