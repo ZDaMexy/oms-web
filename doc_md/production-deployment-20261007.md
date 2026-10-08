@@ -1,6 +1,6 @@
 # 原版 osu-web 生产迁移：2026-10-07
 
-用户已认可本地视觉并授权部署。当前为部署进行中；共享主机完整运行门和第一轮空目录恢复已通过，第二轮原始还原完成但完整网页 / 全榜补验尚未通过，实际生产尚未切换。下载入库、真实账号、OMS 对照和固定播放器 P/C 仍需真人验收。
+用户已认可本地视觉并授权部署。当前为部署进行中；共享主机完整运行、两次实际空目录恢复、完整 F 保全及八份备份 / 最大 raw / 额外 2 GiB 空间门均已通过，实际生产尚未切换。固定正式备份本身成功且已完整 F 核验，但其首个观察程序启动即失败，完整运行观察仍须补验。下载入库、真实账号、OMS 对照和固定播放器 P/C 仍需真人验收。本文后续各次失败及旧待签状态保留原时点，当前结论取末段。
 
 2026-10-08 最新已结束运行为 R14，UTC `05:55:30.041243` 至 `06:39:18.348420`；原新候选 `b879e4233818-b0feceae22e4`、实际 R11 安装与 package SHA `01b2b54a…` 保持。七来源、首次个人、目录、四完整原生与独立灯、全部分页、burst、实际 1,800 秒持续、同出口登录 / 限流、真实 peer 配额和结束投影全部通过，driver / owner 均真实 loaded / MainPID 0 / exit0 / success，`staging_host_gate=true`。全部 29 资源流 / 10,462 原帧、SHA / 行数 / 完整 gzip EOF / CRC 与实际终态已独立保存至 F；最低可用内存 588,206,080 B（560.957 MiB），swap / OOM 均零。正式 current 仍为 `d1f052b93a81-e6fdf914cb04`，新站未切换；本轮成功不重标 R11～R13 失败，也不代签两新空恢复、八对 / raw / 2 GiB 预算或真人 P/C。准确分项及本轮完整保全见本文末段。
 
@@ -256,3 +256,13 @@ R2 只重新导出同一固定 cut，没有再暂停、旋转或重新生成原�
 原固定日志 cut 的 46 件已完整 F 核验后，追加准确清理的四件旧 closed journal 原终态保持；再追加三件也已实际完成，源 `9e1bbc17…`、有限 worker 成功、全部 10 帧留 F `additional-three-closed-journals-actual-r3`。三件实测净增可用空间 148500480 B，结束实余 3214774272 B；这一实际值包含尚在盘的第二恢复与共享主机其他活动，不当作完整恢复预算通过。default480 + 既有 OMS32 MiB 的合计 512 MiB 保留设置保持。
 
 正式切换前新鲜配置已完整保存并逐件 size / SHA 核验至受保护 F `production-before-switch-r4`：11 件实际 OMS / 个人站 / shared Nginx 规则、IR / catalog / fixed backup / timer unit、旧真实 format3 内联 files manifest 及固定维护源码。旧 manifest 原样保全，不臆测 runtime-files.json 必然存在。8081 / 8082 健康均实际 200，timer 仍 enabled / active / waiting，尚未暂停、未启动本轮正式备份、未切 current。准备入口的旧 ACL shell / 错误 manifest 假定各自原件保留，不作为完成证明。正式备份观察源 `c98a4917…` 与第二轮导出收尾源 `81c6e8b7…` 只读复核及本地 AST 已过，尚未实际执行；终态可得性、真实当前 InvocationID / PID 的完整流、全件 gzip / raw / 22 表及 worker 独立期限仍须实测。
+
+## 两次恢复完成与正式备份接续
+
+2026-10-08 第二轮独立补验 r5 于 UTC `11:10:46.787116` 至 `11:21:54.424692` 实际完成，原 PID 2884955、loaded / MainPID0 / exit0 / success。完整 29,250 人的 1,464 页全部 200，最高 124.325 ms；四次完整原生 29,204 行为 9,261.613 / 9,026.690 / 8,764.532 / 8,134.590 ms。99 次正常续期、已撤销桌面仍 401、原生旧身份、隐藏及密钥边界与完整 22 表对照通过；只允许真实会话、配额变化。全部 10 资源流 / 2,360 原帧及终态留 F `second-restore-completion-r5-actual`。原 R14 / r1～r4 的失败不改。
+
+同一第二恢复的有限导出 / 退役收尾 r3 于 UTC `11:23:39` 实际启动并成功，源 `3b26991d…`，父 PID 2892020 与两个独立 worker 均 loaded / PID0 / exit0 / success，128 MiB / CPU50% / swap0。11,550 项完整 archive 为 168,063,778 B，SHA `314c1b4b58f5df91eea07e73c9b08059f8e03503ceb3e5ca461de7f3ce44b1ac`；F `empty-runtime-r14-2` 完整 gzip EOF / CRC、全部成员 size / SHA 与 snapshot 对均核验，raw / WAL / SHM 字节等于已测完整 22 表停库组合。回执如实记 `local_SQLite_reread_executed=false`，不把字节继承证明说成本地重读。F 完整回执送回后只精确退役该第二恢复 raw / snapshot 两件，原库未动；六资源流 / 3,327 帧、真实终态及导出证明留 `second-finalization-r3-actual`。第一恢复原导出 / 退役两流的遗漏也独立补收共 961 原帧，不伪造原回执覆盖。
+
+汇总实际验收源 `eb247097…` 于 UTC `11:36:56` 通过：`recovery-protocol-r14/actual-two-restores-capacity-r1.json` 逐件绑定两完整 F 恢复及全部 81 资源窗口 / 29,724 原帧。最大 main + WAL 1,422,161,928 B，八对压缩件 / sidecar 加 2 GiB 的保守底线 2,980,222,456 B；实测终态空闲 4,661,727,232 B，合计所需 4,402,384,384 B、余量 259,342,848 B。恢复全窗口最低可用内存 622,678,016 B，swap / OOM 零；原恢复空间最低只高于底线 6,162,952 B，如实保留，不四舍五入成宽裕。这一门通过不等于生产或真人 P/C。
+
+UTC `11:39:04` 原 timer 在核原配置不漂移、旧 worker 已成功关闭后实际暂停，enabled 保持，回执 `production-release-controls-r1/actual-installed-timer-pause-r1.json`；发布结束须恢复 active / waiting。R4 首次本地 ACL 核验将开发存储输出读为 JSON 而失败，尚未 SSH；R5 文件名绑定仍旧而失败，也未 dispatch。R6 已实际 dispatch 一次：固定 `oms-ir-backup.service` 的 InvocationID `a43659f4de76494da11ece2e89b47cc8` / PID 2902914 成功关闭，但 observer 在启动 61 ms 后因 bash 身份尚未通过而失败，原七帧均旧 invocation，不补签完整观察。完整原失败保全于 `fixed-production-backup-pre-switch-680f098971de`；随后仅从这次精确 invocation 完成行取得实际 `daily-20261008T114256Z.db.gz` 对并完整 F 核验 gzip / raw SHA、integrity / FK、22 表及当时真实 current 绑定，留 `fixed-production-backup-pre-switch-680f098971de-completed-pair-r1`。原 observer false 与正式备份门 false 保持，补验需有限等待实际 oneshot 启动身份和完整同 invocation / PID / cgroup 观察，不修改固定 helper、unit 或数据。正式 current 仍 `d1f052b93a81-e6fdf914cb04`。
