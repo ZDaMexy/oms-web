@@ -2,11 +2,12 @@
 
 OMS 的 BMS / mania 玩家网站，从 [ppy/osu-web](https://github.com/ppy/osu-web) 原项目接续，保留上游历史和 Laravel / Blade / React / Less / Turbo 页面组织。现 OMS 服务继续维护账号、成绩、目录与社区。
 
-2026-10-08 原版网站已部署，当前为**已部署待验收**。玩家可在[官网](https://oms.zdamexy.work/)查看新闻、浏览谱面、筛选跨来源榜，使用同一套OMS账号的个人页与社区。共享主机运行 / 两恢复 / 容量、同库回退、发布前后正式备份与公网核验已过，来源与维护取[生产维护](doc_md/production-maintenance.md)。真实下载入库、账号 / 客户端及指定播放器 P/C 仍待验收。没有 PP、地力、聊天、在线状态、支付或谱包托管。
+2026-10-08 原版[官网](https://oms.zdamexy.work/)已上线，当前为**已部署待验收**。本地视觉已获认可；玩家范围取 [OMS.md](OMS.md)，线上真人验收、准确运行来源与维护取[生产维护](doc_md/production-maintenance.md)。
 
 - [来源与状态](OMS.md)
 - [本地启动、验收与恢复](doc_md/local-use-and-recovery.md)
 - [线上维护、备份、回退与真人验收](doc_md/production-maintenance.md)
+- [新闻维护](doc_md/production-maintenance.md#新闻与内容维护)
 - [迁移与实际证据](doc_md/oms-web-migration-20261007.md)
 - [协作入口](AGENTS.md)
 

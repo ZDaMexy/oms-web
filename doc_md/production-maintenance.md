@@ -21,6 +21,14 @@
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
 
+## 新闻与内容维护
+
+新闻内容只维护 [resources/oms/news.json](../resources/oms/news.json)。[HomeController](../app/Http/Controllers/HomeController.php) 的 `newsPosts()` 读取这一个文件，按 `published_at` 降序提供给首页、`/news` 和 `/news/{slug}`；正文由[新闻模板](../resources/views/news/show.blade.php)显示。旧静态仓的 `src/oms/news.ts` 属于旧设计来源。
+
+保持实际 JSON 结构：文章包含 `slug`、`published_at`、`title`、`image`、`excerpt` 和 `body`；正文段落使用 `text`，可选 `heading` 与 `links`，链接使用 `label` / `href`。公开固定地址由 `slug` 决定，现有地址和真实发布日期保留。发布或试运行范围写在真实标题、摘要和正文中，不增加假新闻、玩家活动或已完成的真人验收；公开 20260626 与开发版 IR 的边界继续保留。
+
+新闻随源码提交和不可变发布包上线，网页没有新闻编辑入口。更新后检查首页摘要、新闻列表、固定文章的日期 / 正文 / 链接以及普通刷新；维护者不能直接修改已发布只读包，也不能把只改本地文件记成已上线。对应运行来源、源码下载和实际发布结果仍按本文件及[生产记录](production-deployment-20261007.md)分别登记。
+
 ## 运行与资源核对
 
 | 单元 | 固定预算和行为 |
