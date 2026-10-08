@@ -2,10 +2,11 @@
 
 OMS 的 BMS / mania 玩家网站，从 [ppy/osu-web](https://github.com/ppy/osu-web) 原项目接续，保留上游历史和 Laravel / Blade / React / Less / Turbo 页面组织。现 OMS 服务继续维护账号、成绩、目录与社区。
 
-2026-10-07 当前为**本地视觉已确认，生产部署进行中**。用户反馈“效果很好，那部署？”，认可本地效果并授权部署；新站生产切换及运行、资源、恢复与公开核验尚未记录完成。玩家可在 [本地入口](http://127.0.0.1:8090/) 查看新闻、浏览谱面、筛选跨来源榜、登录查看个人记录并使用社区。真实下载入库、账号 / 客户端及指定播放器 P/C 仍待验收。没有 PP、地力、聊天、在线状态、支付或谱包托管。
+2026-10-08 原版网站已部署，当前为**已部署待验收**。玩家可在[官网](https://oms.zdamexy.work/)查看新闻、浏览谱面、筛选跨来源榜，使用同一套OMS账号的个人页与社区。共享主机运行 / 两恢复 / 容量、同库回退、发布前后正式备份与公网核验已过，来源与维护取[生产维护](doc_md/production-maintenance.md)。真实下载入库、账号 / 客户端及指定播放器 P/C 仍待验收。没有 PP、地力、聊天、在线状态、支付或谱包托管。
 
 - [来源与状态](OMS.md)
 - [本地启动、验收与恢复](doc_md/local-use-and-recovery.md)
+- [线上维护、备份、回退与真人验收](doc_md/production-maintenance.md)
 - [迁移与实际证据](doc_md/oms-web-migration-20261007.md)
 - [协作入口](AGENTS.md)
 
@@ -13,4 +14,4 @@ OMS 的 BMS / mania 玩家网站，从 [ppy/osu-web](https://github.com/ppy/osu-
 
 初始上游为 `2c596022a1345fbed288978e7fa5304df0359f50`。原上游说明逐字节保存于 [UPSTREAM_README.md](UPSTREAM_README.md)，仅作原项目来源；其安装及部署步骤不适用于本裁剪版本。
 
-源码沿 [GNU AGPL v3](LICENCE) 提供，保留原作者归属。当前字体为 Inter 与 Font Awesome；实际依赖、许可和修改说明见 [源码与许可页](http://127.0.0.1:8090/credits)。本项目与 osu! / ppy 的官方服务无隶属关系。
+源码沿 [GNU AGPL v3](LICENCE) 提供，保留原作者归属。当前字体为 Inter 与 Font Awesome；实际依赖、许可和修改说明见[源码与许可页](https://oms.zdamexy.work/credits)。本项目与 osu! / ppy 的官方服务无隶属关系。

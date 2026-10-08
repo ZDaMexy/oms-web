@@ -1,8 +1,8 @@
 # 原版 osu-web 生产迁移：2026-10-07
 
-用户已认可本地视觉并授权部署。当前为部署进行中；共享主机完整运行、两次实际空目录恢复、完整 F 保全及八份备份 / 最大 raw / 额外 2 GiB 空间门均已通过，实际生产尚未切换。固定正式备份本身成功且已完整 F 核验，但其首个观察程序启动即失败，完整运行观察仍须补验。下载入库、真实账号、OMS 对照和固定播放器 P/C 仍需真人验收。本文后续各次失败及旧待签状态保留原时点，当前结论取末段。
+原版 osu-web 已实际部署，当前状态为 **已部署待验收**。2026-10-08 20:35:11 CST 最终切入 `b879e4233818-b0feceae22e4` / schema3；共享主机完整运行、两次实际空目录恢复、完整 F 保全、八对 / 最大 raw / 额外 2 GiB 空间门、发布前后正式备份及新→旧→新同库回退均通过。公网页面、真实目录 / 参考混榜 / 公开个人、插件 / 源码下载和缓存核验通过；原 timer 已恢复 enabled / active / waiting。下载入库、真实账号 / 密钥、OMS 对照和固定播放器 P/C 仍需真人验收。维护、备份与回退取[维护说明](production-maintenance.md)，本轮发布和失败取[正式发布与收尾](#正式发布与收尾)。
 
-2026-10-08 最新已结束运行为 R14，UTC `05:55:30.041243` 至 `06:39:18.348420`；原新候选 `b879e4233818-b0feceae22e4`、实际 R11 安装与 package SHA `01b2b54a…` 保持。七来源、首次个人、目录、四完整原生与独立灯、全部分页、burst、实际 1,800 秒持续、同出口登录 / 限流、真实 peer 配额和结束投影全部通过，driver / owner 均真实 loaded / MainPID 0 / exit0 / success，`staging_host_gate=true`。全部 29 资源流 / 10,462 原帧、SHA / 行数 / 完整 gzip EOF / CRC 与实际终态已独立保存至 F；最低可用内存 588,206,080 B（560.957 MiB），swap / OOM 均零。正式 current 仍为 `d1f052b93a81-e6fdf914cb04`，新站未切换；本轮成功不重标 R11～R13 失败，也不代签两新空恢复、八对 / raw / 2 GiB 预算或真人 P/C。准确分项及本轮完整保全见本文末段。
+运行来源仍为 Backend `b879e42338183bed3a5b7de057817152a23de46c`、Web `b0feceae22e4af55dc9c974f39e4b5f40a02bfd1`，package SHA `01b2b54ac25cb6dce57dba5797bcbfaadc124f0bf3ef0d85fb73c971dd039568`。后续文档与外置检查工具提交不是运行版本。下文按原时点保留各轮进行中状态和真实失败；新结论不重标旧 false，不代签真人 P/C。
 
 ## 不可变来源与数据
 
@@ -266,3 +266,50 @@ R2 只重新导出同一固定 cut，没有再暂停、旋转或重新生成原�
 汇总实际验收源 `eb247097…` 于 UTC `11:36:56` 通过：`recovery-protocol-r14/actual-two-restores-capacity-r1.json` 逐件绑定两完整 F 恢复及全部 81 资源窗口 / 29,724 原帧。最大 main + WAL 1,422,161,928 B，八对压缩件 / sidecar 加 2 GiB 的保守底线 2,980,222,456 B；实测终态空闲 4,661,727,232 B，合计所需 4,402,384,384 B、余量 259,342,848 B。恢复全窗口最低可用内存 622,678,016 B，swap / OOM 零；原恢复空间最低只高于底线 6,162,952 B，如实保留，不四舍五入成宽裕。这一门通过不等于生产或真人 P/C。
 
 UTC `11:39:04` 原 timer 在核原配置不漂移、旧 worker 已成功关闭后实际暂停，enabled 保持，回执 `production-release-controls-r1/actual-installed-timer-pause-r1.json`；发布结束须恢复 active / waiting。R4 首次本地 ACL 核验将开发存储输出读为 JSON 而失败，尚未 SSH；R5 文件名绑定仍旧而失败，也未 dispatch。R6 已实际 dispatch 一次：固定 `oms-ir-backup.service` 的 InvocationID `a43659f4de76494da11ece2e89b47cc8` / PID 2902914 成功关闭，但 observer 在启动 61 ms 后因 bash 身份尚未通过而失败，原七帧均旧 invocation，不补签完整观察。完整原失败保全于 `fixed-production-backup-pre-switch-680f098971de`；随后仅从这次精确 invocation 完成行取得实际 `daily-20261008T114256Z.db.gz` 对并完整 F 核验 gzip / raw SHA、integrity / FK、22 表及当时真实 current 绑定，留 `fixed-production-backup-pre-switch-680f098971de-completed-pair-r1`。原 observer false 与正式备份门 false 保持，补验需有限等待实际 oneshot 启动身份和完整同 invocation / PID / cgroup 观察，不修改固定 helper、unit 或数据。正式 current 仍 `d1f052b93a81-e6fdf914cb04`。
+
+## 正式发布与收尾
+
+2026-10-08 原版网站已实际上线，最终 forward 于UTC `12:35:06.934686` 至 `12:35:11.684265` 成功；当前 `b879e4233818-b0feceae22e4` / schema3，状态 **已部署待验收**。真实库同一dev / inode265517，22表及原定义保持，正常启动只增加此前已采用的 `scores_directory` / `score_groups_public_directory` 两条普通目录索引；没有生产raw恢复、迁入合成账号、重造UUID或旧身份认领。catalog原PID1862556未停止，三个源码文件与新包一致；固定维护包D1/22不改。
+
+### 固定正式备份观察完成
+
+R7观察源 SHA `97a0d2a727a490ab1bd4020d428cc8e5fef2e0c3c02038eb33301e1d65bfb021` 经AST / 只读复核后实际执行。oneshot启动最多30秒等待，同InvocationID / ExecMainPID、实际cgroup成员及原argv / cwd / starttime须精确符合；每个候选身份均原样保存，ControlPID或MainPID只在真实同实例内接受。完整流与最终同实例终态分别核对，不用后来成功补帧，不放宽固定128 MiB / CPU50% / swap0。
+
+| 正式对 | 实际身份及 F 目录 | 完整运行证据 |
+| --- | --- | --- |
+| 发布前 `daily-20261008T120531Z.db.gz` / 同名JSON | PID2913687 / InvocationID `cfe2f25eeb744c9dafebe84fc9cc842e`；`fixed-production-backup-pre-switch-f3f004b6adaa` | 109原帧 / 104匹配live；最低MemAvailable843,034,624 B / 空闲4,659,793,920 B；真实终态峰134,217,728 B / exit0 / success |
+| 发布后 `daily-20261008T124145Z.db.gz` / 同名JSON | PID2940634 / InvocationID `1be3e1a9061e4baa8cc94dc1b1217210`；`fixed-production-backup-post-switch-7be5768366c7` | 113原帧 / 107匹配live；最低MemAvailable845,819,904 B / 空闲4,654,452,736 B；真实终态峰134,217,728 B / exit0 / success |
+
+两完整gzip / sidecar在F三ACE受保护目录逐件字节 / SHA、完整gzip EOF / CRC、raw SHA、integrity / FK、全部22表 / sequence / 索引 / trigger及真实运行manifest绑定通过；raw分别233,472 / 241,664 B。业务库大小不冒充全量公开投影大小。原fixed helper / unit / timer配置保持；原R4 / R5前置拒绝、R6 observer false与独立完成对保全不改。
+
+### 正式准备、首次失败与同库回退
+
+prepare R2源 `8c1b38e6…` / 绑定 `633d0281…` 于UTC12:20实际通过，owner PID2921947、40完整原帧、真实退出成功 / 峰118,153,216 B。正式cache正确在 `/app` 与公开URL下生成；公开缓存父目录明确0755可遍历，private bootstrap / storage保持0700，不将0077私有进程掩码沿用为不可访问的公开父目录。正式PHP / cache unit以0644安装，原主IR / catalog / fixed backup保持。CLI cache真实128 MiB / CPU50% / swap0及终态，F全部配置 / 来源 / 原件绑定保持。
+
+R3源 `f8e6286b…` 的第一次forward实际失败，F `production-native-forward-r1-actual` 的false保持。Nginx检查与直接reload返回0之后立即HTTPS读取仍落在旧worker：主页404，旧路径还返回旧slash规则。候选正常启动已增加两条批准目录索引；自动恢复正确停止候选主IR与PHP，但原严格schema全等检查拒绝这两条已证明兼容索引，使恢复停在服务关闭，造成短暂中断。原响应、全部资源、错误及schema差异保留，不把reload异步或旧守卫失败写成生产回退成功。
+
+独立实际恢复只接受原全部schema定义加精确两条批准索引，恢复F原配对路由、current至D1/e6、旧主IR健康200及宝塔正式reload，新PHP停止 / disabled；同一库保留，不删除索引或恢复旧raw。实际owner PID2929173 loaded / MainPID0 / exit0 / success，完整14件源 / 报告 / 步骤日志与真实终态已独立收取到F `failure-recovery-r1-actual`。该收取明确没有完整资源采样，不伪签资源门，也不重跑已结束恢复。
+
+修订R4只在此真实故障范围内处理：停止主IR即记发布变动、任何schema守卫之前停止候选主IR / PHP；兼容检查保留原全部定义，最多允许这两索引；宝塔用实际 `/etc/init.d/nginx reload`，随后30秒有界检查真实HTTPS就绪并留每次尝试。源 SHA `ce619c6476c4f004429328ec6ffdd133c2288749aadffc0037f8d1e32b3cb236`，绑定 SHA `3e54c957fd649befc8ee4c046f5610a7a00574f5a4c9ea1c21c7018ed0f0d973`，不修改B879/B0不可变产品字节。
+
+| 实际阶段 | UTC起止 / owner PID | 完整 F 核验 |
+| --- | --- | --- |
+| 首次成功forward | 12:31:37.432068–12:31:42.243867 / 2930586 | `production-native-forward-r2-actual`，13原帧，实际终态峰23,584,768 B |
+| 旧源码 / 旧路由同库回退 | 12:33:15.558872–12:33:19.346074 / 2933321 | `production-native-rollback-r1-actual`，9原帧，实际终态峰22,970,368 B；旧主页完整3023 B / SHA `5be0319667268160bbfc2a9df46fa176a57491276bca590f3e0c2e48508a5d86` 等于原manifest |
+| 最终恢复新站 | 12:35:06.934686–12:35:11.684265 / 2936103 | `production-native-forward-r3-actual`，13原帧，实际终态峰22,413,312 B |
+
+三次均真实loaded / MainPID0 / exit0 / success、128 MiB / CPU50% / swap0；原全部帧 / SHA / 行数及实际terminal独立核验。最终forward最低可用内存797,302,784 B / 空闲4,657,381,376 B，swap / OOM零。七页面实际200 / 重新验证缓存 / 安全头、八原插件完整字节、个人站原完整body SHA及固定helper / catalog均核对；每次保留同一live，不回灌旧数据。回退只签本次schema3与两索引范围，不宣称任意历史源码兼容。
+
+### 公网核验、timer 与最终来源保全
+
+公网R1实际207检查 / 562请求，196通过；11失败来自检查器把静态Blade页当IR React JSON、或把PHP空数组强当对象。R2依真实controller / action / section、原DOM、正文 / 新闻、完整导航与账号空数组核对，原件另留；18页检查等仍因root href实际无尾斜杠误报，且Ginger一次实际502 / 98 B / 3,734 ms。后续独立Ginger查询真实200 / 7,394 ms，不改原失败或推定其未记录错误原因。
+
+R3只将空root path与 `/` 视为等价，仍保留其他path / 查询 / fragment及BMS / mania菜单参数；Ginger仍要求本次实际200、没有自动重试或换源补签，真实API错误先落公开code / message再判断。冻结源 SHA `967dbe0cf3aea5da20cf0f5a897c37ec686266d9e12fb135abf284f3727ea738` 经ROOT AST / SHA / diff核对后，于UTC `12:56:46.767101` 至 `12:58:47.032102` 实际 **207检查 / 564请求全部通过**，报告 `production-public-smoke-r3-actual/public-smoke.json`。这只签实际匿名公开HTTP，不签真人、浏览器、恢复或完整资源门。
+
+覆盖原首页 / 两篇真实新闻全文、独立下载三步骤 / 帮助 / 许可、谱面目录与真实MD5详情 / 来源选择、三个真实下载源目录 / 详情、真实公开OMS ID1个人页、BMS / mania榜和实际空社区、匿名me401。来源筛选仍作用整榜，灯 / 人数 / 名次 / 条件 / 分页原合同保持。八原插件完整SHA及range206、对应AGPL源码整个gzip EOF / CRC和每成员绑定、164自站资源完整runtime-map字节与缓存、普通条件HTTP刷新两次200及整HTML相同、原个人站和资源、双站TLS及静态ACME404通过。未跟随下载谱包，未生成帐号 / 帖子 / mania玩家假数据；静态ACME404不声称实际续签已发生。
+
+原timer于UTC12:44:45实际恢复 enabled / active / waiting，原04:15 CST / RandomizedDelay300 / Persistent配置和固定备份unit SHA未变；当时NextElapse为2026-10-09 04:16:57 CST，完整回执 `production-finish-r1/actual-timer-restored-and-current.json`。最后只读收取于UTC `13:02:46.039604`，actual current仍B879/B0，主IR / catalog / PHP running、原timer waiting、备份实际PID2940634已成功关闭。11件新实际配置完整SHA / size / 身份及三ACE私有F保全在 `production-after-switch-configs-r1/independent-final-production-state.json`；本次收取不修改主机或代签资源窗口。
+
+最终瞬时MemAvailable868,077,568 B（约828 MiB）、root空闲4,645,654,528 B（约4.33 GiB）、swap0，loadavg0.07 / 0.03 / 0.02。真实阶段门取上方完整窗口，瞬时值不代替它们。F原旧路由文件为 `production-before-switch-r4/08-39.105.55.78.conf` / `09-oms-ir.conf`，新路由 / PHP / cache / 主IR / catalog / fixed backup / timer及default journal设置另完整保全，维护步骤取[当前维护](production-maintenance.md)。系统日志原件完整F保全与default480＋OMS32 MiB合计512 MiB限制保持，不扫描母库或其他私有数据，不增服务器旧设计备份。
+
+线上浏览器初次创建30秒超时；inventory实际取得标题“首页 | OMS”的已存在tab，但绑定读取再次30秒超时，未取得线上DOM / 截图。工具结果保留F `production-browser-observation-r1.json`，不把tab标题 / HTTP / 本地截图代签线上视觉、普通浏览器刷新、点击、真实登录 / 密钥或下载入库。用户本地视觉认可保持原范围；接续[真人路径](production-maintenance.md#真人验收)，先OMS＋全量公开历史＋ED7K的P，再逐格完成指定宿主和玩法矩阵C。当前结论仅 **已部署待验收**，P/C、非调试客户端和原发行 / 设备 / 皮肤门均未关闭。
