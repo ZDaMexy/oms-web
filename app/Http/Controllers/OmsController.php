@@ -170,7 +170,7 @@ class OmsController extends Controller
     public function ir(Request $request): View
     {
         $context = $this->queryInput($request, ['q' => '', 'page' => 1, 'limit' => 20], [
-            'q', 'page', 'limit', 'md5', 'sources', 'mode', 'condition', 'table', 'initial',
+            'q', 'page', 'limit', 'md5', 'sources', 'mode', 'condition', 'table', 'initial', 'level',
         ]);
         if (isset($context['md5'])) {
             abort_unless(preg_match('/^[0-9a-fA-F]{32}$/D', $context['md5']) === 1, 422, '谱面 MD5 不符合约定。');
@@ -178,7 +178,7 @@ class OmsController extends Controller
             $context['ruleset'] = 'bms';
             $context['ir_only'] = true;
             if (isset($context['table'])) {
-                $selected = $this->difficultyTables->chart($context['table'], $context['md5']);
+                $selected = $this->difficultyTables->chart($context);
 
                 return $this->page('beatmapsets.show', 'beatmapset', [
                     'context' => $context,
@@ -201,7 +201,7 @@ class OmsController extends Controller
 
     public function difficultyTable(Request $request, string $table): JsonResponse
     {
-        $context = $this->queryInput($request, ['q' => '', 'page' => 1, 'initial' => ''], ['q', 'page', 'initial']);
+        $context = $this->queryInput($request, ['q' => '', 'page' => 1, 'initial' => ''], ['q', 'page', 'initial', 'level']);
         $context['table'] = $table;
 
         return response()->json($this->difficultyTables->charts($context), 200, ['Cache-Control' => 'no-store']);

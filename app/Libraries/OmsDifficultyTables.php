@@ -41,9 +41,35 @@ class OmsDifficultyTables
         // Snapshots are sorted across the complete table before filtering or
         // paging. No score population, source eligibility or rank is inferred.
         $items = $this->read($table['id'])['items'];
+        $levels = [];
+        foreach ($items as $item) {
+            $key = 'level:'.($item['level'] ?? '');
+            $levels[$key] ??= ['value' => $item['level'], 'count' => 0];
+            $levels[$key]['count']++;
+        }
+        $levels = array_values($levels);
+        usort($levels, static function (array $a, array $b): int {
+            if ($a['value'] === null || $b['value'] === null) {
+                return ($a['value'] === null) <=> ($b['value'] === null);
+            }
+            if (is_numeric($a['value']) && is_numeric($b['value'])) {
+                $comparison = (float) $a['value'] <=> (float) $b['value'];
+                if ($comparison !== 0) {
+                    return $comparison;
+                }
+            }
+
+            return strnatcmp($a['value'], $b['value']);
+        });
+        $filterLevel = array_key_exists('level', $context);
+        $level = ($context['level'] ?? '') === '' ? null : $context['level'];
+        abort_unless(!$filterLevel || in_array($level, array_column($levels, 'value'), true), 422);
         $matches = [];
         $initials = [];
         foreach ($items as $item) {
+            if ($filterLevel && $item['level'] !== $level) {
+                continue;
+            }
             if ($query !== '' && mb_stripos(($item['title'] ?? '').' '.($item['artist'] ?? '').' '.($item['md5'] ?? ''), $query) === false) {
                 continue;
             }
@@ -60,15 +86,17 @@ class OmsDifficultyTables
             'limit' => 50,
             'total' => count($matches),
             'initial_counts' => $initials,
+            'levels' => $levels,
         ];
     }
 
-    public function chart(string $table, string $md5): array
+    public function chart(array $context): array
     {
-        $metadata = $this->table($table);
+        $metadata = $this->table($context['table']);
         abort_unless($metadata['status'] === 'ok', 503);
         foreach ($this->read($metadata['id'])['items'] as $item) {
-            if ($item['md5'] === $md5) {
+            if ($item['md5'] === $context['md5']
+                && (!array_key_exists('level', $context) || $item['level'] === ($context['level'] === '' ? null : $context['level']))) {
                 return ['table' => $metadata, 'chart' => $item];
             }
         }

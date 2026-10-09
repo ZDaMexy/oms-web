@@ -25,8 +25,14 @@ export default function Main(_props: {container:HTMLElement}) {
   const endpoint=mode==='bms'&&md5?'/api/ir/v1/catalog/bms/'+md5+(sha256==null?'':'?'+new URLSearchParams({sha256})):mode==='mania'&&sid?'/api/ir/v1/catalog/mania/sets/'+sid:null;
   const metadata=useApi<BmsDetail|ManiaDetail>(!irOnly&&initial.catalog==null?endpoint:null);
   const detail=initial.catalog??metadata.data;
+  const tableQuery=new URLSearchParams();
+  if(initial.difficulty_table!=null) {
+    tableQuery.set('table',initial.difficulty_table.id);
+    const level=query.get('level');
+    if(level!=null) tableQuery.set('level',level);
+  }
   return <div className='osu-layout osu-layout--full'>
-    <HeaderV4 theme='beatmapset' links={[{title:irOnly?'谱面榜':'谱面',url:irOnly?'/ir'+(initial.difficulty_table==null?'':'?'+new URLSearchParams({table:initial.difficulty_table.id})):'/beatmapsets'},{title:'详情',url:location.pathname+location.search,active:true}]}/>
+    <HeaderV4 theme='beatmapset' links={[{title:irOnly?'谱面榜':'谱面',url:irOnly?'/ir'+(initial.difficulty_table==null?'':'?'+tableQuery):'/beatmapsets'},{title:'详情',url:location.pathname+location.search,active:true}]}/>
     <div className='osu-page osu-page--generic-compact'>
       {irOnly?tableChart!=null?<>
         <IrHeader detail={{ruleset:'bms',chart:{md5:tableChart.md5,sha256:null,title:tableChart.title,artist:tableChart.artist,difficulty:tableChart.level==null?null:(initial.difficulty_table?.symbol??'')+tableChart.level}}}/>
