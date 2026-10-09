@@ -118,6 +118,13 @@ location = /site.webmanifest {{
     add_header Cache-Control no-cache always;
     {headers}
 }}
+location = /omsir-openlr2.example.json {{
+    root {release}/web/public;
+    try_files $uri =404;
+    default_type application/json;
+    add_header Cache-Control no-cache always;
+    {headers}
+}}
 location = /oms-web-source.tar.gz {{
     root {release}/web/public;
     try_files $uri =404;

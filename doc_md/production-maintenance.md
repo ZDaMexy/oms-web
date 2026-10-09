@@ -1,5 +1,7 @@
 # OMS 原版 osu-web 试运行维护
 
+当前 2026-10-09 22:17:27 CST 已发布 OMSIR 成绩页：实际客户端并列、旧库低调标记、EX / ACC / 六类判定 / 连击 / Mod与原详情；接入事实、原失败、模板路由补齐及全部新增证据取[本轮记录](omsir-score-page-20261009.md)。本轮重启主IR以加载附加展示字段，catalog不重启；产品真人门保持待验收。
+
 2026-10-08 原版网站已部署，状态 **已部署待验收**。玩家可从[首页](https://oms.zdamexy.work/)进入新闻、独立下载与帮助、谱面浏览、跨来源榜、账号、个人页、玩家榜和社区。真人下载入库、账号 / 密钥、OMS 对照及固定播放器 P/C 尚未签收。具体运行、恢复、失败与发布证据只取[生产记录](production-deployment-20261007.md#正式发布与收尾)。
 
 2026-10-09 文案与阅读体验审改已发布，软件 / 公网检查和发布前后完整备份通过；具体范围、失败尝试与新增证据取[本轮审改记录](deai-review-20261009.md)。下文2026-10-08的完整压力 / 恢复 / 旧设计往返证据保留原日期，不因这次网页更新重标。产品真人门继续待验收。
@@ -16,28 +18,36 @@
 
 | 对象 | 当前实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/b879e4233818-479987991a9b`，2026-10-09 20:12:43 CST 切入 |
-| 服务源码 | Backend `b879e42338183bed3a5b7de057817152a23de46c`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
-| 原版页面源码 | Web `479987991a9ba349d45675c388b67c69ea95c847`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/a85aee3e3c45-b17354d27c6b`，2026-10-09 22:17:27 CST 切入 |
+| 服务源码 | Backend `a85aee3e3c45d2358feef986f04beff00ed6ad8f`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
+| 原版页面源码 | Web `b17354d27c6b5c50170a88aa35497592fdf6d502`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | 源码 / 旧设计回退目标 | `/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04`；原设计完整外存备份在 F 盘，服务器没有另打旧设计备份包 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；本次保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-ed3f014e02a9`，Alpine / PHP8.5；独立 oms-web 用户，只读 `/app`，不升级宝塔共享 PHP |
-| 当前可写缓存 / 日志 | `/var/cache/oms-web/b879e4233818-479987991a9b/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/a85aee3e3c45-b17354d27c6b/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
 上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端账号 UI 软件来源仍为 `6168791`，默认 endpoint 空、旧在线总开关 false；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
 
-## 当前网页更新与回退范围（2026-10-09 20:12）
+## 当前成绩页维护与回退（2026-10-09）
+
+运行源码、正式缓存、精确IR路径、四件配置变化（含JSON模板exact路由）、前后12件原件、两对完整备份与F核验取[本轮发布记录](omsir-score-page-20261009.md)。主IR已加载a85 / 新PID3509802，catalog原PID保持；与过去纯Web更新的主IR未重启不同，不能套用旧三配置回退步骤。
+
+当前直接同库回退479：先新备份和配置保全，恢复本轮before的IR / 两Web unit与OMS include，切current、daemon-reload、BT检查 / 重载、生成旧正式缓存，再重启IR / FPM并核公开范围、两站、资源。保持现库，禁止旧raw覆盖新内容；实际新→旧→新往返仍只取原2026-10-08证据。固定D1/22b维护 / D1/e6旧设计、B0、FFF和479均保留。
+
+证据根为 `F:/zdamexy-workspace/websites/oms-web/artifacts/score-page-normalization-20261009`。timer恢复enabled / active / waiting；同库dev / inode保持。收尾空闲4,545,056,768 B，保守预留4,402,384,384 B，余142,672,384 B。新有限12次读取不刷新旧持续 / 压力 / 恢复；未做母库清洗、schema迁移、真实客户端或Windows发行。
+
+## 2026-10-09 普通来源发布历史（20:12）
 
 本轮将 LR2IR 成绩作为普通来源并列展示，源码 / 资源 / 对应源码包已切479，Backend / vendor / 八插件 / PHP环境保持。两个Web unit与OMS include仅更新版本 / 独立缓存绑定，数据库身份及主IR / catalog进程保持。实际缓存 / FPM / 宝塔Nginx、公开36项成绩一致性及33项页面 / 全件资源 / 双站检查取[本轮记录](lr2ir-source-presentation-20261009.md)。线上浏览器取景超时，本地截图不代签生产真人视觉。
 
 前后12件完整配置、固定helper新鲜两对备份和实际有限资源窗在 `F:\zdamexy-workspace\websites\oms-web\artifacts\lr2ir-source-presentation-20261009\production-private`。timer恢复enabled / active / waiting；收尾下一触发的原值在 `transfer-retirement.json`，备份 / 缓存不可读终态峰保持null。
 
-当前直接同库网页回退为 `b879e4233818-fffddaac1ce4 / production-r1`；先新备份和配置保全，再恢复本轮before的两Web unit与OMS include、核宝塔Nginx、切current / 重载并生成旧正式缓存 / 重启FPM，核有界就绪 / 双站 / 资源。主IR仍从B0加载，主IR / catalog / 固定维护不换源，不回灌raw；本轮未做实际往返。已无活动引用的6fb运行目录在全部字节 / 元数据核对、新鲜备份与再次核引用后退役，现从本轮受保护F全件归档恢复；B0、D1固定维护 / 旧设计和日备份保留。
+当次直接同库网页回退为 `b879e4233818-fffddaac1ce4 / production-r1`；先新备份和配置保全，再恢复本轮before的两Web unit与OMS include、核宝塔Nginx、切current / 重载并生成旧正式缓存 / 重启FPM，核有界就绪 / 双站 / 资源。当次主IR仍从B0加载，主IR / catalog / 固定维护不换源，不回灌raw；本轮未做实际往返。已无活动引用的6fb运行目录在全部字节 / 元数据核对、新鲜备份与再次核引用后退役，现从本轮受保护F全件归档恢复；B0、D1固定维护 / 旧设计和日备份保留。
 
 完整F副本与远端SHA核对后只退役本任务incoming重复gzip；收尾空闲4,591,403,008 B，保守预留4,402,384,384 B，余189,018,624 B。旧压力 / 恢复仍保留原日期，增长触发重新预算。共享落点同步[Homepage镜像](../../homepage-website/doc_md/other/oms-lr2ir-source-20261009.md)与[旧Website镜像](../../oms-website/doc_md/other/oms-lr2ir-source-20261009.md)。
 
