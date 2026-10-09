@@ -8,32 +8,44 @@
 
 同日15:03:58 CST 已发布表内等级选择，实际软件 / 本地桌面 / 公网检查、视口未生效与线上浏览器超时、备份和更新后预算取[本轮等级筛选记录](bms-level-filter-20261009.md)。前述14:07难度表来源和更早证据保持原日期；本次未重新抓表。
 
+同日17:24:30 CST 已发布成绩来源与排行榜审改，覆盖谱面头部、来源筛选、谱面 / 玩家榜和个人成绩。完整本地浏览器、公开成绩一致性、两次备份、有限资源门、历史运行包 F 归档及线上取景超时取[本轮排行榜记录](rankings-layout-review-20261009.md)。前述筛选与旧证据保持各自日期；真人门继续待验收。
+
 ## 当前来源与运行位置
 
 | 对象 | 当前实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/b879e4233818-6fbf7fd157d2`，2026-10-09 15:03:58 CST 切入 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/b879e4233818-fffddaac1ce4`，2026-10-09 17:24:30 CST 切入 |
 | 服务源码 | Backend `b879e42338183bed3a5b7de057817152a23de46c`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
-| 原版页面源码 | Web `6fbf7fd157d2f73cfff61093677a0a8d52bc66ea`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
+| 原版页面源码 | Web `fffddaac1ce468b6c250fb1016039834fcc772a5`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | 源码 / 旧设计回退目标 | `/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04`；原设计完整外存备份在 F 盘，服务器没有另打旧设计备份包 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；本次保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-ed3f014e02a9`，Alpine / PHP8.5；独立 oms-web 用户，只读 `/app`，不升级宝塔共享 PHP |
-| 当前可写缓存 / 日志 | `/var/cache/oms-web/b879e4233818-6fbf7fd157d2/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/b879e4233818-fffddaac1ce4/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
 上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端账号 UI 软件来源仍为 `6168791`，默认 endpoint 空、旧在线总开关 false；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
 
-## 当前网页更新与回退范围（2026-10-09 15:03）
+## 当前网页更新与回退范围（2026-10-09 17:24）
+
+本轮整理成绩展示，Backend / vendor / 八插件 / PHP环境保持原字节，schema3 / 同一库与主 IR / catalog PID保持。两 Web unit 与 OMS include只换fff版本 / 独立缓存绑定。完整实际启动、首个启动502与有界就绪、公开成绩29项 / 页面资源33项、源码下载及双站检查取[排行榜发布记录](rankings-layout-review-20261009.md)。主 IR仍从B0加载，不能清理B0。
+
+前后12件配置与固定helper两对完整备份在 `F:\zdamexy-workspace\websites\oms-web\artifacts\rankings-ux-20261009\production-private` 的 `before / after / backup-pre / backup-post`。终态不可读峰保持null，timer恢复enabled / active / waiting，收尾当次下一触发2026-10-10 04:17:45 CST。
+
+当前直接网页回退为 `b879e4233818-6fbf7fd157d2 / production-r1`，保留当前库；先新备份 / 配置保全，再按本轮before原件恢复两个Web unit与OMS include、检查宝塔Nginx、切current / 重载并生成旧正式缓存 / 重启FPM，核有界就绪、双站与资源。主IR / catalog / 固定维护不换源，不回灌raw；本轮没有实际往返。
+
+历史2b / 747运行目录已全件F归档并核所有字节 / 元数据及无活动引用，再于新鲜备份后退役服务器确切目录，现需从 `production-private/obsolete-runtimes/` 的核验归档恢复。当前6fb回退、B0 / D1维护 / 旧设计和日备份保留。仅在完整F副本与远端SHA重绑后退役本任务incoming重复gzip。收尾空闲4,605,456,384 B，沿2026-10-08最大raw / 八对 / 额外2 GiB保守所需4,402,384,384 B，余203,072,000 B；这次有限资源窗不刷新旧压力 / 恢复证据。共享投影取[Homepage镜像](../../homepage-website/doc_md/other/oms-ranking-layout-20261009.md)与[旧Website镜像](../../oms-website/doc_md/other/oms-ranking-layout-20261009.md)。
+
+## 2026-10-09 表内等级发布记录（15:03）
 
 本轮更新表内等级选项、等级 / 字母 / 搜索组合、分页与单曲返回等级，Backend / vendor / 插件 / PHP环境和schema3保持原字节，同一业务库和主IR / catalog PID保持。两Web unit与OMS include只换当前版本 / 独立缓存；正式缓存、FPM实际启动、BT Nginx检查和双站HTTPS通过。完整事实、首个CSS404 / 启动502与有界就绪、测试范围和预算只在[本轮记录](bms-level-filter-20261009.md)登记。
 
 发布前后12件配置与准确helper备份对在`F:\zdamexy-workspace\websites\oms-web\artifacts\bms-levels-20261009\production-private`的`before / after / backup-pre / backup-post`；不可读终态备份 / 缓存峰保持null。timer恢复enabled / active / waiting，收尾当次下一触发2026-10-10 04:18:11 CST。
 
-当前直接网页回退目标`b879e4233818-7473587da7e1 / production-r2`，保留当前库；先取得新备份和完整配置，再恢复本轮`before/`的两个Web unit与OMS include，检查BT Nginx、切current、重载并生成旧正式缓存 / 重启FPM，核就绪 / 双站 / 资源。主IR / catalog / 固定维护不换源、不回灌raw。本轮未做实际往返；旧D1/e6只取下方原日期范围。
+当次直接网页回退目标`b879e4233818-7473587da7e1 / production-r2`，保留当前库；先取得新备份和完整配置，再恢复本轮`before/`的两个Web unit与OMS include，检查BT Nginx、切current、重载并生成旧正式缓存 / 重启FPM，核就绪 / 双站 / 资源。主IR / catalog / 固定维护不换源、不回灌raw。本轮未做实际往返；旧D1/e6只取下方原日期范围。
 
 新增两路等级过滤读取在原FPM限制内通过；当前空闲4,493,045,760 B，按2026-10-08最大main＋WAL与八对 / 额外2 GiB合计4,402,384,384 B保守计算，余量90,661,376 B。仅在完整F包和远端SHA重绑后退役本任务73,083,160 B incoming重复gzip；运行 / 维护 / 747回退目录、日备份与F包保留。共享落点同步[Homepage镜像](../../homepage-website/doc_md/other/oms-table-levels-20261009.md)及[旧Website镜像](../../oms-website/doc_md/other/oms-table-levels-20261009.md)。
 
@@ -92,7 +104,7 @@ journalctl -u oms-web.service --no-pager -n 40
 
 HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence、多人或持续连接。HTML要求重新验证缓存，带散列资源一年 immutable；原插件 no-store。页面更新需检查普通浏览器刷新，不能只让玩家用 Ctrl+F5。
 
-2026-10-08完整运行门最低可用内存560.957 MiB，swap / OOM零；两空恢复所有窗口、最大 main + WAL、源码 / 依赖 / 缓存、八对与额外2 GiB均已实测。最后恢复最低磁盘仅高于原底线6,162,952 B，原数保留。增长、新版本或真实故障触发重新预算；不自行购买或扩盘。当前新增等级过滤读取与安装后盘账取[本轮记录](bms-level-filter-20261009.md)，旧完整运行和恢复仍取生产记录，不把十万条合成数据当千万级历史证明。
+2026-10-08完整运行门最低可用内存560.957 MiB，swap / OOM零；两空恢复所有窗口、最大 main + WAL、源码 / 依赖 / 缓存、八对与额外2 GiB均已实测。最后恢复最低磁盘仅高于原底线6,162,952 B，原数保留。增长、新版本或真实故障触发重新预算；不自行购买或扩盘。当前新增页面读取、历史运行包F保全与安装后盘账取[排行榜发布记录](rankings-layout-review-20261009.md)，旧完整运行和恢复仍取生产记录，不把十万条合成数据当千万级历史证明。
 
 ## 日备份与 F 盘外取
 
@@ -138,3 +150,5 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 2026-10-08公网HTTP通过，但线上浏览器工具30秒超时。2026-10-09文案轮新增33项公网HTTP核对通过，生产下载页浏览器导航 / 读取35秒及截图15秒仍超时。同日难度表轮447项与另33项公网核对通过，线上建页40秒仍超时；未取得线上DOM / 截图或真人点击 / 登录验收。两轮桌面 / 手机与普通刷新证据均属于本地，用户先前认可的原版视觉也不提升为线上真人通过。遇到问题记录入口、操作、发生时间及页面提示，按反馈修复后只重验受影响范围。PP / 地力、聊天、presence、多人与官网谱包托管不在本次交付。
 
 同日15:03等级筛选轮各309项本地 / 公网与另33项公网回归通过，本地桌面真实选表 / 换级 / 字母 / 分页与刷新通过；390×844视口设置未生效、实际仍1280×720，未签本轮窄屏。线上现有tab绑定40秒超时，没有取得本轮生产DOM / 截图。完整证据取[等级筛选记录](bms-level-filter-20261009.md)，真人门继续待验收。
+
+同日17:24排行榜审改轮58项本地成绩、31项最终本地资源 / 页面、29项公开成绩与33项公开回归通过，更新前后同范围原始成绩一致。本地桌面及此前真实窄屏截图已取得，收尾追加视口仍未生效；线上建页20秒超时，没有生产DOM / 截图。截图不代签真人门，详细适用范围取[排行榜记录](rankings-layout-review-20261009.md)。
