@@ -31,8 +31,8 @@ export function IrInfo({detail}:{detail:IrChart}) {
     </div></div></div>
     <div className='beatmapset-info__box'><div className='beatmapset-info__scrollable'><div className='beatmapset-info__row'>
       <h3 className='beatmapset-info__header'>成绩来源</h3>
-      {detail.available_sources.length===0?<p>暂无公开成绩来源。</p>:detail.available_sources.map(source=><p key={source}>{sourceNames[source]??source}</p>)}
-      {detail.archive_suspended&&<p>LR2IR 历史目录标记为暂停。</p>}
+      {detail.available_sources.length===0?<p>暂无公开成绩来源。</p>:[...new Set(detail.available_sources.map(source => sourceNames[source] ?? source))].map(source=><p key={source}>{source}</p>)}
+      {detail.archive_suspended&&<p>LR2IR 目录标记为暂停。</p>}
     </div></div></div>
     <div className='beatmapset-info__box'><div className='beatmapset-info__scrollable'><div className='beatmapset-info__row'>
       <h3 className='beatmapset-info__header'>OMS 计分条件</h3>

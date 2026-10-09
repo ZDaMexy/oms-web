@@ -2,7 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 import { Details, LampBadge } from 'oms/components';
-import { sourceNames } from 'oms/page';
+import { lr2irClientNames, sourceNames } from 'oms/page';
 import { Board, BoardRow } from 'oms/types';
 import * as React from 'react';
 
@@ -42,7 +42,9 @@ function BmsDetails({ row }: { row: BoardRow }) {
   return <div className={bn + '__record-details'}>
     <dl className={bn + '__facts'}>
       <div><dt>玩家身份</dt><dd>{row.identity.namespace.toUpperCase()} #{row.identity.id}</dd></div>
-      <div><dt>成绩来源</dt><dd>{sourceNames[row.score.source] ?? row.score.source} · {recordKinds[row.score.record_kind] ?? row.score.record_kind}</dd></div>
+      <div><dt>成绩来源</dt><dd>{sourceNames[row.score.source] ?? row.score.source}</dd></div>
+      <div><dt>记录类型</dt><dd>{recordKinds[row.score.record_kind] ?? row.score.record_kind}</dd></div>
+      {lr2irClientNames[row.score.source] != null && <div><dt>原客户端标记</dt><dd>{lr2irClientNames[row.score.source]}</dd></div>}
       <div><dt>游玩时间</dt><dd>{row.score.played_at == null ? '来源未提供' : <PlayedAt value={row.score.played_at} />}</dd></div>
       {row.score.received_at != null && <div><dt>接收时间</dt><dd><PlayedAt value={row.score.received_at} /></dd></div>}
       {Object.entries(row.score.conditions).map(([key, value]) => <div key={key}><dt>{fields[key] ?? key}</dt><dd>{value == null ? '未提供' : typeof value === 'object' ? JSON.stringify(value) : String(value)}</dd></div>)}
@@ -62,7 +64,7 @@ export function ScoreHighlights({ board, mania }: { board?: Board; mania?: Mania
   if (top == null && maniaTop == null && me == null) return null;
   return <div className='beatmapset-scoreboard__highlights'>
     {top != null && <div className='beatmapset-scoreboard__highlight'>
-      <div className='beatmapset-scoreboard__highlight-player'><small>当前榜首</small><span className='beatmapset-scoreboard__highlight-rank'>#1</span><strong><Player row={top} /></strong><small>{top.identity.namespace.toUpperCase()} #{top.identity.id}</small></div>
+      <div className='beatmapset-scoreboard__highlight-player'><small>当前榜首</small><span className='beatmapset-scoreboard__highlight-rank'>#1</span><strong title={top.identity.namespace.toUpperCase() + ' #' + top.identity.id}><Player row={top} /></strong></div>
       <div className='beatmapset-scoreboard__highlight-score'><small>EX / 满分</small><ExScore row={top} /><div><LampBadge lamp={top.score.lamp} /> <small>{sourceNames[top.score.source] ?? top.score.source}</small></div></div>
     </div>}
     {maniaTop != null && <div className='beatmapset-scoreboard__highlight'>
@@ -100,7 +102,7 @@ export default function Table({ board, mania }: { board?: Board; mania?: ManiaRo
           <td className={bn + '__cell ' + bn + '__cell--score'}><ExScore row={row} /></td>
           <td className={bn + '__cell ' + bn + '__cell--player'}><strong title={row.identity.namespace.toUpperCase() + ' #' + row.identity.id}><Player row={row} /></strong></td>
           <td className={bn + '__cell'}><LampBadge lamp={row.score.lamp} /></td>
-          <td className={bn + '__cell ' + bn + '__cell--source'} title={recordKinds[row.score.record_kind] ?? row.score.record_kind}>{sourceNames[row.score.source] ?? row.score.source}</td>
+          <td className={bn + '__cell ' + bn + '__cell--source'}>{sourceNames[row.score.source] ?? row.score.source}</td>
           <td className={bn + '__cell ' + bn + '__cell--time'}><PlayedAt value={row.score.played_at} /></td>
           <td className={bn + '__cell ' + bn + '__cell--details'}>{toggle(key, row.identity.username)}</td>
         </tr>{expanded === key && <tr id={id + '-' + key} className={bn + '__detail-row'}><td colSpan={7}><BmsDetails row={row} /></td></tr>}</React.Fragment>;

@@ -2,7 +2,7 @@ import { SearchFilter } from 'beatmaps/search-filter';
 import { Spinner } from 'components/spinner';
 import * as React from 'react';
 import { useApi } from './api';
-import { keys, sourceNames } from './page';
+import { keys, lr2irClientNames, sourceNames } from './page';
 import { Lamp, Ruleset, Source } from './types';
 
 export function Status({ error, ready }: { error?: string; ready: boolean }) {
@@ -26,34 +26,34 @@ export function ModeFilters({ mode, keymode, onChange }: { mode: Ruleset; keymod
     <SearchFilter title='键型' options={keys(mode).map(id=>({id,name:id.replace('bms_','BMS ').replace('pms_','PMS ').replace('mania_','')}))} selected={[keymode]} onChange={values=>onChange({keymode:values[0],condition:null})}/>
   </>;
 }
-export function Sources({ value, onChange, live = false, single = false, mode = 'bms' }: { value: string | null; onChange: (value: string) => void; live?: boolean; single?: boolean; mode?: Ruleset }) {
+export function Sources({ value, onChange, live = false, mode = 'bms' }: { value: string | null; onChange: (value: string) => void; live?: boolean; mode?: Ruleset }) {
   const registry = useApi<{items:Source[]}>('/api/ir/v2/sources');
   if (registry.data == null) return <Status error={registry.error} ready={false}/>;
   const sources = registry.data.items.filter(source => (mode !== 'mania' || source.code === 'oms') && (!live || source.record_kind !== 'archive_best'));
   const selected = value == null ? sources.filter(source=>source.available).map(source=>source.code) : value.split(',').filter(Boolean);
-  const chosen=single?selected.slice(0,1):selected;
+  const lr2ir = sources.filter(source => lr2irClientNames[source.code] != null);
+  const options = sources.filter(source => lr2irClientNames[source.code] == null).map(source => ({ id: source.code, label: sourceNames[source.code] ?? source.label, sources: [source] }));
+  if (lr2ir.length > 0) options.push({ id: 'lr2ir', label: 'LR2IR', sources: lr2ir });
   return <div className='score-source-filter' role='group' aria-label='成绩来源'>
-    <div className='score-source-filter__heading'><span>成绩来源</span>{!single&&<div className='score-source-filter__actions'>
+    <div className='score-source-filter__heading'><span>成绩来源</span><div className='score-source-filter__actions'>
       <button type='button' onClick={()=>onChange(sources.filter(source=>source.available).map(source=>source.code).join(','))}>全选</button>
       <button type='button' onClick={()=>onChange('')}>清空</button>
-    </div>}</div>
-    {(['live','archive'] as const).map(kind=>{
-      const options=sources.filter(source=>(source.record_kind==='archive_best')===(kind==='archive'));
-      if(options.length===0)return null;
-      return <div className='score-source-filter__group' key={kind}>
-        <span className='score-source-filter__label'>{kind==='archive'?'LR2IR 历史':'播放器'}</span>
-        <div className='score-source-filter__options'>{options.map(source=><button type='button' key={source.code}
-          className={'score-source-filter__option'+(chosen.includes(source.code)?' score-source-filter__option--active':'')}
-          disabled={!source.available} aria-pressed={chosen.includes(source.code)} aria-label={source.label}
-          title={source.label+(source.available?'':' · 未开放')}
-          onClick={()=>onChange((single?[source.code]:chosen.includes(source.code)?chosen.filter(id=>id!==source.code):[...chosen,source.code]).join(','))}>
-          <span className='score-source-filter__check' aria-hidden='true'><i className='fas fa-check'/></span>
-          {kind==='archive'?source.code==='lr2ir.v3.lr2'?'LR2':source.code==='lr2ir.v3.sbmp'?'SBMP':'未知客户端':sourceNames[source.code]??source.label}
-          {!source.available&&<small>未开放</small>}
-        </button>)}</div>
-      </div>;
-    })}
-    <details className='score-source-filter__versions'><summary>版本与来源说明</summary><ul>{sources.map(source=><li key={source.code}>{source.label}{source.record_kind==='archive_best'?' · 单谱历史摘要':''}</li>)}</ul></details>
+    </div></div>
+    <div className='score-source-filter__options'>{options.map(option => {
+      const codes = option.sources.filter(source => source.available).map(source => source.code);
+      const count = codes.filter(code => selected.includes(code)).length;
+      const active = codes.length > 0 && count === codes.length;
+      const partial = count > 0 && !active;
+      return <button type='button' key={option.id}
+        className={'score-source-filter__option' + (count > 0 ? ' score-source-filter__option--active' : '')}
+        disabled={codes.length === 0} aria-pressed={partial ? 'mixed' : active}
+        title={option.label + (partial ? ' · 部分已选' : codes.length === 0 ? ' · 未开放' : '')}
+        onClick={() => onChange((active ? selected.filter(code => !codes.includes(code)) : [...selected.filter(code => !codes.includes(code)), ...codes]).join(','))}>
+        <span className='score-source-filter__check' aria-hidden='true'><i className={'fas fa-' + (partial ? 'minus' : 'check')} /></span>
+        {option.label}{codes.length === 0 && <small>未开放</small>}
+      </button>;
+    })}</div>
+    <details className='score-source-filter__versions'><summary>来源说明</summary><ul>{options.map(option => <li key={option.id}>{option.id === 'lr2ir' ? 'LR2IR 收录成绩；原客户端标记可在成绩详情查看。' : option.sources[0].label}</li>)}</ul></details>
   </div>;
 }
 export function LampBadge({lamp}:{lamp?:Lamp|null}) {
