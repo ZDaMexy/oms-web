@@ -155,10 +155,31 @@ async function rankingMe() {
     target.replaceChildren();
     if (response.me == null) { target.textContent = '你在所选条件下还没有公开成绩。'; return; }
     const me = response.me;
+    const card = document.createElement('div');
+    card.className = 'beatmapset-scoreboard__highlight beatmapset-scoreboard__highlight--me';
+    const player = document.createElement('div');
+    player.className = 'beatmapset-scoreboard__highlight-player';
+    const label = document.createElement('small');
+    label.textContent = '我的位置';
+    const rank = document.createElement('span');
+    rank.className = 'beatmapset-scoreboard__highlight-rank';
+    rank.textContent = '#' + me.rank.toLocaleString('zh-CN');
     const link = document.createElement('a');
     link.href = '/users/' + me.user.id;
     link.textContent = me.user.username;
-    target.append(document.createTextNode('你的名次：#' + me.rank + ' · '), link, document.createTextNode(' · ' + me.value));
+    const name = document.createElement('strong');
+    name.append(link);
+    player.append(label, rank, name);
+    const score = document.createElement('div');
+    score.className = 'beatmapset-scoreboard__highlight-score';
+    const metric = document.createElement('small');
+    metric.textContent = (target as HTMLElement).dataset.metricLabel!;
+    const value = document.createElement('strong');
+    value.className = 'beatmap-scoreboard-table__score';
+    value.textContent = BigInt(me.value).toLocaleString('zh-CN');
+    score.append(metric, value);
+    card.append(player, score);
+    target.append(card);
   } catch (error) { if (revision === session.revision && target.isConnected) { target.setAttribute('role', 'alert'); target.textContent = message(error); } }
 }
 function sessionChanged() {

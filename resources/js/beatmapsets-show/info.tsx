@@ -6,7 +6,7 @@ import { BmsDetail, IrChart, ManiaDetail } from 'oms/types';
 import { formatBytes } from 'utils/html';
 import * as React from 'react';
 export default function Info({detail}:{detail:BmsDetail|ManiaDetail}) {
-  return <div className='beatmapset-info u-fancy-scrollbar'>
+  return <div className='beatmapset-info beatmapset-info--catalog u-fancy-scrollbar'>
     <div className='beatmapset-info__box'><div className='beatmapset-info__scrollable'><div className='beatmapset-info__row'>
       <h3 className='beatmapset-info__header'>谱包</h3>
       {detail.ruleset==='bms'?detail.candidates.map(candidate=><p key={candidate.source}>{candidate.package.name} · {candidate.package.size_bytes==null?'大小未知':formatBytes(candidate.package.size_bytes)}</p>):
@@ -21,7 +21,8 @@ export default function Info({detail}:{detail:BmsDetail|ManiaDetail}) {
 }
 
 export function IrInfo({detail}:{detail:IrChart}) {
-  return <div className='beatmapset-info u-fancy-scrollbar'>
+  return <details className='beatmapset-info beatmapset-info--disclosure'>
+    <summary>谱面与收录信息</summary><div className='beatmapset-info__body'>
     <div className='beatmapset-info__box'><div className='beatmapset-info__scrollable'><div className='beatmapset-info__row'>
       <h3 className='beatmapset-info__header'>谱面标识</h3>
       <p className='beatmapset-info__link'>MD5 {detail.chart.md5}</p>
@@ -37,5 +38,5 @@ export function IrInfo({detail}:{detail:IrChart}) {
       <h3 className='beatmapset-info__header'>OMS 计分条件</h3>
       {detail.groups.length===0?<p>暂无公开 OMS 条件。</p>:detail.groups.map(group=><p key={group.id}>{group.label}</p>)}
     </div></div></div>
-  </div>;
+  </div></details>;
 }

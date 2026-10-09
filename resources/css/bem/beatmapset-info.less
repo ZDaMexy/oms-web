@@ -21,6 +21,30 @@
     grid-template-columns: 1fr 175px @beatmapset-float-box-width;
   }
 
+  &--catalog,
+  &--disclosure {
+    padding-bottom: 16px;
+    .@{_top}__box { min-height: 0; max-height: none; }
+    .@{_top}__scrollable::after { display: none; }
+  }
+
+  &--catalog {
+    @media @desktop { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  }
+
+  &--disclosure {
+    display: block;
+    padding-top: 16px;
+    summary { color: hsl(var(--hsl-f1)); cursor: pointer; font-size: 12px; }
+  }
+
+  &__body {
+    display: grid;
+    gap: 20px;
+    margin-top: 8px;
+    @media @desktop { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
   &__box {
     min-width: 0;
     display: flex;

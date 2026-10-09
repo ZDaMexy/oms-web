@@ -10,6 +10,21 @@
     grid-template-columns: 1fr auto auto;
   }
 
+  &--oms {
+    > div { min-width: 0; }
+    @media @desktop { grid-template-columns: minmax(170px, 1fr) auto minmax(0, 2fr); gap: 24px; }
+  }
+
+  &__lanes { display: grid; gap: 12px; }
+  &__lane {
+    padding: 14px 16px;
+    border-radius: 5px;
+    background: hsl(var(--hsl-b2));
+    min-width: 0;
+    h3 { font-size: 14px; font-weight: 600; margin: 0 0 6px; }
+    > p { font-size: 11px; color: hsl(var(--hsl-f1)); overflow-wrap: anywhere; }
+  }
+
   &__chart {
     height: 90px;
     position: relative;

@@ -13,6 +13,18 @@
     grid-template-columns: 1fr @beatmapset-float-box-width;
   }
 
+  &--no-stats { grid-template-columns: minmax(0, 1fr); }
+  &--no-cover {
+    min-height: 0;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    .beatmapset-header__beatmap-picker-box { flex: none; margin-bottom: 8px; }
+    .beatmapset-header__box--main { padding-bottom: 0; min-width: 0; }
+    .beatmapset-header__details-text--title { margin-top: 0; line-height: 1.25; }
+    .beatmapset-header__details-text--artist { font-size: 16px; padding-bottom: 8px; color: hsl(var(--hsl-l1)); }
+    .beatmapset-header__diff-name { display: inline-block; border-radius: 4px; padding: 4px 8px; background: hsla(var(--hsl-c2), 0.15); font-size: 13px; }
+  }
+
   &__box {
     display: flex;
     flex-direction: column;

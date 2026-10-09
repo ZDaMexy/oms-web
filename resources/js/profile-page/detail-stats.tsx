@@ -8,7 +8,7 @@ import { sourceNames } from 'oms/page';
 import Stats from './stats';
 
 export default function DetailStats({ data }: { data: Performance }) {
-  return <div className='profile-detail-stats'>
+  return <div className='profile-detail-stats profile-detail-stats--oms'>
     <div>
       <div className='profile-detail-stats__chart-numbers profile-detail-stats__chart-numbers--top'>
         <div className='profile-detail-stats__values'>
@@ -19,9 +19,9 @@ export default function DetailStats({ data }: { data: Performance }) {
       <p>所选来源中的公开成绩</p>
     </div>
     <div className='profile-detail-stats__separator' />
-    <div>{data.lanes.length === 0 ? <p>这个范围还没有公开成绩。</p> : data.lanes.map(lane =>
-      <div key={lane.condition_scope.id}>
-        <p>{sourceNames[lane.source] ?? lane.source} · {lane.condition_scope.label}</p>
+    <div className='profile-detail-stats__lanes'>{data.lanes.length === 0 ? <p>这个范围还没有公开成绩。</p> : data.lanes.map(lane =>
+      <div className='profile-detail-stats__lane' key={lane.condition_scope.id}>
+        <h3>{sourceNames[lane.source] ?? lane.source}</h3><p>{lane.condition_scope.label}</p>
         <Stats metrics={lane.metrics} rankings={lane.rankings} />
         <Details value={lane.condition_scope} label='查看规则详情' />
       </div>)}</div>

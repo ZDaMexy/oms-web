@@ -2,8 +2,8 @@ import { SearchFilter } from 'beatmaps/search-filter';
 import { Spinner } from 'components/spinner';
 import * as React from 'react';
 import { useApi } from './api';
-import { keys } from './page';
-import { Ruleset, Source } from './types';
+import { keys, sourceNames } from './page';
+import { Lamp, Ruleset, Source } from './types';
 
 export function Status({ error, ready }: { error?: string; ready: boolean }) {
   if (error != null) return <p role='alert' className='beatmapset-scoreboard__notice'>{error}</p>;
@@ -31,14 +31,35 @@ export function Sources({ value, onChange, live = false, single = false, mode = 
   if (registry.data == null) return <Status error={registry.error} ready={false}/>;
   const sources = registry.data.items.filter(source => (mode !== 'mania' || source.code === 'oms') && (!live || source.record_kind !== 'archive_best'));
   const selected = value == null ? sources.filter(source=>source.available).map(source=>source.code) : value.split(',').filter(Boolean);
-  return <>
-    <SearchFilter title='成绩来源' options={sources.map(source=>({id:source.code,name:source.label+(source.available?'':'（未开放）'),disabled:!source.available}))}
-      selected={single ? selected.slice(0,1) : selected} multiselect={!single} onChange={ids=>onChange(ids.join(','))}/>
-    {!single && <div className='beatmapsets-search-filter__items'>
-      <button type='button' className='beatmapsets-search-filter__item' onClick={()=>onChange(sources.filter(source=>source.available).map(source=>source.code).join(','))}>全选</button>
-      <button type='button' className='beatmapsets-search-filter__item' onClick={()=>onChange('')}>清空</button>
-    </div>}
-  </>;
+  const chosen=single?selected.slice(0,1):selected;
+  return <div className='score-source-filter' role='group' aria-label='成绩来源'>
+    <div className='score-source-filter__heading'><span>成绩来源</span>{!single&&<div className='score-source-filter__actions'>
+      <button type='button' onClick={()=>onChange(sources.filter(source=>source.available).map(source=>source.code).join(','))}>全选</button>
+      <button type='button' onClick={()=>onChange('')}>清空</button>
+    </div>}</div>
+    {(['live','archive'] as const).map(kind=>{
+      const options=sources.filter(source=>(source.record_kind==='archive_best')===(kind==='archive'));
+      if(options.length===0)return null;
+      return <div className='score-source-filter__group' key={kind}>
+        <span className='score-source-filter__label'>{kind==='archive'?'LR2IR 历史':'播放器'}</span>
+        <div className='score-source-filter__options'>{options.map(source=><button type='button' key={source.code}
+          className={'score-source-filter__option'+(chosen.includes(source.code)?' score-source-filter__option--active':'')}
+          disabled={!source.available} aria-pressed={chosen.includes(source.code)} aria-label={source.label}
+          title={source.label+(source.available?'':' · 未开放')}
+          onClick={()=>onChange((single?[source.code]:chosen.includes(source.code)?chosen.filter(id=>id!==source.code):[...chosen,source.code]).join(','))}>
+          <span className='score-source-filter__check' aria-hidden='true'><i className='fas fa-check'/></span>
+          {kind==='archive'?source.code==='lr2ir.v3.lr2'?'LR2':source.code==='lr2ir.v3.sbmp'?'SBMP':'未知客户端':sourceNames[source.code]??source.label}
+          {!source.available&&<small>未开放</small>}
+        </button>)}</div>
+      </div>;
+    })}
+    <details className='score-source-filter__versions'><summary>版本与来源说明</summary><ul>{sources.map(source=><li key={source.code}>{source.label}{source.record_kind==='archive_best'?' · 单谱历史摘要':''}</li>)}</ul></details>
+  </div>;
+}
+export function LampBadge({lamp}:{lamp?:Lamp|null}) {
+  const label=lamp?.label??'未知灯';
+  const tone=/full.?combo|perfect/i.test(label)?'combo':/failed|no play/i.test(label)?'failed':/hard|hazard/i.test(label)?'hard':/easy/i.test(label)?'easy':/clear/i.test(label)?'clear':'unknown';
+  return <span className={'score-lamp score-lamp--'+tone} title={lamp==null?'来源未提供通关灯':`${lamp.family} · ${lamp.value}${lamp.rule_label==null?'':' · '+lamp.rule_label}`}>{label}</span>;
 }
 export function Details({ value, label = '查看成绩详情' }: { value: unknown; label?: string }) {
   return <details className='beatmapset-scoreboard__details'><summary>{label}</summary><pre className='u-fancy-scrollbar'>{JSON.stringify(value,null,2)}</pre></details>;

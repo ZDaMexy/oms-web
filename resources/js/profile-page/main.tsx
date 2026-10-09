@@ -30,7 +30,7 @@ export default function Main(_props: { container: HTMLElement }) {
       {controller.user != null && <div className='user-profile-pages'>
         {section==='history' ? (controller.own ? <History controller={controller}/> : <section className='page-extra'><p>完整记录仅本人登录后可查看。</p></section>) : <section className='page-extra' id={section === 'best' ? 'top_ranks' : 'recent_activity'}>
           <h2 className='title title--page-extra'>{section === 'best' ? '公开最佳成绩' : '近期最佳更新'}</h2>
-          <label className='beatmapsets-search-filter'>条件
+          <label className='score-condition-filter'>条件
             <select value={query.get('condition') ?? ''} onChange={event => update({ condition: event.target.value || null })}>
               <option value=''>所选来源的全部条件</option>
               {performance.data?.lanes.map(lane => <option key={lane.condition_scope.id} value={lane.condition_scope.id}>{lane.condition_scope.label}</option>)}

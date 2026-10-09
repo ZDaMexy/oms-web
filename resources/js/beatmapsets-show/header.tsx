@@ -30,9 +30,10 @@ export default function Header({detail,md5,sha256,selectedSource,onSource}:Props
   const chart=detail.ruleset==='bms'?detail.chart:detail.set.charts[0];
   const cover=detail.ruleset==='bms'?candidate?.cover_url:detail.set.cover_url;
   const charts=detail.ruleset==='bms'?candidate?.charts:detail.set.charts;
+  const hasStats=chart!=null&&[chart.keymode,chart.bpm,chart.notes,chart.length_seconds].some(value=>value!=null);
   const automatic='/api/ir/v1/catalog/bms/'+md5+'/download'+(sha256==null?'':'?'+new URLSearchParams({sha256}));
   const download=detail.ruleset==='bms'?selectedSource==null?automatic:candidate?.eligible?candidate.package.download_url:null:detail.download.full_url;
-  return <div className='beatmapset-header'>
+  return <div className={'beatmapset-header'+(cover==null?' beatmapset-header--no-cover':'')+(!hasStats?' beatmapset-header--no-stats':'')}>
     <div className='beatmapset-header__cover'>{cover!=null&&<div className='beatmapset-cover beatmapset-cover--full' style={{backgroundImage:`url("${cover}")`}}/>}</div>
     <div className='beatmapset-header__box beatmapset-header__box--main'>
       <div className='beatmapset-header__beatmap-picker-box'><div className='beatmap-picker'>
@@ -60,21 +61,19 @@ export default function Header({detail,md5,sha256,selectedSource,onSource}:Props
       {detail.ruleset==='bms'&&candidate!=null&&<p className='beatmapset-header__availability-info'>{candidate.identity==='md5-only'?'按谱面 MD5 找到，来源未提供 SHA256':'来源提供了 SHA256'} · {candidate.availability==='unchecked'?'下载链接尚未检查':candidate.availability}{candidate.reason==null?'':' · '+candidate.reason}</p>}
       {detail.ruleset==='bms'&&<details><summary>其他来源与状态</summary>{detail.source_status.map(status=><p key={status.source}>{sourceNames[status.source]??status.source}：{status.message??status.status}</p>)}</details>}
     </div>
-    <div className='beatmapset-header__box beatmapset-header__box--stats'><Stats chart={chart??null}/></div>
+    {hasStats&&<div className='beatmapset-header__box beatmapset-header__box--stats'><Stats chart={chart??null}/></div>}
   </div>;
 }
 
 export function IrHeader({detail}:{detail:Pick<IrChart, 'chart' | 'ruleset'>}) {
   const chart = detail.chart;
   const search = chartUrl(chart.md5,detail.ruleset,chart.sha256==null?{}:{sha256:chart.sha256});
-  return <div className='beatmapset-header'>
-    <div className='beatmapset-header__cover'/>
+  return <div className='beatmapset-header beatmapset-header--no-cover beatmapset-header--no-stats'>
     <div className='beatmapset-header__box beatmapset-header__box--main'>
-      <div className='beatmapset-header__beatmap-picker-box'><div className='beatmap-picker'><span className='beatmap-picker__beatmap'>{chart.difficulty??'难度名未知'}</span></div></div>
+      {chart.difficulty!=null&&<div className='beatmapset-header__beatmap-picker-box'><span className='beatmapset-header__diff-name'>{chart.difficulty}</span></div>}
       <span className='beatmapset-header__details-text beatmapset-header__details-text--title'>{chart.title??'标题未知'}</span>
       <span className='beatmapset-header__details-text beatmapset-header__details-text--artist'>{chart.artist??'艺术家未知'}</span>
       {detail.ruleset==='bms'&&<div className='beatmapset-header__buttons'><BigButton href={search} modifiers='beatmapset-download' text={{top:'查找谱包',bottom:'Ginger Rush / 616'}} icon='fas fa-search'/></div>}
     </div>
-    <div className='beatmapset-header__box beatmapset-header__box--stats'><Stats chart={null}/></div>
   </div>;
 }

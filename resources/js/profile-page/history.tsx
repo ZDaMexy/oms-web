@@ -1,7 +1,7 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the GNU Affero General Public License v3.0.
 // See the LICENCE file in the repository root for full licence text.
 
-import { Details, Paginator, Status } from 'oms/components';
+import { Details, LampBadge, Paginator, Status } from 'oms/components';
 import { chartUrl } from 'oms/page';
 import * as React from 'react';
 import { Controller } from './controller';
@@ -16,7 +16,7 @@ export default function History({controller}:{controller:Controller}) {
     <Status error={history.error} ready={history.data!=null}/>
     {history.data!=null && <>
       <p>{history.data.total.toLocaleString('zh-CN')} 局 OMS 游玩</p>
-      <div className='play-detail-list'>{history.data.items.map(score=><div className='play-detail play-detail--highlightable' key={score.submission_id}>
+      <div className='play-detail-list'>{history.data.items.map(score=><div className='play-detail play-detail--highlightable play-detail--oms' key={score.submission_id}>
         <div className='play-detail__group play-detail__group--top'><div className='play-detail__detail'>
           <a className='play-detail__title u-ellipsis-overflow' href={chartUrl(score.chart.md5,score.ruleset,{sha256:score.chart.sha256})}>{score.chart.title}</a>
           <small className='play-detail__artist'> {score.chart.artist}</small>
@@ -30,15 +30,14 @@ export default function History({controller}:{controller:Controller}) {
             <div className='play-detail__accuracy-and-weighted-pp'><span className='play-detail__accuracy'>{score.ruleset==='bms'
               ? <>EX {score.ex_score==null?'未知':score.ex_score.toLocaleString('zh-CN')} / {score.max_ex_score==null?'未知':score.max_ex_score.toLocaleString('zh-CN')}</>
               : <>分数 {score.total_score.toLocaleString('zh-CN')}</>}</span></div>
-            <div>{score.passed?'通关':'未通关'}{score.ruleset_data==null?'':` · ${score.ruleset_data.version===7?lamps[score.ruleset_data.clear_lamp]??'未知灯':'未知灯'}（原灯 ${score.ruleset_data.clear_lamp}）`}</div>
+            <div>{score.ruleset==='bms'?<LampBadge lamp={score.ruleset_data==null?null:{family:'oms-v'+score.ruleset_data.version,value:score.ruleset_data.clear_lamp,label:score.ruleset_data.version===7?lamps[score.ruleset_data.clear_lamp]??'未知灯':'未知灯'}}/>:<>{(score.accuracy*100).toFixed(2)}% · {score.passed?'已通关':'未通关'}</>}</div>
           </div></div>
-          <div className='play-detail__mods-pp'><div className='play-detail__mods'>{score.group_label}</div></div>
-          <div className='play-detail__more'><Details value={score}/></div>
         </div>
-        <div className='play-detail__beatmap-and-time'>
+        <div className='play-detail__record-status play-detail__beatmap-and-time'>
           <span className='play-detail__time'>接收 <time dateTime={score.received_at} className='js-localtime'>{score.received_at}</time></span>
           <span>{score.public_board?'符合公开榜条件':'不进入公开榜'}</span>
         </div>
+        <details className='play-detail__record'><summary>条件与成绩详情</summary><p>{score.group_label}</p><p>{score.passed?'已通关':'未通关'}</p><Details value={score} label='原始记录'/></details>
       </div>)}</div>
       {history.data.items.length===0 && <p>{history.data.total===0?'尚未上传 OMS 游玩记录。':'本页没有记录，请返回第一页。'}</p>}
       <Paginator {...history.data} onPage={page=>update({page:String(page)},false)}/>
