@@ -4,7 +4,8 @@
 import HeaderV4 from 'components/header-v4';
 import { pageData, ruleset, useQuery } from 'oms/page';
 import * as React from 'react';
-import { IrSearchContent, IrSearchData, SearchContent } from './search-content';
+import { IrSearchContent, IrSearchData } from './difficulty-tables';
+import { SearchContent } from './search-content';
 
 export function Main() {
   const initial = pageData<IrSearchData>();

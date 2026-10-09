@@ -19,7 +19,9 @@ async function decode<T>(response: Response): Promise<T> {
   return body as T;
 }
 async function send<T>(path: string, init: RequestInit = {}): Promise<T> {
-  return decode<T>(await fetch(path, { ...init, credentials: 'same-origin', cache: 'no-store' }));
+  const headers = new Headers(init.headers);
+  headers.set('Accept', 'application/json');
+  return decode<T>(await fetch(path, { ...init, headers, credentials: 'same-origin', cache: 'no-store' }));
 }
 export function write<T>(path: string, body: unknown, signal?: AbortSignal, actorId?: number) {
   return send<T>(path, { method: 'POST', signal, headers: { 'Content-Type': 'application/json', 'X-OMS-IR': '1', ...(actorId == null ? {} : { 'X-OMS-Actor': String(actorId) }) }, body: JSON.stringify(body) });

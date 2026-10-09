@@ -20,6 +20,7 @@ Route::middleware('web')->group(function (): void {
     Route::get('beatmaps/{beatmapset}', 'OmsController@beatmapset');
     Route::get('search', 'OmsController@beatmaps')->name('search');
     Route::get('ir', 'OmsController@ir')->name('ir');
+    Route::get('ir/tables/{table}', 'OmsController@difficultyTable')->where('table', '[a-z0-9_-]+');
 
     Route::get('users', 'OmsController@profileLegacy');
     Route::get('users/{user}', 'OmsController@profile')->name('users.show')->where('user', '[1-9][0-9]*');

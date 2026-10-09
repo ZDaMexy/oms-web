@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Libraries\OmsApi;
+use App\Libraries\OmsDifficultyTables;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
@@ -15,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class OmsController extends Controller
 {
-    public function __construct(protected OmsApi $api)
+    public function __construct(protected OmsApi $api, protected OmsDifficultyTables $difficultyTables)
     {
     }
 
@@ -168,13 +170,22 @@ class OmsController extends Controller
     public function ir(Request $request): View
     {
         $context = $this->queryInput($request, ['q' => '', 'page' => 1, 'limit' => 20], [
-            'q', 'page', 'limit', 'md5', 'sources', 'mode', 'condition',
+            'q', 'page', 'limit', 'md5', 'sources', 'mode', 'condition', 'table', 'initial',
         ]);
         if (isset($context['md5'])) {
             abort_unless(preg_match('/^[0-9a-fA-F]{32}$/D', $context['md5']) === 1, 422, '谱面 MD5 不符合约定。');
             $context['md5'] = strtolower($context['md5']);
             $context['ruleset'] = 'bms';
             $context['ir_only'] = true;
+            if (isset($context['table'])) {
+                $selected = $this->difficultyTables->chart($context['table'], $context['md5']);
+
+                return $this->page('beatmapsets.show', 'beatmapset', [
+                    'context' => $context,
+                    'table_chart' => $selected['chart'],
+                    'difficulty_table' => $selected['table'],
+                ]);
+            }
             return $this->page('beatmapsets.show', 'beatmapset', [
                 'context' => $context,
                 'chart' => $this->api->getJson('/api/ir/v2/charts/'.$context['md5']),
@@ -183,8 +194,17 @@ class OmsController extends Controller
 
         return $this->page('beatmapsets.index', 'ir', [
             'context' => $context,
-            'chart_list' => $this->api->getJson('/api/ir/v2/charts', array_intersect_key($context, array_flip(['q', 'page', 'limit']))),
+            'difficulty_tables' => $this->difficultyTables->listing(),
+            'table_list' => isset($context['table']) ? $this->difficultyTables->charts($context) : null,
         ]);
+    }
+
+    public function difficultyTable(Request $request, string $table): JsonResponse
+    {
+        $context = $this->queryInput($request, ['q' => '', 'page' => 1, 'initial' => ''], ['q', 'page', 'initial']);
+        $context['table'] = $table;
+
+        return response()->json($this->difficultyTables->charts($context), 200, ['Cache-Control' => 'no-store']);
     }
 
     public function account(): View

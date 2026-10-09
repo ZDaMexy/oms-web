@@ -2,6 +2,13 @@
 export type Ruleset = 'bms' | 'mania';
 export interface User { id: number; username: string }
 export interface Page<T> { items: T[]; page: number; limit: number; total: number }
+export interface DifficultyTable {
+  id: string; name: string; symbol: string; count: number | null; status: 'ok' | 'unavailable';
+  url: string; source_url: string | null;
+}
+export interface DifficultyTableChart {
+  row: number; md5: string | null; title: string | null; artist: string | null; level: string | null; initial: string;
+}
 export interface Condition { id: string; label: string; comparison: string; conditions: Record<string, unknown>; unknown_fields: string[] }
 export interface Lamp { family: string; value: number | string; label: string; source?: string; record_id?: string | null; rule_label?: string }
 export interface Chart {

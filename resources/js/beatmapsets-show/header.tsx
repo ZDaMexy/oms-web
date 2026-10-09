@@ -64,7 +64,7 @@ export default function Header({detail,md5,sha256,selectedSource,onSource}:Props
   </div>;
 }
 
-export function IrHeader({detail}:{detail:IrChart}) {
+export function IrHeader({detail}:{detail:Pick<IrChart, 'chart' | 'ruleset'>}) {
   const chart = detail.chart;
   const search = chartUrl(chart.md5,detail.ruleset,chart.sha256==null?{}:{sha256:chart.sha256});
   return <div className='beatmapset-header'>
