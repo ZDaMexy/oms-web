@@ -10,26 +10,38 @@
 
 同日17:24:30 CST 已发布成绩来源与排行榜审改，覆盖谱面头部、来源筛选、谱面 / 玩家榜和个人成绩。完整本地浏览器、公开成绩一致性、两次备份、有限资源门、历史运行包 F 归档及线上取景超时取[本轮排行榜记录](rankings-layout-review-20261009.md)。前述筛选与旧证据保持各自日期；真人门继续待验收。
 
+同日20:12:43 CST 已按用户澄清合并 LR2IR 为普通来源，默认页为「排行榜」；原数据 / 名次 / 身份保持。当前发布、完整选择与原客户端详情的实际验证取[本轮记录](lr2ir-source-presentation-20261009.md)。
+
 ## 当前来源与运行位置
 
 | 对象 | 当前实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/b879e4233818-fffddaac1ce4`，2026-10-09 17:24:30 CST 切入 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/b879e4233818-479987991a9b`，2026-10-09 20:12:43 CST 切入 |
 | 服务源码 | Backend `b879e42338183bed3a5b7de057817152a23de46c`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
-| 原版页面源码 | Web `fffddaac1ce468b6c250fb1016039834fcc772a5`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
+| 原版页面源码 | Web `479987991a9ba349d45675c388b67c69ea95c847`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | 源码 / 旧设计回退目标 | `/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04`；原设计完整外存备份在 F 盘，服务器没有另打旧设计备份包 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；本次保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-ed3f014e02a9`，Alpine / PHP8.5；独立 oms-web 用户，只读 `/app`，不升级宝塔共享 PHP |
-| 当前可写缓存 / 日志 | `/var/cache/oms-web/b879e4233818-fffddaac1ce4/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/b879e4233818-479987991a9b/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
 上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端账号 UI 软件来源仍为 `6168791`，默认 endpoint 空、旧在线总开关 false；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
 
-## 当前网页更新与回退范围（2026-10-09 17:24）
+## 当前网页更新与回退范围（2026-10-09 20:12）
+
+本轮将 LR2IR 成绩作为普通来源并列展示，源码 / 资源 / 对应源码包已切479，Backend / vendor / 八插件 / PHP环境保持。两个Web unit与OMS include仅更新版本 / 独立缓存绑定，数据库身份及主IR / catalog进程保持。实际缓存 / FPM / 宝塔Nginx、公开36项成绩一致性及33项页面 / 全件资源 / 双站检查取[本轮记录](lr2ir-source-presentation-20261009.md)。线上浏览器取景超时，本地截图不代签生产真人视觉。
+
+前后12件完整配置、固定helper新鲜两对备份和实际有限资源窗在 `F:\zdamexy-workspace\websites\oms-web\artifacts\lr2ir-source-presentation-20261009\production-private`。timer恢复enabled / active / waiting；收尾下一触发的原值在 `transfer-retirement.json`，备份 / 缓存不可读终态峰保持null。
+
+当前直接同库网页回退为 `b879e4233818-fffddaac1ce4 / production-r1`；先新备份和配置保全，再恢复本轮before的两Web unit与OMS include、核宝塔Nginx、切current / 重载并生成旧正式缓存 / 重启FPM，核有界就绪 / 双站 / 资源。主IR仍从B0加载，主IR / catalog / 固定维护不换源，不回灌raw；本轮未做实际往返。已无活动引用的6fb运行目录在全部字节 / 元数据核对、新鲜备份与再次核引用后退役，现从本轮受保护F全件归档恢复；B0、D1固定维护 / 旧设计和日备份保留。
+
+完整F副本与远端SHA核对后只退役本任务incoming重复gzip；收尾空闲4,591,403,008 B，保守预留4,402,384,384 B，余189,018,624 B。旧压力 / 恢复仍保留原日期，增长触发重新预算。共享落点同步[Homepage镜像](../../homepage-website/doc_md/other/oms-lr2ir-source-20261009.md)与[旧Website镜像](../../oms-website/doc_md/other/oms-lr2ir-source-20261009.md)。
+
+## 2026-10-09 排行榜展示发布记录（17:24）
 
 本轮整理成绩展示，Backend / vendor / 八插件 / PHP环境保持原字节，schema3 / 同一库与主 IR / catalog PID保持。两 Web unit 与 OMS include只换fff版本 / 独立缓存绑定。完整实际启动、首个启动502与有界就绪、公开成绩29项 / 页面资源33项、源码下载及双站检查取[排行榜发布记录](rankings-layout-review-20261009.md)。主 IR仍从B0加载，不能清理B0。
 
