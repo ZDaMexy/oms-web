@@ -38,7 +38,11 @@
     gap: 14px;
     .ranking-filter { display: block; min-width: 0; }
     .ranking-filter__title { display: block; font-size: 11px; font-weight: 400; color: hsl(var(--hsl-f1)); margin: 0 0 6px; }
-    .form-control { width: 100%; min-width: 0; font-size: 12px; }
+    .form-control {
+      width: 100%; min-width: 0; min-height: 36px; padding: 8px 10px;
+      font-size: 12px; color: hsl(var(--hsl-c1)); background: hsl(var(--hsl-b3));
+      border: 1px solid hsl(var(--hsl-b1)); border-radius: 4px;
+    }
     @media @desktop { grid-template-columns: 100px 130px minmax(120px, 1fr) minmax(0, 2fr) auto; }
   }
 

@@ -165,7 +165,9 @@ async function rankingMe() {
     rank.className = 'beatmapset-scoreboard__highlight-rank';
     rank.textContent = '#' + me.rank.toLocaleString('zh-CN');
     const link = document.createElement('a');
-    link.href = '/users/' + me.user.id;
+    link.href = '/users/' + me.user.id + '?' + new URLSearchParams({
+      ruleset: String(initial.data.context.ruleset), keymode: String(initial.data.context.keymode), sources: String(initial.data.context.source),
+    });
     link.textContent = me.user.username;
     const name = document.createElement('strong');
     name.append(link);
