@@ -44,7 +44,7 @@ class OmsDifficultyTables
         $levels = [];
         foreach ($items as $item) {
             $key = 'level:'.($item['level'] ?? '');
-            $levels[$key] ??= ['value' => $item['level'], 'count' => 0];
+            $levels[$key] ??= ['value' => $this->level($item['level']), 'count' => 0];
             $levels[$key]['count']++;
         }
         $levels = array_values($levels);
@@ -67,7 +67,7 @@ class OmsDifficultyTables
         $matches = [];
         $initials = [];
         foreach ($items as $item) {
-            if ($filterLevel && $item['level'] !== $level) {
+            if ($filterLevel && $this->level($item['level']) !== $level) {
                 continue;
             }
             if ($query !== '' && mb_stripos(($item['title'] ?? '').' '.($item['artist'] ?? '').' '.($item['md5'] ?? ''), $query) === false) {
@@ -96,12 +96,17 @@ class OmsDifficultyTables
         abort_unless($metadata['status'] === 'ok', 503);
         foreach ($this->read($metadata['id'])['items'] as $item) {
             if ($item['md5'] === $context['md5']
-                && (!array_key_exists('level', $context) || $item['level'] === ($context['level'] === '' ? null : $context['level']))) {
+                && (!array_key_exists('level', $context) || $this->level($item['level']) === ($context['level'] === '' ? null : $context['level']))) {
                 return ['table' => $metadata, 'chart' => $item];
             }
         }
 
         abort(404);
+    }
+
+    private function level(?string $value): ?string
+    {
+        return $value === '' ? null : $value;
     }
 
     private function read(string $name): array

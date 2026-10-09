@@ -35,7 +35,7 @@ export default function Main(_props: {container:HTMLElement}) {
     <HeaderV4 theme='beatmapset' links={[{title:irOnly?'谱面榜':'谱面',url:irOnly?'/ir'+(initial.difficulty_table==null?'':'?'+tableQuery):'/beatmapsets'},{title:'详情',url:location.pathname+location.search,active:true}]}/>
     <div className='osu-page osu-page--generic-compact'>
       {irOnly?tableChart!=null?<>
-        <IrHeader detail={{ruleset:'bms',chart:{md5:tableChart.md5,sha256:null,title:tableChart.title,artist:tableChart.artist,difficulty:tableChart.level==null?null:(initial.difficulty_table?.symbol??'')+tableChart.level}}}/>
+        <IrHeader detail={{ruleset:'bms',chart:{md5:tableChart.md5,sha256:null,title:tableChart.title,artist:tableChart.artist,difficulty:tableChart.level==null||tableChart.level===''?null:(initial.difficulty_table?.symbol??'')+tableChart.level}}}/>
         <p className='difficulty-tables__provenance'>曲名与表内等级来自 {initial.difficulty_table!.name}；成绩按这张谱面的 MD5 查询。</p>
       </>:<><Status error={irMetadata.error} ready={ir!=null}/>{ir!=null&&<><IrHeader detail={ir}/><IrInfo detail={ir}/></>}</>:
         <>{endpoint==null?<p>{mode==='mania'&&md5!=null?'这张谱面尚未找到对应的 Sayobot 谱包。':'地址缺少谱面 MD5 或谱面集编号，请重新选择谱面。'}</p>:<Status error={metadata.error} ready={detail!=null}/>}

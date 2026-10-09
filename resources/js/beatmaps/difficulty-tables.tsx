@@ -85,7 +85,7 @@ export function IrSearchContent({ query, update, initial }: Props) {
               {result.data.items.map((item, index) => <React.Fragment key={item.row}>
                 {(index === 0 || item.initial !== result.data!.items[index - 1].initial) && <h3 className='difficulty-tables__letter'>{initialName(item.initial)}</h3>}
                 <div className='difficulty-tables__row'>
-                  <span className='difficulty-tables__level'>{item.level == null ? '—' : result.data!.table.symbol + item.level}</span>
+                  <span className='difficulty-tables__level'>{item.level == null || item.level === '' ? '—' : result.data!.table.symbol + item.level}</span>
                   <div className='difficulty-tables__song'>
                     {item.md5 == null ? <span>{item.title ?? '曲名未提供'}</span> : <a href={chartUrl(item.md5)}>{item.title ?? '曲名未提供'}</a>}
                     {item.artist != null && <span className='difficulty-tables__artist'>{item.artist}</span>}
