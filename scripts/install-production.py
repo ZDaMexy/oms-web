@@ -16,7 +16,15 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--package', type=Path, required=True)
 parser.add_argument('--package-sha256', required=True)
 parser.add_argument('--php-runtime', type=Path, required=True)
+parser.add_argument('--reference-release', type=Path)
 args = parser.parse_args()
+reference = args.reference_release
+if reference is not None:
+    assert reference.parent == Path('/opt/oms-ir/releases') and re.fullmatch(r'[0-9a-f]{12}-[0-9a-f]{12}', reference.name)
+    assert reference.resolve() == reference and not reference.is_symlink() and (reference / '.ready').is_file()
+    assert Path('/opt/oms-ir/current').resolve() == reference
+linked_bytes = 0
+copied_bytes = 0
 assert hashlib.file_digest(args.package.open('rb'), 'sha256').hexdigest() == args.package_sha256
 with tarfile.open(args.package) as archive:
     entries = archive.getmembers()
@@ -98,8 +106,19 @@ with tarfile.open(args.package) as archive:
     for entry in entries:
         target = destination / entry.name
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(archive.extractfile(entry).read())
-        target.chmod(0o644)
+        source = reference / entry.name if reference is not None else None
+        # Immutable files with verified identical bytes may share disk blocks.
+        # Changed files are always new inodes; never write through a hard link.
+        if (source is not None and source.is_file() and not source.is_symlink()
+                and source.stat().st_mode & 0o777 == 0o644
+                and source.stat().st_dev == target.parent.stat().st_dev
+                and hashlib.file_digest(source.open('rb'), 'sha256').hexdigest() == hashlib.sha256(archive.extractfile(entry).read()).hexdigest()):
+            os.link(source, target)
+            linked_bytes += entry.size
+        else:
+            target.write_bytes(archive.extractfile(entry).read())
+            target.chmod(0o644)
+            copied_bytes += entry.size
     (destination / 'archive.db').symlink_to(projection)
     for path in ('bootstrap/cache', 'storage/framework/views', 'storage/framework/cache', 'storage/logs'):
         (destination / 'web' / path).mkdir(parents=True, exist_ok=True)
@@ -107,4 +126,4 @@ subprocess.run(['/opt/oms-ir/tools/uv-0.12.11/uv', 'sync', '--project', str(dest
     env={**__import__('os').environ, 'UV_CACHE_DIR': '/opt/oms-ir/cache', 'UV_PYTHON_INSTALL_DIR': '/opt/oms-ir/python'})
 subprocess.run([str(destination / 'backend/.venv/bin/python'), '-c', 'import sqlite3; assert sqlite3.sqlite_version_info>=(3,51,3),sqlite3.sqlite_version'], check=True)
 (destination / '.ready').touch()
-print(json.dumps({'release': str(destination), 'runtime': str(runtime), 'production_activated': False}))
+print(json.dumps({'release': str(destination), 'runtime': str(runtime), 'linked_immutable_bytes': linked_bytes, 'copied_changed_bytes': copied_bytes, 'production_activated': False}))
