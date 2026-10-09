@@ -85,7 +85,7 @@ class OmsDifficultyTables
             'page' => (int) $page,
             'limit' => 50,
             'total' => count($matches),
-            'initial_counts' => $initials,
+            'initial_counts' => (object) $initials,
             'levels' => $levels,
         ];
     }
