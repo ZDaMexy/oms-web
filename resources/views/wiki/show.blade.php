@@ -67,7 +67,7 @@
             <h3 id="openlr2-ir">OpenLR2 v260915</h3>
             <ol>
                 <li>关闭播放器，选择与播放器 EXE 架构一致的 32 / 64 位 DLL，放入 <code>LR2files/CustomIRs/OmsIR/</code>。</li>
-                <li>下载 <a href="/ir/omsir-openlr2.example.json" download="omsir.json" data-turbo="false">omsir.json 配置模板</a>，将它以 <code>omsir.json</code> 保存到同一目录。<code>origin</code> 保留本站地址，<code>integration_key</code> 换成 OpenLR2 专用密钥。</li>
+                <li>下载 <a href="/omsir-openlr2.example.json" download="omsir.json" data-turbo="false">omsir.json 配置模板</a>，将它以 <code>omsir.json</code> 保存到同一目录。<code>origin</code> 保留本站地址，<code>integration_key</code> 换成 OpenLR2 专用密钥。</li>
                 <li>保留原 <code>LR2files/Config/openlr2-config.xml</code> 的备份，在已有 <code>&lt;config&gt;&lt;network&gt;</code> 节点内设置 <code>&lt;display_ir&gt;OMS IR (OpenLR2 v260915)&lt;/display_ir&gt;</code>，用于选择原生榜显示插件。</li>
                 <li>重新启动，查看插件目录内的 <code>LastStatus.txt</code>，核对连接结果；完成正常单谱游玩后，再核对网站成绩与播放器榜单。</li>
             </ol>

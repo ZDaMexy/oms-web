@@ -46,6 +46,7 @@ with tarfile.open(args.package) as archive:
             'backend/pyproject.toml', 'backend/uv.lock', 'backend/adapters/sdk-manifest.json',
             'web/artisan', 'web/composer.json', 'web/composer.lock', 'web/LICENCE', 'web/THIRD_PARTY_NOTICES.md',
             'web/public/index.php', 'web/public/favicon.ico', 'web/public/site.webmanifest', 'web/public/oms-web-source.tar.gz',
+            'web/public/omsir-openlr2.example.json',
         }
         assert allowed and '/.env' not in name and '/node_modules/' not in name and '/.dev-cache/' not in name and not name.startswith('web/bootstrap/cache/')
         data = archive.extractfile(name).read()

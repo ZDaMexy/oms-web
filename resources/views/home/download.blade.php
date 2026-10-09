@@ -43,7 +43,7 @@
         <div class="download-page__guide"><div class="download-page__guide-content">
             <h2>其他播放器连接 OMSIR</h2>
             <p>beatoraja 0.8.8、LR2oraja build11611350155、Endless Dream v0.4.0、OpenLR2 v260915 的试运行插件已提供。</p>
-            <p><a href="/help#players">插件下载与完整安装步骤</a> · <a href="/ir/omsir-openlr2.example.json" download="omsir.json" data-turbo="false">OpenLR2 配置模板</a></p>
+            <p><a href="/help#players">插件下载与完整安装步骤</a> · <a href="/omsir-openlr2.example.json" download="omsir.json" data-turbo="false">OpenLR2 配置模板</a></p>
             <p>经典原版 LR2 的实时插件尚未提供。旧 LR2IR 成绩已作为基底收录。</p>
         </div></div>
     </div></div>
