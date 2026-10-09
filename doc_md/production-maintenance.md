@@ -35,9 +35,11 @@
 
 ## 客户端与网站接线（2026-10-10）
 
-采用`client-web-wiring`的[客户端提交快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-web-wiring-snapshot-20261010.md)，实际路径 / 参数只取[共同接线合同](../../../oms-server/dev_bridge_md/doc_md/subline/oms-player-site/constraints.md#客户端与网页入口)。客户端恢复选歌 / 结算谱面、规范个人页和玩家排行；原谱MD5 / OMS ID、当前玩法 / 键型、来源含空 / 条件 / mania组和页码保留，地址切换清空旧范围。浏览器分别登录，不传桌面token。
+随后采用`client-omsir-direct-login`的[客户端新源码](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-ir-account-login-snapshot-20261010.md)：固定OMSIR、原账号直接注册 / 登录、具体谱面公开榜，删地址 / 开关 / 保存连接、顶部通用奖杯和端内目录搜索；未登录可主动查榜，登录只捕捉后续新局，旧origin凭据 / 待交不转移。共同现行职责取下方合同，旧接线来源中的可切换地址交互不再适用于新客户端。仅本地客户端软件与文档更新，本仓页面 / 资源、公开20260626客户端及生产运行未发布变化，真实窗口 / 账号 / 两端同范围仍待验收。
 
-本次仅客户端源码与文档，未更新网页 / Backend源码、资源或生产配置；上述a85 / b173运行包不变。客户端65例与Desktop双配置、匿名8页上下文及空来源API检查只证明软件和参数承接，不代签真实点击 / 用户 / 成绩。原账号 / 待交、两端同范围、真实原包下载及P/C仍按[真人验收](#真人验收)执行，无Windows发行物。
+采用`client-web-wiring`的[客户端提交快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-web-wiring-snapshot-20261010.md)，实际路径 / 参数只取[共同接线合同](../../../oms-server/dev_bridge_md/doc_md/subline/oms-player-site/constraints.md#客户端与网页入口)。客户端恢复选歌 / 结算谱面、规范个人页和玩家排行；原谱MD5 / OMS ID、当前玩法 / 键型、来源含空 / 条件 / mania组和页码保留；可切换地址仅为该旧提交的交互，现行origin取上方新来源。浏览器分别登录，不传桌面token。
+
+同日较早接线只更新客户端源码与文档，未更新网页 / Backend源码、资源或生产配置；上述a85 / b173运行包不变。该轮客户端65例与Desktop双配置、匿名8页上下文及空来源API检查只证明软件和参数承接，不代签真实点击 / 用户 / 成绩。原账号 / 待交、两端同范围、真实原包下载及P/C仍按[真人验收](#真人验收)执行，无Windows发行物。
 
 ## 当前成绩页维护与回退（2026-10-09）
 
