@@ -98,9 +98,9 @@ export default function Table({ board, mania }: { board?: Board; mania?: ManiaRo
         return <React.Fragment key={key}><tr className={bn + '__body-row ' + bn + '__body-row--' + (index % 2 === 0 ? 'even' : 'odd') + (board.me?.identity.namespace === row.identity.namespace && board.me.identity.id === row.identity.id ? ' ' + bn + '__body-row--me' : '')}>
           <td className={bn + '__cell ' + bn + '__cell--rank'}>#{row.rank.toLocaleString('zh-CN')}</td>
           <td className={bn + '__cell ' + bn + '__cell--score'}><ExScore row={row} /></td>
-          <td className={bn + '__cell ' + bn + '__cell--player'}><strong><Player row={row} /></strong><small>{row.identity.namespace.toUpperCase()} #{row.identity.id}</small></td>
+          <td className={bn + '__cell ' + bn + '__cell--player'}><strong title={row.identity.namespace.toUpperCase() + ' #' + row.identity.id}><Player row={row} /></strong></td>
           <td className={bn + '__cell'}><LampBadge lamp={row.score.lamp} /></td>
-          <td className={bn + '__cell ' + bn + '__cell--source'}>{sourceNames[row.score.source] ?? row.score.source}<small>{recordKinds[row.score.record_kind] ?? row.score.record_kind}</small></td>
+          <td className={bn + '__cell ' + bn + '__cell--source'} title={recordKinds[row.score.record_kind] ?? row.score.record_kind}>{sourceNames[row.score.source] ?? row.score.source}</td>
           <td className={bn + '__cell ' + bn + '__cell--time'}><PlayedAt value={row.score.played_at} /></td>
           <td className={bn + '__cell ' + bn + '__cell--details'}>{toggle(key, row.identity.username)}</td>
         </tr>{expanded === key && <tr id={id + '-' + key} className={bn + '__detail-row'}><td colSpan={7}><BmsDetails row={row} /></td></tr>}</React.Fragment>;
@@ -110,7 +110,7 @@ export default function Table({ board, mania }: { board?: Board; mania?: ManiaRo
         return <React.Fragment key={key}><tr className={bn + '__body-row ' + bn + '__body-row--' + (index % 2 === 0 ? 'even' : 'odd')}>
           <td className={bn + '__cell ' + bn + '__cell--rank'}>#{row.rank.toLocaleString('zh-CN')}</td>
           <td className={bn + '__cell ' + bn + '__cell--score'}><strong>{row.score.total_score.toLocaleString('zh-CN')}</strong></td>
-          <td className={bn + '__cell ' + bn + '__cell--player'}><strong><a href={'/users/' + row.user.id}>{row.user.username}</a></strong><small>OMS #{row.user.id}</small></td>
+          <td className={bn + '__cell ' + bn + '__cell--player'}><strong title={'OMS #' + row.user.id}><a href={'/users/' + row.user.id}>{row.user.username}</a></strong></td>
           <td className={bn + '__cell'}>{row.score.passed ? '已通关' : '未通关'}</td>
           <td className={bn + '__cell'}>{(row.score.accuracy * 100).toFixed(2)}%</td>
           <td className={bn + '__cell ' + bn + '__cell--time'}><PlayedAt value={row.score.played_at} /></td>
