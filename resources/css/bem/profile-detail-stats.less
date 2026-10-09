@@ -13,6 +13,13 @@
   &--oms {
     > div { min-width: 0; }
     @media @desktop { grid-template-columns: minmax(170px, 1fr) auto minmax(0, 2fr); gap: 24px; }
+    .profile-detail-stats__values {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
+      .profile-stats__entry { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+      .profile-stats__key { font-size: 11px; color: hsl(var(--hsl-f1)); }
+      .profile-stats__value { font-size: 26px; margin: 0; font-variant-numeric: tabular-nums; }
+    }
+    > div > p { font-size: 11px; color: hsl(var(--hsl-f1)); margin-top: 12px; }
   }
 
   &__lanes { display: grid; gap: 12px; }

@@ -12,7 +12,7 @@ export default function Header({ controller }: { controller: Controller }) {
     { title: '个人', url: '/users/' + id, active: true },
     { title: '帖子', url: '/community?author_id=' + id },
     { title: '玩家榜', url: '/rankings?' + new URLSearchParams({ ruleset: mode, keymode }) },
-  ]} contentAppend={controller.section==='history'?undefined:<div className='beatmapsets-search__filters'>
+  ]} contentAppend={controller.section==='history'?undefined:<div className='beatmapsets-search__filters oms-profile-filters'>
     <ModeFilters mode={mode} keymode={keymode} onChange={changes => update(changes)} />
     <Sources mode={mode} live value={query.get('sources')} onChange={sources => update({ sources, condition: null })} />
   </div>} />;
