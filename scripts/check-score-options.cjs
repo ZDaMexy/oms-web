@@ -1,0 +1,30 @@
+// Verify source-specific option semantics before applying the shared visual labels.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const ts = require('typescript');
+const source = fs.readFileSync('resources/js/oms/score-options.ts', 'utf8');
+const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
+const exportsForTest = {};
+vm.runInNewContext(compiled, { exports: exportsForTest });
+const options = (source, conditions, record_kind = 'best_state') => exportsForTest.scoreOptions({ source, conditions, record_kind });
+const codes = value => Array.from(value, option => option.code);
+
+assert.deepEqual(codes(options('lr2oraja_ed', { option: 3 })), ['R-RD']);
+assert.deepEqual(codes(options('openlr2', { random_p1: 3 })), ['S-RD']);
+assert.deepEqual(codes(options('beatoraja', { option: 4 })), ['S-RD']);
+assert.deepEqual(codes(options('lr2oraja', { option: 121, keymode: 'bms_14k', gauge: 3 })), ['HARD', 'MR', 'RD', 'FLIP']);
+assert.deepEqual(Array.from(options('lr2oraja', { option: 121, keymode: 'bms_14k' }), option => option.detail), ['1P', '2P', undefined]);
+assert.deepEqual(codes(options('openlr2', { random_p1: 1, random_p2: 3, dpflip: 1, keymode: 'bms_14k', gauge: 2 })), ['HAZARD', 'MR', 'S-RD', 'FLIP']);
+assert.deepEqual(codes(options('beatoraja', { gauge: -1 })), ['SHIFT']);
+assert.deepEqual(codes(options('beatoraja', { option: -1 })), ['OP -1']);
+assert.deepEqual(codes(options('lr2ir.v3.lr2', { option_1: 'RAN', option_2: '難' }, 'archive_best')), ['RD', 'HARD']);
+assert.deepEqual(codes(options('lr2ir.v3.lr2', { option_1: '', option_2: null }, 'archive_best')), []);
+assert.deepEqual(codes(options('lr2ir.v3.unknown', { option_3: 'unmapped' }, 'archive_best')), ['unmapped']);
+const oms = exportsForTest.omsOptions([{ acronym: 'HARD', settings: {} }], { starting_gauge_type: 'Hard' });
+assert.deepEqual(codes(oms), ['HARD', 'NM']);
+const gas = exportsForTest.omsOptions([{ acronym: 'GAS', settings: {} }], { gauge_auto_shift: true, starting_gauge_type: 'ExHard', floor_gauge_type: 'Easy' });
+assert.equal(gas[0].code, 'GAS');
+assert.match(gas[0].label, /ExHard → Easy/);
+assert.deepEqual(codes(exportsForTest.omsOptions([{ acronym: 'RD', settings: { random_mode: 'SRandom' } }])), ['S-RD']);
+console.log('15 score option checks passed');

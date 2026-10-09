@@ -14,6 +14,7 @@
   &__actions {
     gap: 16px;
     button { .reset-input(); color: hsl(var(--hsl-l1)); font-size: 12px; padding: 4px 0; }
+    a { font-size: 12px; }
   }
   &__options { min-width: 0; }
   &__option {
@@ -68,4 +69,33 @@
   &--hard { color: hsl(var(--hsl-red-1)); }
   &--easy { color: hsl(var(--hsl-lime-1)); }
   &--clear { color: @blue-light; }
+}
+
+.score-options {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.3;
+  &__option {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-height: 20px;
+    padding: 3px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+    color: hsl(var(--hsl-f1));
+    background: hsla(var(--hsl-f1), 0.1);
+    i { font-size: 9px; }
+    small { font-size: 8px !important; margin: 0 !important; color: inherit !important; }
+    &--layout { color: hsl(var(--hsl-c2)); background: hsla(var(--hsl-c2), 0.18); }
+    &--gauge { color: hsl(var(--hsl-red-1)); background: hsla(var(--hsl-red-1), 0.15); }
+    &--rule { color: @yellow-light; background: fade(@yellow-light, 12%); }
+    &--assist { color: hsl(var(--hsl-lime-1)); background: hsla(var(--hsl-lime-1), 0.15); }
+    &--visual { color: @blue-light; background: fade(@blue-light, 12%); }
+  }
+  &__missing { color: hsl(var(--hsl-f1)); font-weight: normal; }
 }

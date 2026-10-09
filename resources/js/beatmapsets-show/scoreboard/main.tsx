@@ -43,7 +43,7 @@ export default function Main({md5,mode}:{md5:string;mode:Ruleset}) {
         {data!=null&&<>
           <div className='beatmapset-scoreboard__scope'><h2>{mode==='bms'?(reference?'排行榜':'同条件成绩榜'):'OMS 成绩榜'}</h2><span>{data.total.toLocaleString('zh-CN')} 位玩家</span></div>
           <p className='beatmapset-scoreboard__description'>{mode==='bms'
-            ? result.data!.selected_sources.length===0?'未选择成绩来源。':reference?'按 EX 分排列，通关灯沿用原记录。':'只比较规则和物量相同的 OMS 成绩。'
+            ? result.data!.selected_sources.length===0?'未选择客户端。':reference?'按 EX 分排列 · ACC 为 EX 得分率。':'只比较规则和物量相同的 OMS 成绩。'
             : '按同一计分条件下的公开最佳总分排列，也包含未通关成绩。'} <a href='/help#scores'>榜单说明</a></p>
           <ScoreHighlights board={result.data} mania={mania.data?.items}/>
           {data.items.length===0?<p className='beatmapset-scoreboard__notice'>{data.total===0?(source===''?'选择成绩来源后查看榜单。':mode==='bms'&&!reference?'没有符合这个条件的成绩，可以换个条件或返回排行榜。':'所选来源下还没有成绩。'):'本页没有成绩，请返回第一页。'}</p>:mode==='bms'?<Table board={result.data!}/>:<Table mania={mania.data!.items}/>}

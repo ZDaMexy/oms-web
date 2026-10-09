@@ -74,9 +74,18 @@ export interface Performance {
 }
 export interface BoardRow {
   rank: number; identity: { namespace: string; id: string; username: string };
-  score: { record_id: string; record_kind: string; source: string; ex_score: number | null; max_ex_score: number | null; total_score?: number | null; played_at: string | null; received_at?: string | null; conditions: Record<string, unknown>; unknown_fields: string[]; lamp?: Lamp | null };
+  score: {
+    record_id: string; record_kind: string; source: string; ex_score: number | null; max_ex_score: number | null;
+    total_score?: number | null; played_at: string | null; received_at?: string | null;
+    conditions: Record<string, unknown>; unknown_fields: string[]; lamp?: Lamp | null;
+    accuracy: number; accuracy_basis: 'ex-rate'; reported_accuracy: number | null;
+    statistics: Record<'pg' | 'gr' | 'gd' | 'bd' | 'pr' | 'ep', number | null>;
+    native_statistics: Record<string, number | null>; max_combo: number | null;
+    mods: ScoreMod[] | null; client_version: string | null;
+  };
   best_lamps: Lamp[];
 }
+export interface ScoreMod { acronym: string; settings: Record<string, unknown> }
 export interface Board extends Page<BoardRow> {
   me: BoardRow | null; selected_sources: string[]; conditions: {id: string; label: string}[]; notice: string;
 }

@@ -32,5 +32,5 @@ export function chartUrl(md5: string, mode: Ruleset, extras: Record<string, stri
 export function keys(mode: Ruleset) {
   return mode === 'bms' ? ['bms_5k', 'bms_7k', 'bms_9k', 'pms_9k', 'bms_14k'] : Array.from({ length: 18 }, (_, i) => `mania_${i + 1}k`);
 }
-export const sourceNames: Record<string, string> = { oms: 'OMS', beatoraja: 'beatoraja', lr2oraja: 'LR2oraja', lr2oraja_ed: 'Endless Dream', openlr2: 'OpenLR2', 'lr2ir.v3.lr2': 'LR2IR', 'lr2ir.v3.sbmp': 'LR2IR', 'lr2ir.v3.unknown': 'LR2IR', ginger: 'Ginger Rush', '616': '616', sayobot: 'Sayobot' };
+export const sourceNames: Record<string, string> = { oms: 'OMS', beatoraja: 'beatoraja', lr2oraja: 'LR2oraja', lr2oraja_ed: 'Endless Dream', openlr2: 'OpenLR2', 'lr2ir.v3.lr2': 'LR2', 'lr2ir.v3.sbmp': '客户端待确认', 'lr2ir.v3.unknown': '客户端未标记', ginger: 'Ginger Rush', '616': '616', sayobot: 'Sayobot' };
 export const lr2irClientNames: Record<string, string> = { 'lr2ir.v3.lr2': 'LR2', 'lr2ir.v3.sbmp': 'SBMP', 'lr2ir.v3.unknown': '未标记' };
