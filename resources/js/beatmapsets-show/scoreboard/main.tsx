@@ -16,7 +16,7 @@ export default function Main({md5,mode}:{md5:string;mode:Ruleset}) {
   const source=query.get('sources');
   const maniaEnabled=source==null||source==='oms';
   const page=query.get('page')??'1';
-  const info=useApi<{groups:{id:string;label:string}[]}>(mode==='mania'?'/api/ir/v2/charts/'+md5:null);
+  const info=useApi<{groups:{id:string;label:string}[]}>(mode==='mania'?'/api/ir/v2/charts/'+md5:null, undefined, 'public');
   const chosenGroup=group??info.data?.groups[0]?.id;
   const params=new URLSearchParams({page,limit:'20',mode:reference?'reference':'comparable'});
   if(source!=null) params.set('sources',source);

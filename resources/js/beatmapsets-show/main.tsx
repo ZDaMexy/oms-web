@@ -17,13 +17,13 @@ export default function Main(_props: {container:HTMLElement}) {
   const md5=initial.context.md5??query.get('md5');
   const irOnly=initial.context.ir_only===true;
   const tableChart=initial.table_chart;
-  const irMetadata=useApi<IrChart>(irOnly&&initial.chart==null&&tableChart==null&&md5!=null?'/api/ir/v2/charts/'+md5:null);
+  const irMetadata=useApi<IrChart>(irOnly&&initial.chart==null&&tableChart==null&&md5!=null?'/api/ir/v2/charts/'+md5:null, undefined, 'public');
   const ir=initial.chart??irMetadata.data;
   const mode=irOnly?ir?.ruleset??initial.context.ruleset??ruleset(query):initial.context.ruleset??ruleset(query);
   const sid=initial.context.sid??query.get('sid');
   const sha256=initial.context.sha256??query.get('sha256');
   const endpoint=mode==='bms'&&md5?'/api/ir/v1/catalog/bms/'+md5+(sha256==null?'':'?'+new URLSearchParams({sha256})):mode==='mania'&&sid?'/api/ir/v1/catalog/mania/sets/'+sid:null;
-  const metadata=useApi<BmsDetail|ManiaDetail>(!irOnly&&initial.catalog==null?endpoint:null);
+  const metadata=useApi<BmsDetail|ManiaDetail>(!irOnly&&initial.catalog==null?endpoint:null, undefined, 'public');
   const detail=initial.catalog??metadata.data;
   const tableQuery=new URLSearchParams();
   if(initial.difficulty_table!=null) {

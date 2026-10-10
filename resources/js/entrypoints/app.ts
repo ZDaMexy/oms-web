@@ -10,4 +10,4 @@ import 'register-components';
 import { session } from 'oms/api';
 import 'oms/forms';
 
-document.addEventListener('turbo:load', () => { void session.refresh(); });
+document.addEventListener('turbo:load', () => { void session.ensure(); });

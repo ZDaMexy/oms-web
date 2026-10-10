@@ -16,7 +16,7 @@ export function SearchContent({query,mode,update}:Props) {
   const params=new URLSearchParams({ruleset:mode,source,q:query.get('q')??'',page,cursor:query.get('cursor')??'0'});
   const keymode=query.get('keys');
   if(keymode) params.set('keys',mode==='mania'?keymode.replace('mania_','').replace('k',''):keymode);
-  const result=useApi<CatalogSearch>('/api/ir/v1/catalog/search?'+params);
+  const result=useApi<CatalogSearch>('/api/ir/v1/catalog/search?'+params, undefined, 'public');
   const [text,setText]=React.useState(query.get('q')??'');
   React.useEffect(() => { setText(query.get('q') ?? ''); }, [query.get('q')]);
   const search = (event: React.FormEvent) => {

@@ -27,7 +27,7 @@ export function ModeFilters({ mode, keymode, onChange }: { mode: Ruleset; keymod
   </>;
 }
 export function Sources({ value, onChange, live = false, mode = 'bms' }: { value: string | null; onChange: (value: string) => void; live?: boolean; mode?: Ruleset }) {
-  const registry = useApi<{items: Source[]}>('/api/ir/v2/sources');
+  const registry = useApi<{items: Source[]}>('/api/ir/v2/sources', undefined, 'public');
   if (registry.data == null) return <Status error={registry.error} ready={false} />;
   const sources = registry.data.items.filter(source => (mode !== 'mania' || source.code === 'oms') && (!live || source.record_kind !== 'archive_best'));
   const selected = value == null ? sources.filter(source => source.available).map(source => source.code) : value.split(',').filter(Boolean);

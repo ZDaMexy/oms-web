@@ -32,7 +32,7 @@ export function IrSearchContent({ query, update, initial }: Props) {
   const sameScope = table === initial.context.table && letter === (initial.context.initial ?? '')
     && level === (initial.context.level ?? null) && q === (initial.context.q ?? '') && Number(page) === Number(initial.context.page ?? 1);
   const result = useApi<TablePage>(table == null ? null : '/ir/tables/' + encodeURIComponent(table) + '?' + params,
-    sameScope ? initial.table_list ?? undefined : undefined);
+    sameScope ? initial.table_list ?? undefined : undefined, 'public');
   const [text, setText] = React.useState(q);
   React.useEffect(() => { setText(q); }, [q]);
   const selected = initial.difficulty_tables.tables.find(item => item.id === table);

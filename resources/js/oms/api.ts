@@ -35,12 +35,14 @@ class Session {
   user: User | null = null;
   error: string | null = null;
   revision = 0;
+  private confirmed = false;
   private reading?: Promise<void>;
   private readonly channel = typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel('oms-ir-browser-session');
 
   constructor() {
     this.channel?.addEventListener('message', () => {
       const pending = this.reading;
+      this.confirmed = false;
       this.change(null);
       void (pending ?? Promise.resolve()).then(() => this.refresh());
     });
@@ -51,6 +53,11 @@ class Session {
     this.user = user;
     this.revision++;
     document.dispatchEvent(new Event('oms:session'));
+  }
+
+  ensure() {
+    // Navigation reuses a confirmed identity; focus and cross-tab changes force a read.
+    return this.reading ?? (this.confirmed ? Promise.resolve() : this.refresh());
   }
 
   refresh() {
@@ -68,6 +75,7 @@ class Session {
             if (!(refreshError instanceof ApiError) || refreshError.status !== 401) throw refreshError;
             if (revision === this.revision) {
               const changed = this.error != null || this.user != null;
+              this.confirmed = true;
               this.error = null;
               if (changed) this.change(null);
             }
@@ -77,10 +85,12 @@ class Session {
         }
         if (revision !== this.revision) return;
         const changed = this.error != null || this.user == null || this.user.id !== result.user.id || this.user.username !== result.user.username;
+        this.confirmed = true;
         this.error = null;
         if (changed) this.change(result.user);
       } catch (error) {
         if (revision !== this.revision) return;
+        this.confirmed = false;
         this.error = message(error);
         if (this.user != null) this.change(null);
         document.dispatchEvent(new Event('oms:session'));
@@ -90,12 +100,14 @@ class Session {
   }
 
   async login(kind: 'login' | 'register', username: string, password: string) {
+    this.confirmed = false;
     this.change(null); // cancel any old owner's in-flight view before changing credentials
     const revision = this.revision;
     return authLock(async () => {
       if (revision !== this.revision) throw new Error('账号已改变，请重新确认登录。');
       const result = await write<{ user: User }>(`/api/ir/v1/auth/${kind}`, { username, password, transport: 'browser' });
       if (revision !== this.revision) throw new Error('账号已改变，请重新确认登录。');
+      this.confirmed = true;
       this.error = null;
       this.change(result.user);
       Turbo.cache.clear();
@@ -105,6 +117,7 @@ class Session {
   }
 
   async logout() {
+    this.confirmed = false;
     this.change(null);
     const revision = this.revision;
     await authLock(async () => {
@@ -112,6 +125,7 @@ class Session {
       await write('/api/ir/v1/auth/logout', {});
     });
     if (revision !== this.revision) return;
+    this.confirmed = true;
     this.error = null;
     Turbo.cache.clear();
     this.channel?.postMessage('changed');
@@ -121,16 +135,22 @@ class Session {
 export const session = new Session();
 
 export async function downloadBms(path: string, signal: AbortSignal) {
-  await session.refresh();
-  if (session.error != null) throw new Error(session.error);
-  // Check the same-origin 307 without fetching the external package body.
-  const response = await fetch(path, { credentials: 'same-origin', cache: 'no-store', redirect: 'manual', signal });
-  if (response.type !== 'opaqueredirect') {
-    await decode(response);
-    throw new Error('服务没有返回可用的谱包地址。');
+  const endpoint = new URL(path, location.origin);
+  endpoint.searchParams.set('resolve', '1');
+  const result = await request<{ url?: unknown } | null>(endpoint.pathname + endpoint.search, signal);
+  const invalidUrl = () => new Error('服务没有返回可用的谱包地址。');
+  if (result == null || typeof result !== 'object' || typeof result.url !== 'string'
+    || Array.from(result.url).some(character => character.charCodeAt(0) <= 32)) throw invalidUrl();
+  let target: URL;
+  try { target = new URL(result.url); }
+  catch (error) {
+    if (!(error instanceof TypeError)) throw error;
+    throw invalidUrl();
   }
+  if (target.protocol !== 'https:' || !['gingerrush.com', 'pixeldrain.net', 'bms.alvorna.com'].includes(target.hostname)
+    || target.port !== '' || target.username !== '' || target.password !== '' || target.hash !== '') throw invalidUrl();
   signal.throwIfAborted();
-  window.location.assign(path);
+  window.location.assign(target.href);
 }
 
 export async function request<T>(path: string, signal?: AbortSignal): Promise<T> {
@@ -161,14 +181,14 @@ export function useSession() {
   }, []);
   return session;
 }
-export function useApi<T>(path: string | null, initial?: T): { key: string; data?: T; error?: string } {
+export function useApi<T>(path: string | null, initial?: T, scope: 'account' | 'public' = 'account'): { key: string; data?: T; error?: string } {
   const current = useSession();
-  const key = JSON.stringify([path, current.revision]);
+  const key = JSON.stringify([path, scope === 'public' ? null : current.revision]);
   const seeded = useRef(initial == null ? null : key);
   const [value, setValue] = useState<{ key: string; data?: T; error?: string }>({ key, data: initial });
   useEffect(() => {
     if (path == null) return;
-    // Public SSR data is used once; later scope/account changes always request anew.
+    // SSR data is used once; path changes and account-bound reads invalidate it.
     if (seeded.current === key) { seeded.current = null; return; }
     const cancel = new AbortController();
     setValue({ key });
