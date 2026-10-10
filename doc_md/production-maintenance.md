@@ -29,7 +29,7 @@
 | 当前可写缓存 / 日志 | `/var/cache/oms-web/a85aee3e3c45-b17354d27c6b/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
-上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端最新网站接线来源取下方2026-10-10提交快照，此前6168791账号UI与其他能力保持各自范围；默认 endpoint 空、旧在线总开关 false；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
+上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端最新网站接线来源取下方2026-10-10提交快照，此前6168791账号UI与其他能力保持各自范围；旧 osu! API endpoint 空、旧在线总开关 false，固定 OMSIR 采用下方直接登录来源；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
 
