@@ -1,6 +1,17 @@
 # OMS 原版 osu-web 试运行维护
 
-当前2026-10-11 12:24:11 CST已发布网络服务优化；准确清理量、源绑定、90秒有限并行访问、IR / catalog / PHP三服务同库新→上一版→新往返、41项公开核验和前后完整备份只取[本轮记录](network-service-review-20261011.md#清理后实际发布已部署待验收)。日备份已恢复，产品仍**已部署待验收**；Windows客户端只更新开发源码，仍由用户非调试验收。
+内容维护每次改共享JSON后检查原生v1 / 256KiB预算、实际kernel、网页摘要 / 完整正文 / 帮助锚点、ETag / gzip / HEAD / 304及普通刷新；随准确不可变包发布，不直接改运行目录。账号 / 用户内容继续由唯一Backend管理。
+
+## 当前原生服务维护与回退（2026-10-11）
+
+直接上一版 `cc37bdb8f3b4-f9a5afd99939 / production-r1`；本轮新→该版→新已实际三服务同库通过。未来操作先取新鲜固定helper备份 / F完整核验与最新13件配置保全，保存timer后暂停；停止Web / cache、主IR / catalog，按本轮 `native-services-20261011/production-private/before/` 五件原件恢复四unit与OMS include，原子切current、daemon-reload、BT指定binary / config检查，启动IR / catalog核双health、生成旧正式缓存、init Nginx reload并启动FPM，核真实旧页面 / 资源 / 双站及三个PID。保留同一业务库 / schema3，不回灌raw；不能仅切current或只换网页。
+
+新原生客户端内容端点在直接旧版不存在，回退需明确该能力会显示读取失败；网页 / IR旧服务仍沿已验证范围。固定D1/22b维护、D1/e6旧设计和全部当前 / 上一版 / 更早保留运行包不清理。共享gzip沿此前网络配置，原2026-10-08旧设计恢复日期不刷新。下方网络与成绩页回退属于原发布，当前步骤只取本节；后续配置 / 数据变化先重新核门，不能盲盖旧原件。
+
+
+当前2026-10-11 16:34:47 CST已发布端内服务配套，Web / Backend真实来源、原生内容缓存、90秒共载、三服务同库往返、公开41＋内容8项与两新鲜固定helper备份只取[本轮记录](client-native-services-20261011.md#生产发布与闭环)。日备份恢复，产品保持**已部署待真人验收**；客户端最终源码f2b495f4已测，用户VS Code非调试验收，未生成Windows包。
+
+此前2026-10-11 12:24:11 CST网络优化发布与清理、往返及备份保持[该轮原证据](network-service-review-20261011.md#清理后实际发布已部署待验收)；现行来源及原生服务发布取本页顶部。
 
 此前2026-10-09 22:17:27 CST已发布OMSIR成绩页：实际客户端并列、旧库低调标记、EX / ACC / 六类判定 / 连击 / Mod与原详情；接入事实、原失败、模板路由补齐及全部新增证据取[本轮记录](omsir-score-page-20261009.md)。本轮重启主IR以加载附加展示字段，catalog不重启；产品真人门保持待验收。
 
@@ -20,28 +31,30 @@
 
 | 对象 | 当前实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/cc37bdb8f3b4-f9a5afd99939`，2026-10-11 12:24:11 CST最终切入 |
-| 服务源码 | Backend `cc37bdb8f3b4e3cb60c2cf563f9054e389fbee24`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
-| 原版页面源码 | Web `f9a5afd99939e8a60e861debce4a5fb315eb21ad`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/824de121a686-494932756b74`，2026-10-11 16:34:47 CST最终切入 |
+| 服务源码 | Backend `824de121a6862d2f9b576f66a18715192fd0d57f`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
+| 原版页面源码 | Web `494932756b747edba791fd1499b83348ec49b963`；Laravel / Blade / React / Less / Turbo、AGPL / 归属及对应源码下载保持 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | 源码 / 旧设计回退目标 | `/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04`；原设计完整外存备份在 F 盘，服务器没有另打旧设计备份包 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；本次保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-ed3f014e02a9`，Alpine / PHP8.5；独立 oms-web 用户，只读 `/app`，不升级宝塔共享 PHP |
-| 当前可写缓存 / 日志 | `/var/cache/oms-web/cc37bdb8f3b4-f9a5afd99939/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/824de121a686-494932756b74/production-r1`；bootstrap / storage私有、PHP日志沿原位置 |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
-上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端最新网站接线来源取下方2026-10-10提交快照，此前6168791账号UI与其他能力保持各自范围；旧 osu! API endpoint 空、旧在线总开关 false，固定 OMSIR 采用下方直接登录来源；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
+上述 Web / Backend 是运行提交，文档HEAD、历史取证和外置检查工具各自记录。客户端现行原生服务完整来源取[2026-10-11配套](client-native-services-20261011.md#当前采用与范围)，直接登录与待交仍沿原来源；下方2026-10-10接线为原提交历史。旧ppy API为空 / 总开关false，用户从F工作区VS Code非调试验收，未生成Windows发行、publish或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
 
 ## 客户端与网站接线（2026-10-10）
 
-随后采用`client-omsir-direct-login`的[客户端新源码](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-ir-account-login-snapshot-20261010.md)：固定OMSIR、原账号直接注册 / 登录、具体谱面公开榜，删地址 / 开关 / 保存连接、顶部通用奖杯和端内目录搜索；未登录可主动查榜，登录只捕捉后续新局，旧origin凭据 / 待交不转移。共同现行职责取下方合同，旧接线来源中的可切换地址交互不再适用于新客户端。仅本地客户端软件与文档更新，本仓页面 / 资源、公开20260626客户端及生产运行未发布变化，真实窗口 / 账号 / 两端同范围仍待验收。
+2026-10-11已发布共享news / help JSON，网页与原生客户端同源，固定OMSIR直接登录说明同步；此前启用 / 填地址 / 保存缺口关闭。[本轮配套](client-native-services-20261011.md)签源码 / 生产读取，仍不代签真实账号或公开20260626发行。
+
+2026-10-10采用`client-omsir-direct-login`，直接登录来源见[账号快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-ir-account-login-snapshot-20261010.md)，当时只更新客户端、删除旧地址 / 开关 / 保存与通用奖杯 / 目录搜索。本轮端内首页 / 目录接续见顶部新来源，固定OMSIR、匿名公开榜与原origin凭据 / 待交隔离仍适用；浏览器与桌面分别登录，真实窗口 / 账号 / 下载仍待。
 
 采用`client-web-wiring`的[客户端提交快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-web-wiring-snapshot-20261010.md)，实际路径 / 参数只取[共同接线合同](../../../oms-server/dev_bridge_md/doc_md/subline/oms-player-site/constraints.md#客户端与网页入口)。客户端恢复选歌 / 结算谱面、规范个人页和玩家排行；原谱MD5 / OMS ID、当前玩法 / 键型、来源含空 / 条件 / mania组和页码保留；可切换地址仅为该旧提交的交互，现行origin取上方新来源。浏览器分别登录，不传桌面token。
 
-同日较早接线只更新客户端源码与文档，未更新网页 / Backend源码、资源或生产配置；上述a85 / b173运行包不变。该轮客户端65例与Desktop双配置、匿名8页上下文及空来源API检查只证明软件和参数承接，不代签真实点击 / 用户 / 成绩。原账号 / 待交、两端同范围、真实原包下载及P/C仍按[真人验收](#真人验收)执行，无Windows发行物。
+2026-10-10较早接线只更新客户端及文档，当时a85 / b173生产来源不变；65例 / 双配置和匿名页面仅证明该提交软件。当前新增原生页面与配套发布不由旧65代签，来源沿顶部。原账号 / 待交、两端同范围、实际原包下载及P/C按[真人验收](#真人验收)，无Windows发行物。
 
 ## 当前网络优化维护与回退（2026-10-11）
 
@@ -111,7 +124,7 @@
 
 ## 新闻与内容维护
 
-新闻内容只维护 [resources/oms/news.json](../resources/oms/news.json)。[HomeController](../app/Http/Controllers/HomeController.php) 的 `newsPosts()` 读取这一个文件，按 `published_at` 降序提供给首页、`/news` 和 `/news/{slug}`；正文由[新闻模板](../resources/views/news/show.blade.php)显示。旧静态仓的 `src/oms/news.ts` 属于旧设计来源。
+新闻只维护[news.json](../resources/oms/news.json)，帮助只维护[help.json](../resources/oms/help.json)。HomeController同一读源提供首页 / 新闻 / 完整正文、/help和匿名结构化/client-content；实际稳定slug / help ID沿共享JSON，旧静态src/oms/news.ts只属旧设计来源。
 
 保持实际 JSON 结构：文章包含 `slug`、`published_at`、`title`、`image`、`excerpt` 和 `body`；正文段落使用 `text`，可选 `heading` 与 `links`，链接使用 `label` / `href`。公开固定地址由 `slug` 决定，现有地址和真实发布日期保留。发布或试运行范围写在真实标题、摘要和正文中，不增加假新闻、玩家活动或已完成的真人验收；公开 20260626 与开发版 IR 的边界继续保留。
 
@@ -119,12 +132,12 @@
 
 ## 运行与资源核对
 
-2026-10-11网络服务优化已清理后实际发布网页身份复用、一次下载解析和同键外源合并；客户端持久等待 / 有界压缩仍为开发源码。准确发布和共享Nginx图片gzip调整已通过配置F保全 / 宝塔检查 / reload / 双站与JSON核对；应用包已通过实际空间 / 准确源门安装并切换，受影响有限运行 / 同库往返、公开资源与来源、新鲜前后备份及F完整核验通过。准确字节、实际资源和未完成真人只取[发布记录](network-service-review-20261011.md#清理后实际发布已部署待验收)；软件请求量比较仍不当作全站CPU / 流量成效，增长时重新复核预算。
+现行资源取[原生服务发布](client-native-services-20261011.md#资源与安全清理)：安装 / 三次切换 / 90秒两路共载的实际窗、原恢复预留与收尾空间分别记录。前一网络轮已发布网页身份复用、一次下载解析与同键合并 / 图片gzip，证据保留原日期，不混计本轮收益。客户端内容无启动预取 / 空闲轮询，按页请求、取消迟到结果、300秒有界缓存；谱包不经OMS代理。有限请求不签全站CPU / 长期流量提升，增长重新预算。
 
 | 单元 | 固定预算和行为 |
 | --- | --- |
 | oms-ir.service | 500 MiB / CPU150% / swap0；loopback8081，按需 API |
-| oms-ir-catalog.service | 96 MiB / CPU25% / swap0；loopback8082，仅批准源元数据；本次保留原 PID1862556，三源码文件已与新包核对一致 |
+| oms-ir-catalog.service | 96 MiB / CPU25% / swap0；loopback8082、批准源元数据；与IR / PHP每次同库切换同步重启，具体PID沿本轮收据 |
 | oms-web.service | 200 MiB / CPU50% / swap0，high160 MiB；loopback FPM9070，两子进程按需启动，enabled / running |
 | oms-web-cache.service | 128 MiB / CPU50% / swap0；正式 `/app` 与 URL 下生成配置 / 视图，完成后 exited，当前版本发布时重启 FPM清旧 OPcache |
 | oms-ir-backup.service | 固定维护包，128 MiB / CPU50% / swap0；oneshot，不与另一备份 / 恢复并行 |
@@ -144,7 +157,7 @@ journalctl -u oms-web.service --no-pager -n 40
 
 HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence、多人或持续连接。HTML要求重新验证缓存，带散列资源一年 immutable；原插件 no-store。页面更新需检查普通浏览器刷新，不能只让玩家用 Ctrl+F5。
 
-2026-10-08完整运行门最低可用内存560.957 MiB，swap / OOM零；两空恢复所有窗口、最大 main + WAL、源码 / 依赖 / 缓存、八对与额外2 GiB均已实测。最后恢复最低磁盘仅高于原底线6,162,952 B，原数保留。增长、新版本或真实故障触发重新预算；不自行购买或扩盘。当前新增页面读取、历史运行包F保全与安装后盘账取[排行榜发布记录](rankings-layout-review-20261009.md)，旧完整运行和恢复仍取生产记录，不把十万条合成数据当千万级历史证明。
+2026-10-08完整运行 / 两空恢复门与原空间底线保持[原日期生产证据](production-deployment-20261007.md)。最新安装 / 有限读取 / 收尾盘账取[原生服务配套](client-native-services-20261011.md#资源与安全清理)，历史运行包F保全沿各发布来源；不以新90秒刷新旧1,800秒，也不把十万合成数据当千万级历史证明。数据增长 / 新版本 / 实际故障触发重新预算，不自行购买或扩盘。
 
 ## 日备份与 F 盘外取
 
@@ -157,7 +170,7 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 3. 真正恢复先在新空目录进行，冻结包 / 依赖与 fresh缓存独立还原，公开投影只读引用；签收正常读写、撤销 / 隐藏、全量榜 / 非空原生 / 分页及实际资源和F全件交接后，才准确退役自己的恢复数据。本次两轮已有完整证据，未变时不重复制造恢复副本。
 4. SQLite一致备份仅包含业务库；全量公开投影、对应源码 / 依赖包和当前配置各有独立完整F来源，不拿241,664 B的真实业务raw冒充1.6 GB历史投影已保全，也不以只读投影代替账号 / 会话备份。
 
-本次发布前正式对和发布后正式对分别在 F:\zdamexy-workspace\oms\artifacts\oms-web-production-20261007\fixed-production-backup-pre-switch-f3f004b6adaa 与 `fixed-production-backup-post-switch-7be5768366c7`。两者完整核验且同实例运行观察通过。旧R6 observer false及其另行完整对保全仍保持，不能重标成功。后端原备份命令与权限说明见[运行维护](../../../oms-server/oms-backend/deploy/README.md)；其中旧b520回退段仅属原时点，本次回退按下节。
+2026-10-08首次发布前后正式对、失败observer及旧恢复保全沿[原日期生产记录](production-deployment-20261007.md)。最新两个固定helper准确来源 / Invocation、完整F核验与timer取[原生服务配套](client-native-services-20261011.md#新鲜固定helper备份与收尾)。后端[deploy](../../../oms-server/oms-backend/deploy/README.md)的旧静态命令和b520仅属历史；当前三服务同库回退取本页现行原生维护节，旧设计仍按下节2026-10-08原范围。
 
 ## 保留当前库的设计与源码回退
 
