@@ -11,6 +11,7 @@ Route::middleware('web')->group(function (): void {
     Route::get('home', 'HomeController@index');
     Route::get('news', 'HomeController@newsIndex')->name('news.index');
     Route::get('news/{slug}', 'HomeController@newsShow')->name('news.show')->where('slug', '[A-Za-z0-9_-]+');
+    Route::get('client-content', 'HomeController@clientContent')->name('client-content');
     Route::get('download', 'HomeController@getDownload')->name('download');
     Route::redirect('home/download', '/download');
 
@@ -26,7 +27,7 @@ Route::middleware('web')->group(function (): void {
     Route::get('users/{user}', 'OmsController@profile')->name('users.show')->where('user', '[1-9][0-9]*');
     Route::get('rankings', 'OmsController@rankings')->name('rankings');
     Route::get('account', 'OmsController@account')->name('account.edit');
-    Route::get('help', 'OmsController@help')->name('help');
+    Route::get('help', 'HomeController@help')->name('help');
     Route::get('credits', 'OmsController@credits')->name('credits');
 
     Route::get('community', 'OmsController@community')->name('forum.forums.index');

@@ -212,11 +212,6 @@ class OmsController extends Controller
         return $this->page('account.edit', 'account');
     }
 
-    public function help(): View
-    {
-        return $this->page('wiki.show', 'help');
-    }
-
     public function credits(): View
     {
         return $this->page('home.credits', 'credits');

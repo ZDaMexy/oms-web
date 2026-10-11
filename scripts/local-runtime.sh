@@ -119,6 +119,16 @@ http {
       add_header Referrer-Policy same-origin always;
       add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://gingerrush.com https://pixeldrain.net https://bms.alvorna.com https://a.sayobot.cn; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" always;
     }
+    location = /client-content {
+      include /etc/nginx/fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME $web_root/public/index.php;
+      fastcgi_param SCRIPT_NAME /index.php;
+      fastcgi_param HTTP_PROXY "";
+      fastcgi_pass 127.0.0.1:9070;
+      add_header X-Content-Type-Options nosniff always;
+      add_header Referrer-Policy same-origin always;
+      add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://gingerrush.com https://pixeldrain.net https://bms.alvorna.com https://a.sayobot.cn; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" always;
+    }
     location = /index.php {
       include /etc/nginx/fastcgi_params;
       fastcgi_param SCRIPT_FILENAME $web_root/public/index.php;

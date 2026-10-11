@@ -143,6 +143,17 @@ location ^~ /ir/adapters/ {{
 }}
 location = /index.html {{ return 308 /$is_args$args; }}
 location = /index.php {{ return 404; }}
+location = /client-content {{
+    include /www/server/nginx/conf/fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /app/public/index.php;
+    fastcgi_param SCRIPT_NAME /index.php;
+    fastcgi_param DOCUMENT_ROOT /app/public;
+    fastcgi_param HTTP_PROXY "";
+    fastcgi_pass 127.0.0.1:{fpm_port};
+    fastcgi_connect_timeout 2s;
+    fastcgi_read_timeout 30s;
+    {headers}
+}}
 location / {{
     include /www/server/nginx/conf/fastcgi_params;
     fastcgi_param SCRIPT_FILENAME /app/public/index.php;
