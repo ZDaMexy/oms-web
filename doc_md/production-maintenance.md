@@ -1,6 +1,8 @@
 # OMS 原版 osu-web 试运行维护
 
-当前 2026-10-09 22:17:27 CST 已发布 OMSIR 成绩页：实际客户端并列、旧库低调标记、EX / ACC / 六类判定 / 连击 / Mod与原详情；接入事实、原失败、模板路由补齐及全部新增证据取[本轮记录](omsir-score-page-20261009.md)。本轮重启主IR以加载附加展示字段，catalog不重启；产品真人门保持待验收。
+当前2026-10-11 12:24:11 CST已发布网络服务优化；准确清理量、源绑定、90秒有限并行访问、IR / catalog / PHP三服务同库新→上一版→新往返、41项公开核验和前后完整备份只取[本轮记录](network-service-review-20261011.md#清理后实际发布已部署待验收)。日备份已恢复，产品仍**已部署待验收**；Windows客户端只更新开发源码，仍由用户非调试验收。
+
+此前2026-10-09 22:17:27 CST已发布OMSIR成绩页：实际客户端并列、旧库低调标记、EX / ACC / 六类判定 / 连击 / Mod与原详情；接入事实、原失败、模板路由补齐及全部新增证据取[本轮记录](omsir-score-page-20261009.md)。本轮重启主IR以加载附加展示字段，catalog不重启；产品真人门保持待验收。
 
 2026-10-08 原版网站已部署，状态 **已部署待验收**。玩家可从[首页](https://oms.zdamexy.work/)进入新闻、独立下载与帮助、谱面浏览、跨来源榜、账号、个人页、玩家榜和社区。真人下载入库、账号 / 密钥、OMS 对照及固定播放器 P/C 尚未签收。具体运行、恢复、失败与发布证据只取[生产记录](production-deployment-20261007.md#正式发布与收尾)。
 
@@ -18,15 +20,15 @@
 
 | 对象 | 当前实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/a85aee3e3c45-b17354d27c6b`，2026-10-09 22:17:27 CST 切入 |
-| 服务源码 | Backend `a85aee3e3c45d2358feef986f04beff00ed6ad8f`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
-| 原版页面源码 | Web `b17354d27c6b5c50170a88aa35497592fdf6d502`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/cc37bdb8f3b4-f9a5afd99939`，2026-10-11 12:24:11 CST最终切入 |
+| 服务源码 | Backend `cc37bdb8f3b4e3cb60c2cf563f9054e389fbee24`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
+| 原版页面源码 | Web `f9a5afd99939e8a60e861debce4a5fb315eb21ad`；保留原 Laravel / Blade / React / Less / Turbo，AGPL / 归属及对应源码下载公开 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | 源码 / 旧设计回退目标 | `/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04`；原设计完整外存备份在 F 盘，服务器没有另打旧设计备份包 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；本次保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-ed3f014e02a9`，Alpine / PHP8.5；独立 oms-web 用户，只读 `/app`，不升级宝塔共享 PHP |
-| 当前可写缓存 / 日志 | `/var/cache/oms-web/a85aee3e3c45-b17354d27c6b/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/cc37bdb8f3b4-f9a5afd99939/production-r1`；`bootstrap`、`storage` 私有，PHP日志在 `storage/logs/fpm.log` / `php.log` |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
 上述 Web / Backend 是运行提交，文档 HEAD、历史取证提交及外置检查工具各自记录，不重标生产。客户端最新网站接线来源取下方2026-10-10提交快照，此前6168791账号UI与其他能力保持各自范围；旧 osu! API endpoint 空、旧在线总开关 false，固定 OMSIR 采用下方直接登录来源；用户通过 VS Code 非调试启动 F:\zdamexy-workspace\oms 验收，不生成 Windows 发行包、publish 或安装副本。
@@ -41,7 +43,13 @@
 
 同日较早接线只更新客户端源码与文档，未更新网页 / Backend源码、资源或生产配置；上述a85 / b173运行包不变。该轮客户端65例与Desktop双配置、匿名8页上下文及空来源API检查只证明软件和参数承接，不代签真实点击 / 用户 / 成绩。原账号 / 待交、两端同范围、真实原包下载及P/C仍按[真人验收](#真人验收)执行，无Windows发行物。
 
-## 当前成绩页维护与回退（2026-10-09）
+## 当前网络优化维护与回退（2026-10-11）
+
+直接上一版为 `a85aee3e3c45-b17354d27c6b / production-r1`；本轮真实三服务新→该版→新、同库 / schema保持已通过，原2026-10-08旧设计恢复保留原日期。未来回退先新鲜固定helper备份 / F完整核验和最新配置保全，停止Web / cache与IR / catalog后，再按本轮 `network-deploy-20261011/production-private/before/` 五件原件恢复IR、catalog、Web、cache unit与OMS include，切current、daemon-reload、宝塔Nginx检查，启动IR / catalog、核双health、生成旧正式缓存、Nginx reload、启动FPM并核页面 / 资源 / 双站及三个实际PID。所有HTTP / catalog / PHP必须同步加载目标，不能仅切current；共享图片gzip维持本轮值，旧raw不覆盖现库。
+
+所有当前 / 直接上一版 / 固定D1维护与旧设计、B0 / FFF / 479 release仍保留；当前准确前后配置、两次备份、timer与空间仅取本轮记录。下一次操作前复核新流量 / 数据增长和最新配置，不能复用过时原件盲盖。
+
+## 2026-10-09 成绩页维护与回退历史
 
 运行源码、正式缓存、精确IR路径、四件配置变化（含JSON模板exact路由）、前后12件原件、两对完整备份与F核验取[本轮发布记录](omsir-score-page-20261009.md)。主IR已加载a85 / 新PID3509802，catalog原PID保持；与过去纯Web更新的主IR未重启不同，不能套用旧三配置回退步骤。
 
@@ -111,7 +119,7 @@
 
 ## 运行与资源核对
 
-2026-10-11网络服务审查已实现网页身份复用、一次下载解析、同键外源合并与客户端持久等待 / 有界压缩。共享Nginx图片gzip调整已通过配置F保全 / 宝塔检查 / reload / 双站与JSON核对；应用候选包已完整生成，但实际包的保守安装 / 恢复空间门未过，未上传 / 安装或切current。准确字节、估算身份、软件与本地浏览器 / HTTP只取[审查记录](network-service-review-20261011.md)，请求量比较不能当现生产应用成效；后续新鲜备份、co-load与公开门须在可保留恢复预留后执行。
+2026-10-11网络服务优化已清理后实际发布网页身份复用、一次下载解析和同键外源合并；客户端持久等待 / 有界压缩仍为开发源码。准确发布和共享Nginx图片gzip调整已通过配置F保全 / 宝塔检查 / reload / 双站与JSON核对；应用包已通过实际空间 / 准确源门安装并切换，受影响有限运行 / 同库往返、公开资源与来源、新鲜前后备份及F完整核验通过。准确字节、实际资源和未完成真人只取[发布记录](network-service-review-20261011.md#清理后实际发布已部署待验收)；软件请求量比较仍不当作全站CPU / 流量成效，增长时重新复核预算。
 
 | 单元 | 固定预算和行为 |
 | --- | --- |
