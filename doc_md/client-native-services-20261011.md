@@ -2,7 +2,7 @@
 
 ## 2026-10-12客户端页面纠正
 
-当前客户端 6381e120aea1ff63dfdd34ff0e9fe38ac05f1528 已将既有功能接到lazer原新闻 / 帮助 / 排行 / 玩家 / 谱面容器和独立工具栏，删除统一面板。client-native-service-pages、client-native-community-owner、client-native-content-cache 以[新快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-pages-snapshot-20261012.md)及[共同合同](../../../oms-server/dev_bridge_md/doc_md/mainline/client-native-services.md)为当前采用。结构化内容与现有API足够，本轮未改Web / Backend代码、内容资源或生产部署；下方发布 / 运行 / 备份只属2026-10-11原版本。真实画面 / 账号 / 原包 / 整曲、P-C / 发行未签收，聊天 / 好友 / 在线状态后续。
+现行谱面浏览客户端 589a9624e5605cd872a82bdaab10962c64aec471已将谱面目录 / 下载合为一个「谱面列表」，OMS / Ginger / 616 / Sayobot共用原生搜索 / 筛选 / 卡片与各自阅读状态。client-native-service-pages取[本次来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-unified-beatmap-browser-snapshot-20261012.md)和[共同合同](../../../oms-server/dev_bridge_md/doc_md/mainline/client-native-services.md)；client-native-community-owner / client-native-content-cache及其它原生页仍取[6381e12来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-pages-snapshot-20261012.md)。现有API足够，本轮未改Web / Backend代码 / 内容或生产部署，下方运行 / 备份保留2026-10-11原版本。真实画面 / 账号 / 原包 / 整曲、P-C / 发行未签收，社交后续。
 
 ## 2026-10-11服务配套来源（历史）
 
