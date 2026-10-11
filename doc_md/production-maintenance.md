@@ -11,7 +11,7 @@
 新原生客户端内容端点在直接旧版不存在，回退需明确该能力会显示读取失败；网页 / IR旧服务仍沿已验证范围。固定D1/22b维护、D1/e6旧设计和全部当前 / 上一版 / 更早保留运行包不清理。共享gzip沿此前网络配置，原2026-10-08旧设计恢复日期不刷新。下方网络与成绩页回退属于原发布，当前步骤只取本节；后续配置 / 数据变化先重新核门，不能盲盖旧原件。
 
 
-当前2026-10-11 16:34:47 CST已发布端内服务配套，Web / Backend真实来源、原生内容缓存、90秒共载、三服务同库往返、公开41＋内容8项与两新鲜固定helper备份只取[本轮记录](client-native-services-20261011.md#生产发布与闭环)。日备份恢复，产品保持**已部署待真人验收**；客户端最终源码f2b495f4已测，用户VS Code非调试验收，未生成Windows包。
+当前2026-10-11 16:34:47 CST已发布端内服务配套，Web / Backend真实来源、原生内容缓存、90秒共载、三服务同库往返、公开41＋内容8项与两新鲜固定helper备份只取[本轮记录](client-native-services-20261011.md#生产发布与闭环)。日备份恢复，产品保持**已部署待真人验收**；当次服务 manifest 的客户端字段绑定功能源码 58454332，f2b495f4 属旧统一面板软件；现行客户端取[页面纠正来源](client-native-services-20261011.md#2026-10-12客户端页面纠正)，用户 VS Code 非调试验收，未生成 Windows 包。
 
 此前2026-10-11 12:24:11 CST网络优化发布与清理、往返及备份保持[该轮原证据](network-service-review-20261011.md#清理后实际发布已部署待验收)；现行来源及原生服务发布取本页顶部。
 
@@ -44,7 +44,7 @@
 | 当前可写缓存 / 日志 | `/var/cache/oms-web/824de121a686-494932756b74/production-r1`；bootstrap / storage私有、PHP日志沿原位置 |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
-上述 Web / Backend 是运行提交，文档HEAD、历史取证和外置检查工具各自记录。客户端现行原生服务完整来源取[2026-10-11配套](client-native-services-20261011.md#当前采用与范围)，直接登录与待交仍沿原来源；下方2026-10-10接线为原提交历史。旧ppy API为空 / 总开关false，用户从F工作区VS Code非调试验收，未生成Windows发行、publish或安装副本。
+上述 Web / Backend 是运行提交，文档HEAD、历史取证和外置检查工具各自记录。客户端现行原生服务完整来源取[2026-10-11配套](client-native-services-20261011.md#2026-10-12客户端页面纠正)，直接登录与待交仍沿原来源；下方2026-10-10接线为原提交历史。旧ppy API为空 / 总开关false，用户从F工作区VS Code非调试验收，未生成Windows发行、publish或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
 
@@ -52,13 +52,13 @@
 
 2026-10-11已发布共享news / help JSON，网页与原生客户端同源，固定OMSIR直接登录说明同步；此前启用 / 填地址 / 保存缺口关闭。[本轮配套](client-native-services-20261011.md)签源码 / 生产读取，仍不代签真实账号或公开20260626发行。
 
-2026-10-10采用`client-omsir-direct-login`，直接登录来源见[账号快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-ir-account-login-snapshot-20261010.md)，当时只更新客户端、删除旧地址 / 开关 / 保存与通用奖杯 / 目录搜索。本轮端内首页 / 目录接续见顶部新来源，固定OMSIR、匿名公开榜与原origin凭据 / 待交隔离仍适用；浏览器与桌面分别登录，真实窗口 / 账号 / 下载仍待。
+2026-10-10采用`client-omsir-direct-login`，直接登录来源见[账号快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-ir-account-login-snapshot-20261010.md)，当时只更新客户端、删除旧地址 / 开关 / 保存与通用奖杯 / 目录搜索。现行独立原生页 / 统一谱面列表接续见顶部来源，固定OMSIR、匿名公开榜与原origin凭据 / 待交隔离仍适用；浏览器与桌面分别登录，真实窗口 / 账号 / 下载仍待。
 
 采用`client-web-wiring`的[客户端提交快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-web-wiring-snapshot-20261010.md)，实际路径 / 参数只取[共同接线合同](../../../oms-server/dev_bridge_md/doc_md/subline/oms-player-site/constraints.md#客户端与网页入口)。客户端恢复选歌 / 结算谱面、规范个人页和玩家排行；原谱MD5 / OMS ID、当前玩法 / 键型、来源含空 / 条件 / mania组和页码保留；可切换地址仅为该旧提交的交互，现行origin取上方新来源。浏览器分别登录，不传桌面token。
 
 2026-10-10较早接线只更新客户端及文档，当时a85 / b173生产来源不变；65例 / 双配置和匿名页面仅证明该提交软件。当前新增原生页面与配套发布不由旧65代签，来源沿顶部。原账号 / 待交、两端同范围、实际原包下载及P/C按[真人验收](#真人验收)，无Windows发行物。
 
-## 当前网络优化维护与回退（2026-10-11）
+## 2026-10-11 网络优化回退历史
 
 直接上一版为 `a85aee3e3c45-b17354d27c6b / production-r1`；本轮真实三服务新→该版→新、同库 / schema保持已通过，原2026-10-08旧设计恢复保留原日期。未来回退先新鲜固定helper备份 / F完整核验和最新配置保全，停止Web / cache与IR / catalog后，再按本轮 `network-deploy-20261011/production-private/before/` 五件原件恢复IR、catalog、Web、cache unit与OMS include，切current、daemon-reload、宝塔Nginx检查，启动IR / catalog、核双health、生成旧正式缓存、Nginx reload、启动FPM并核页面 / 资源 / 双站及三个实际PID。所有HTTP / catalog / PHP必须同步加载目标，不能仅切current；共享图片gzip维持本轮值，旧raw不覆盖现库。
 
@@ -68,7 +68,7 @@
 
 运行源码、正式缓存、精确IR路径、四件配置变化（含JSON模板exact路由）、前后12件原件、两对完整备份与F核验取[本轮发布记录](omsir-score-page-20261009.md)。主IR已加载a85 / 新PID3509802，catalog原PID保持；与过去纯Web更新的主IR未重启不同，不能套用旧三配置回退步骤。
 
-当前直接同库回退479：先新备份和配置保全，恢复本轮before的IR / 两Web unit与OMS include，切current、daemon-reload、BT检查 / 重载、生成旧正式缓存，再重启IR / FPM并核公开范围、两站、资源。保持现库，禁止旧raw覆盖新内容；实际新→旧→新往返仍只取原2026-10-08证据。固定D1/22b维护 / D1/e6旧设计、B0、FFF和479均保留。
+当次直接同库回退479：先新备份和配置保全，恢复本轮before的IR / 两Web unit与OMS include，切current、daemon-reload、BT检查 / 重载、生成旧正式缓存，再重启IR / FPM并核公开范围、两站、资源。保持现库，禁止旧raw覆盖新内容；实际新→旧→新往返仍只取原2026-10-08证据。固定D1/22b维护 / D1/e6旧设计、B0、FFF和479均保留。
 
 证据根为 `F:/zdamexy-workspace/websites/oms-web/artifacts/score-page-normalization-20261009`。timer恢复enabled / active / waiting；同库dev / inode保持。收尾空闲4,545,056,768 B，保守预留4,402,384,384 B，余142,672,384 B。新有限12次读取不刷新旧持续 / 压力 / 恢复；未做母库清洗、schema迁移、真实客户端或Windows发行。
 
