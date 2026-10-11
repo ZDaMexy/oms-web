@@ -1,8 +1,12 @@
 # OMS 端内在线服务配套与发布（2026-10-11）
 
-## 当前采用与范围
+## 2026-10-12客户端页面纠正
 
-客户端最终格式源码 `f2b495f41c0c20f8f81754339281b26e256e3d03`（功能提交 `58454332f2a8fb6f51fa91f3881e3e82a22c78a8`） 提供原生排行、公开个人页、谱面详情、社区、新闻与帮助。来源先经 [客户端快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-services-snapshot-20261011.md) 与事实登记，再由 [共同合同](../../../oms-server/dev_bridge_md/doc_md/mainline/client-native-services.md) 采用。`client-native-service-pages`、`client-native-community-owner`、`client-native-content-cache` 为本仓本轮消费点；浏览器与游戏分别登录，公开最佳不替代本人 UUID 全历史。
+当前客户端 6381e120aea1ff63dfdd34ff0e9fe38ac05f1528 已将既有功能接到lazer原新闻 / 帮助 / 排行 / 玩家 / 谱面容器和独立工具栏，删除统一面板。client-native-service-pages、client-native-community-owner、client-native-content-cache 以[新快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-pages-snapshot-20261012.md)及[共同合同](../../../oms-server/dev_bridge_md/doc_md/mainline/client-native-services.md)为当前采用。结构化内容与现有API足够，本轮未改Web / Backend代码、内容资源或生产部署；下方发布 / 运行 / 备份只属2026-10-11原版本。真实画面 / 账号 / 原包 / 整曲、P-C / 发行未签收，聊天 / 好友 / 在线状态后续。
+
+## 2026-10-11服务配套来源（历史）
+
+当时客户端统一面板源码 f2b495f41c0c20f8f81754339281b26e256e3d03（功能58454332）提供本文原接口消费者；其画面已被用户实测否定，现行页面只取顶部新来源。原[2026-10-11快照](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-services-snapshot-20261011.md)与软件保留原范围，不能签当前原生体验。
 
 Web 运行源码为 `494932756b747edba791fd1499b83348ec49b963`，Backend 为 `824de121a6862d2f9b576f66a18715192fd0d57f`。本次没有 Windows 包；公开 20260626 客户端的发行范围不提升。真实窗口、IME / DPI、实际账号与下载入库、整曲 / 重启及固定宿主 P/C 继续由用户验收。
 
