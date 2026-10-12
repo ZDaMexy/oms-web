@@ -2,7 +2,7 @@
 
 ## 2026-10-12客户端页面纠正
 
-现行谱面浏览客户端 589a9624e5605cd872a82bdaab10962c64aec471已将谱面目录 / 下载合为一个「谱面列表」，OMS / Ginger / 616 / Sayobot共用原生搜索 / 筛选 / 卡片与各自阅读状态。client-native-service-pages取[本次来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-unified-beatmap-browser-snapshot-20261012.md)和[共同合同](../../../oms-server/dev_bridge_md/doc_md/mainline/client-native-services.md)；client-native-community-owner / client-native-content-cache及其它原生页仍取[6381e12来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-pages-snapshot-20261012.md)。现有API足够，本轮未改Web / Backend代码 / 内容或生产部署，下方运行 / 备份保留2026-10-11原版本。真实画面 / 账号 / 原包 / 整曲、P-C / 发行未签收，社交后续。
+现行谱面浏览客户端 fff09a2431b9cbc80206bf0d83c69192963b5347 只有一个「谱面列表」入口，来源仅 Ginger Rush / 616 / Sayobot；撤出客户端 OMS 目录来源 / UI / 列表读取，具体MD5详情与榜保留。紧凑实际筛选、普通 / 大卡、固定字体与真实字段沿 client-native-service-pages的[本次来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-beatmap-browser-lazer-snapshot-20261012.md)和[共同合同](../../../oms-server/dev_bridge_md/doc_md/mainline/client-native-services.md)；client-native-community-owner / client-native-content-cache及其它原生页仍取[6381e12来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-pages-snapshot-20261012.md)。本轮软件 / 隔离桌面渲染不代签真人，现有网站目录和API继续；未改 Web / Backend 代码 / 内容或部署，下方运行 / 备份保留2026-10-11原版本。真实账号 / 原包 / 整曲、P-C / 发行未签收，社交后续。
 
 ## 2026-10-11服务配套来源（历史）
 
