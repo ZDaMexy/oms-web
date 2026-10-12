@@ -2,7 +2,7 @@
 
 ## 2026-10-12客户端页面纠正
 
-现行谱面浏览客户端 dd795fadde163fc082be550d9344d81c717357a2 只有一个「谱面列表」入口，先选模式：BMS 仅 Ginger Rush / 616，osu!mania 仅 Sayobot；切回 BMS 恢复上次来源，等待中关闭 / 改选取消旧目标。client-native-service-pages沿[本次来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-beatmap-browser-mode-snapshot-20261012.md)和[共同合同](../../../oms-server/dev_bridge_md/doc_md/mainline/client-native-services.md)，原生实际筛选、普通 / 大卡、固定字体、真实字段与原MD5详情 / 榜保持；client-native-community-owner / client-native-content-cache仍取[6381e12来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-pages-snapshot-20261012.md)。本轮软件 / 隔离渲染不代签真人，现有网站目录和API继续；未改 Web / Backend代码 / 内容或部署，下方运行 / 备份保留2026-10-11原版本。真实账号 / 原包 / 整曲、P-C / 发行未签收，社交后续。
+现行谱面浏览客户端 dd795fadde163fc082be550d9344d81c717357a2 只有一个「谱面列表」入口，先选模式：BMS 仅 Ginger Rush / 616，osu!mania 仅 Sayobot；切回 BMS 恢复上次来源，等待中关闭 / 改选取消旧目标。client-native-service-pages沿[本次来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-beatmap-browser-mode-snapshot-20261012.md)和[共同合同](../../../oms-server/dev_bridge_md/doc_md/mainline/client-native-services.md)，原生实际筛选、普通 / 大卡、固定字体、真实字段与原MD5详情 / 榜保持；client-native-community-owner / client-native-content-cache仍取[6381e12来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-client-native-pages-snapshot-20261012.md)。隔离资料与人工420内容宽度渲染不代签真实窗口 / DPI或正常OMS窗口的lazer设计体验，准确范围沿原来源勘误，现有网站目录和API继续；未改 Web / Backend代码 / 内容或部署，下方运行 / 备份保留2026-10-11原版本。真实账号 / 原包 / 整曲、P-C / 发行未签收，社交后续。
 
 ## 2026-10-11服务配套来源（历史）
 
