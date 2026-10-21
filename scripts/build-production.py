@@ -9,6 +9,7 @@ import json
 from pathlib import Path, PurePosixPath
 import subprocess
 import tarfile
+from php_runtime import RUNTIME_ARCHIVE, inspect_runtime
 
 WEB = Path(__file__).resolve().parent.parent
 BACKEND = WEB.parent.parent / 'oms-server/oms-backend'
@@ -91,7 +92,8 @@ def main():
     sources.update({name: data for name, data in files.items() if name.startswith('backend/')})
     sources['source-manifest.json'] = json.dumps({'backend_commit': heads['backend'], 'website_commit': heads['website'], 'adapter_backend_commit': old_manifest['backend_commit'], 'files': {name: hashlib.sha256(data).hexdigest() for name, data in sources.items()}}, indent=2).encode()
     files['web/public/oms-web-source.tar.gz'] = tar_bytes(sources)
-    runtime = WEB / 'artifacts/production/php85-alpine3242.tar.gz'
+    runtime = WEB / 'artifacts/production' / RUNTIME_ARCHIVE
+    php_runtime = inspect_runtime(runtime)
     file_map = json.dumps({'files': {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())}, 'file_bytes': {name: len(data) for name, data in sorted(files.items())}}, separators=(',', ':')).encode()
     manifest = {
         'format': 3, 'runtime_kind': 'native-osu-web-1', 'database_schema_version': 3,
@@ -99,7 +101,7 @@ def main():
         **{name + '_commit': commit for name, commit in heads.items()},
         'public_archive': old_manifest['public_archive'],
         'adapter_source': {'backend_commit': old_manifest['backend_commit'], 'original_release': old_manifest['release_id'], 'original_package_sha256': LEGACY_SHA, 'artifacts_rebuilt': False},
-        'php_runtime': {'sha256': hashlib.file_digest(runtime.open('rb'), 'sha256').hexdigest(), 'bytes': runtime.stat().st_size, 'php': '8.5.11', 'alpine_base': '3.24.2', 'apk_packages': (WEB / 'artifacts/production/php-packages.txt').read_text().splitlines()},
+        'php_runtime': php_runtime,
         'compiled_input_sha256': hashlib.sha256((WEB / 'artifacts/production/compiled-inputs.json').read_bytes()).hexdigest(),
         'created_at': datetime.now(timezone.utc).isoformat(),
         'files_manifest': {'path': 'runtime-files.json', 'sha256': hashlib.sha256(file_map).hexdigest(), 'bytes': len(file_map), 'count': len(files)},

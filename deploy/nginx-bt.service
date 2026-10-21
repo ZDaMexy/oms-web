@@ -1,0 +1,19 @@
+[Unit]
+Description=BT Nginx for ZDaMexy and OMS
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+ConditionFileIsExecutable=/www/server/nginx/sbin/nginx
+
+[Service]
+Type=forking
+PIDFile=/www/server/nginx/logs/nginx.pid
+ExecStartPre=/www/server/nginx/sbin/nginx -t -q -c /www/server/nginx/conf/nginx.conf
+ExecStart=/www/server/nginx/sbin/nginx -c /www/server/nginx/conf/nginx.conf
+ExecReload=/www/server/nginx/sbin/nginx -s reload -c /www/server/nginx/conf/nginx.conf
+ExecStop=/bin/kill -s QUIT $MAINPID
+TimeoutStopSec=30
+KillMode=mixed
+LimitNOFILE=51200
+
+[Install]
+WantedBy=multi-user.target

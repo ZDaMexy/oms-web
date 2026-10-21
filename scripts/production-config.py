@@ -2,6 +2,7 @@
 import argparse
 from pathlib import Path
 import re
+from php_runtime import inspect_installed_runtime
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--release', type=Path, required=True)
@@ -14,6 +15,7 @@ release, runtime, work, output = args.release, args.runtime, args.work, args.out
 assert re.fullmatch(r'/opt/oms-ir/releases/[0-9a-f]{12}-[0-9a-f]{12}', str(release))
 assert re.fullmatch(r'/opt/oms-web/runtime/php85-[0-9a-f]{12}', str(runtime))
 assert str(work).startswith('/opt/oms-web/acceptance/') if args.staging else str(work).startswith('/var/cache/oms-web/')
+inspect_installed_runtime(runtime)
 output.mkdir(parents=True, exist_ok=False)
 api_port, fpm_port, url = (18084, 19070, 'http://127.0.0.1:18090') if args.staging else (8081, 9070, 'https://oms.zdamexy.work')
 fpm = (release / 'web/deploy/php-fpm.conf').read_text().replace('127.0.0.1:9070', f'127.0.0.1:{fpm_port}')
@@ -44,10 +46,11 @@ TasksMax=32
 UMask=0077
 '''
 runtime_lifecycle = 'Type=exec\nRemainAfterExit=yes\nRestart=no\n' if args.staging else 'Restart=on-failure\nRestartSec=2\n'
+cache_order = '' if args.staging else 'Requires=oms-web-cache.service\nAfter=oms-web-cache.service\n'
 (output / 'oms-web.service').write_text(f'''[Unit]
 Description=OMS native osu-web pages ({release.name})
 After=network.target oms-ir.service
-[Service]
+{cache_order}[Service]
 {common}{runtime_lifecycle}ExecStart=/usr/sbin/php-fpm85 --nodaemonize --fpm-config /etc/php85/oms-fpm.conf
 MemoryHigh=160M
 MemoryMax=200M

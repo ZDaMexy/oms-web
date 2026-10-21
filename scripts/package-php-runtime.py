@@ -3,9 +3,10 @@ import gzip
 from pathlib import Path
 import sys
 import tarfile
+from php_runtime import inspect_runtime
 
 root, target = map(Path, sys.argv[1:])
-assert root.resolve() == root and root.name == 'r2-root'
+assert root.resolve() == root and root.name == 'r3-root'
 assert target.parent.is_dir() and not target.exists()
 
 def normalized(entry):
@@ -19,3 +20,4 @@ with target.open('xb') as output, gzip.GzipFile(fileobj=output, mode='wb', filen
     with tarfile.open(fileobj=compressed, mode='w|') as archive:
         for path in sorted(root.rglob('*')):
             archive.add(path, arcname=str(path.relative_to(root)), recursive=False, filter=normalized)
+inspect_runtime(target)

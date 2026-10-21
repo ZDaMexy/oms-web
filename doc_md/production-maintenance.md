@@ -1,10 +1,14 @@
 # OMS 原版 osu-web 试运行维护
 
+2026-10-22 已实施[PHP 与共享主机安全维护](php-security-maintenance-20261022.md)：生产 PHP8.5.12、旧 PHP8.2 停用、状态页访问修复、BT Nginx1.30.6 / 系统 OpenSSL3、启动依赖及内核更新，真实重启后双站与业务服务通过。应用 release 仍为 `824de121a686-494932756b74`，原应用 manifest 保留历史；当前 PHP 取实际 RootDirectory / 进程与独立安全收据。应用回退保留这些安全修复，不能重新启用旧 PHP。
+
 2026-10-12客户端谱面列表沿[当前接续](client-native-services-20261011.md#2026-10-12客户端页面纠正)先选模式，再显示所属来源：BMS 仅 Ginger Rush / 616，osu!mania 仅 Sayobot，切回 BMS 恢复上次来源；等待中关闭 / 改选阻止旧页面弹出。原生真实字段、普通 / 大卡、阅读恢复及原MD5详情 / 榜保持；仅客户端与文档，没有服务重验或部署，生产来源 / 备份日期和真人门保持。玩家验收以正常OMS窗口对照lazer的排布、字号、长名 / 展开和真实键型为准；隔离420内容宽度检查只作边界，不代签实际窗口 / DPI。
 
 内容维护每次改共享JSON后检查原生v1 / 256KiB预算、实际kernel、网页摘要 / 完整正文 / 帮助锚点、ETag / gzip / HEAD / 304及普通刷新；随准确不可变包发布，不直接改运行目录。账号 / 用户内容继续由唯一Backend管理。
 
 ## 当前原生服务维护与回退（2026-10-11）
+
+2026-10-22 起，以下历史应用回退步骤须保留受修复 PHP RootDirectory、cache 启动依赖和 BT Nginx / 状态页安全配置；不得直接覆盖旧五件原件而恢复漏洞版本。新版运行时拦截、准确原件和当前恢复材料范围取[安全维护](php-security-maintenance-20261022.md#发布与回退约束)。
 
 直接上一版 `cc37bdb8f3b4-f9a5afd99939 / production-r1`；本轮新→该版→新已实际三服务同库通过。未来操作先取新鲜固定helper备份 / F完整核验与最新13件配置保全，保存timer后暂停；停止Web / cache、主IR / catalog，按本轮 `native-services-20261011/production-private/before/` 五件原件恢复四unit与OMS include，原子切current、daemon-reload、BT指定binary / config检查，启动IR / catalog核双health、生成旧正式缓存、init Nginx reload并启动FPM，核真实旧页面 / 资源 / 双站及三个PID。保留同一业务库 / schema3，不回灌raw；不能仅切current或只换网页。
 
@@ -40,7 +44,7 @@
 | 源码 / 旧设计回退目标 | `/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04`；原设计完整外存备份在 F 盘，服务器没有另打旧设计备份包 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；本次保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
-| PHP 环境 | `/opt/oms-web/runtime/php85-ed3f014e02a9`，Alpine / PHP8.5；独立 oms-web 用户，只读 `/app`，不升级宝塔共享 PHP |
+| PHP 环境 | `/opt/oms-web/runtime/php85-922304e595f8`，Alpine / PHP8.5；独立 oms-web 用户，只读 `/app`，PHP8.5.12；BT旧PHP8.2已停用，取本页顶部安全维护 |
 | 当前可写缓存 / 日志 | `/var/cache/oms-web/824de121a686-494932756b74/production-r1`；bootstrap / storage私有、PHP日志沿原位置 |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 

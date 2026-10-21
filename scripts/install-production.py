@@ -7,6 +7,7 @@ from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import tarfile
+from php_runtime import inspect_runtime
 
 # Public immutable sources are read by the unprivileged PHP/Nginx user even
 # when the owner launches this installer from a private 0077 maintenance unit.
@@ -43,6 +44,9 @@ with tarfile.open(args.package) as archive:
     file_map = json.loads(file_map_bytes)
     assert len(file_map['files']) == binding['count'] and set(file_map['files']) == set(file_map['file_bytes'])
     assert manifest['format'] == 3 and manifest['runtime_kind'] == 'native-osu-web-1' and manifest['database_schema_version'] == 3
+    # Validate the bytes before creating any release/runtime directory. Old
+    # application rollback must retain a patched runtime, not reactivate 8.5.11.
+    php = inspect_runtime(args.php_runtime, manifest['php_runtime'])
     rid = manifest['release_id']
     assert re.fullmatch(r'[0-9a-f]{12}-[0-9a-f]{12}', rid)
     for key in ('backend_commit', 'website_commit', 'client_commit'):
@@ -66,9 +70,6 @@ with tarfile.open(args.package) as archive:
     projection = Path('/opt/oms-ir/archives') / (public['projection_version'] + '.db')
     assert not projection.is_symlink() and projection.stat().st_size == public['bytes']
     assert hashlib.file_digest(projection.open('rb'), 'sha256').hexdigest() == public['sha256']
-    php = manifest['php_runtime']
-    assert args.php_runtime.stat().st_size == php['bytes']
-    assert hashlib.file_digest(args.php_runtime.open('rb'), 'sha256').hexdigest() == php['sha256']
     runtime = Path('/opt/oms-web/runtime') / ('php85-' + php['sha256'][:12])
     if not runtime.exists():
         runtime.mkdir(parents=True)
