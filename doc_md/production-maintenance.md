@@ -1,6 +1,6 @@
 # OMS 原版 osu-web 试运行维护
 
-2026-10-22 后续[全工作区安全筛查](architecture-security-review-20261022.md)已将生产 Node 更新至22.23.4，应用 / 固定 helper / 面板证书包更新至2026.10.19，部署工具使用uv0.13.4；原HTTP应用不变。历史lock与实际证书包差异由独立安全收据说明，回退不能重新引入旧CA；具体恢复与本轮缺口取该记录。
+2026-10-22 [全工作区安全修复](architecture-security-review-20261022.md#全量修复实施)已将OMS/helper切换至Python3.12.15/OpenSSL3.5.9，独立PHP切换至`php85-0069de279481`的修复组合，宝塔为13.1.0/Python3.13.16；生产Node22.23.4、uv0.13.4及原证书补丁保持。原OMS HTTP应用不变，Homepage安全依赖另循其部署hook发布；当前恢复计划和独立备份工具已同步新root/目录分类。历史应用lock和manifest不改标签，回退不得重新引入旧运行时、CA或curl；具体版本、备份及未完成门取该记录。
 
 2026-10-22 已实施[PHP 与共享主机安全维护](php-security-maintenance-20261022.md)：生产 PHP8.5.12、旧 PHP8.2 停用、状态页访问修复、BT Nginx1.30.6 / 系统 OpenSSL3、启动依赖及内核更新，真实重启后双站与业务服务通过。应用 release 仍为 `824de121a686-494932756b74`，原应用 manifest 保留历史；当前 PHP 取实际 RootDirectory / 进程与独立安全收据。应用回退保留这些安全修复，不能重新启用旧 PHP。
 

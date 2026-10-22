@@ -1,0 +1,2 @@
+# Preserve upstream artwork/font/license bytes, including vendor whitespace.
+* -text -whitespace

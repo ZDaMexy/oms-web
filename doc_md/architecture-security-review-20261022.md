@@ -25,7 +25,9 @@ npm 官方 audit 接口本轮两次返回 503，未记为通过；改用 OSV 对
 - **证书信任**：实际 HTTP 应用和固定备份 helper 的 certifi 2026.7.22，以及宝塔环境的 2024.02.02，均更新为 2026.10.19。宝塔 Python 3.7 无法使用新版 pip，保留其 pip 代码，只将内置 CA 文件替换为已核验 wheel 中的同一公开证书束；没有把旧 pip 元信息改成新版。服务 / 面板重启后复验。Ubuntu 实际 CA 束不含本次被移除的根，无须再次手动改系统信任规则。[Python 官方说明](https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576)
 - **后续发布**：Backend 显式锁 certifi 2026.10.19，uv 改用 0.13.4 的官方固定 SHA；Web 安装器与 Backend 准备脚本要求实际 certifi ≥2026.10.19。线上两个环境对历史 lock 的唯一已安装依赖偏离是 certifi，另有独立 `runtime-security.json` 保留这项运行时补丁身份。原 HTTP release / 源码包不改标签，应用回退不能用旧 lock 重新引入旧 CA。
 
-## 未解决及处置顺序
+## 上午筛查时的待办
+
+本节保留上午当时的缺口；晚间实施后的当前结果取下方[全量修复实施](#全量修复实施)，不将旧候选失败当作当前依赖状态。
 
 1. **ImageSharp**：framework 实际带入 3.1.11，不可信皮肤 / 封面图片解码可达。维护者确认 v3 的修复版为 3.2.0，涵盖 BigTIFF、ICC、Histogram 与 TIFF 编码问题；NuGet 索引范围尚未同步，不能只为消告警跨到 v4。本轮真实试升后，Release 被新增许可检查拒绝。用户没有许可；已撤回该候选引用、恢复实际可构建状态，没有跳过检查或把未生效升级写成已修复。合规的最小后续是申请 `osu.Game` 的免费程序集限定社区密钥；官方允许这种限定密钥进入开源仓库。当前上游也仍固定旧库，没有找到公开可复用密钥。若不采用该许可，需要独立设计图片解码替代，不以表面改引用形状规避许可。[v3 修复](https://github.com/SixLabors/ImageSharp/releases/tag/v3.2.0)、[官方支持与许可政策](https://sixlabors.com/posts/security-support-and-license-enforcement/)、[申请入口](https://licensing.sixlabors.com/)
 2. **BGA 原生媒体**：当前 NativeLibs 2025.806.0 中 Windows `avutil-56` 表明 FFmpeg 4.3.3，处于进程内真实 BGA 解码链。官方 4.3 分支后续已有修复；该构建只启用部分容器 / 解码器，尚未逐项证明每个 CVE 可达。需要核对补丁和 ABI，选择匹配的整套原生库或正式迁移；不能只覆盖不同主 ABI DLL，外部 `ffmpeg.exe` 的更新也不能替代它。最新 framework 只支持 net10，仍用同一旧 NativeLibs，不构成本轮安全捷径。[官方 FFmpeg 安全页](https://ffmpeg.org/security.html)
@@ -69,7 +71,37 @@ AutoMapper 13.0.1 的当前固定映射图已有深度约束；SQLitePCLRaw 2.1.
 
 新原始响应、七仓开工差异、精确包版本、APKINDEX 和服务器收据在忽略的 `artifacts/architecture-security-20261022/evening-delta/`。仅提交本轮受影响文档，既有七仓无关未提交工作保持原样。
 
+## 全量修复实施
+
+用户授权全量修复并提供正规许可后，已实施下列客户端、构建链与服务器修复。原有产品功能、玩家数据、私有Omni素材和D盘HDD不在维护写入范围；旧应用release身份保持，运行时补丁单独登记。
+
+| 范围 | 实际结果 |
+| --- | --- |
+| 客户端图片 | ImageSharp 3.2.0正常许可检查通过。许可文件仅在受限、忽略的本机目录，由`SixLaborsLicenseFile`引用，不纳入源码、输出或聊天；其它开发环境须提供适用许可。五条NuGet旧索引告警保留，维护者回移提交与实际DLL身份已交叉核实，详见[P1-A](../../../oms/doc_md/subline/P1-A/CHANGELOG.md#2026-10-22客户端依赖安全修复接入)。 |
+| 客户端归档 / 序列化 | SharpCompress 0.50.7、MessagePack 3.1.11；迁移实际Archive/Writer/LZMA/BZip2接口，保留取消、路径/字节/CRC边界，并修正新版非solid RAR读取入口。AutoMapper退出依赖图，改用有限模型显式复制；SQLitePCLRaw 3.0.5配官方SQLite 3.54.1，实际本机缓存/WAL回归通过。 |
+| 进程内BGA | 四库整体替换为FFmpeg 4.4.8加固定维护补丁，保留框架主ABI、原启用格式和win-x64范围；35项ABI/导出/协议检查、实际加载及BGA专项通过。对应源码、签名、配方与许可随构建输出；公钥首次导入和有效/篡改签名正反检查已过，未宣称完整从零重建或逐位可复现。详见[P1-L](../../../oms/doc_md/subline/P1-L/CHANGELOG.md#2026-10-22进程内ffmpeg原生依赖升级)。 |
+| Homepage | Astro 7.4.2、MDX 8.1.1、RSS 4.0.19、sharp 0.35.5及其锁图已更新；当前工作树和仅含安全增量的独立源码快照均构建并验证4页、55本地引用及RSS/sitemap通过。安全提交`7d71c1f`于21:19:58 CST循原hook完成部署；既有Header/CSS与检查脚本另行保留，没有混入安全发布。 |
+| OMS Web | 删除未调用的Bootstrap 3 JavaScript整包与全局类型，只保留官方3.4.1原始Less/字体/MIT许可；TypeScript和生产构建通过，生成CSS逐字节等于现生产。没有为删除未加载脚本改动线上应用来源。 |
+| 开发环境 | 本机uv更新为0.13.4；F盘WSL更新Alpine/PHP/OpenSSL/CA，并使用官方Node 24.22.1及核验签名的curl/libcurl 8.23.0。未启动C盘Docker或迁移用户浏览器资料。 |
+| OMS服务与固定helper | Python 3.12.15 / OpenSSL 3.5.9；21项已安装依赖保持，原certifi安全补丁继续保留。首次短健康等待触发回退，改为有界45秒后实际切换成功；原库device/inode、schema3/22表保持。 |
+| 独立PHP | PHP 8.5.12 / Alpine 3.24.3 / libcurl 8.23.0 / OpenSSL 3.5.9 / c-ares 1.34.9 / CA 20261020；实际RootDirectory为`/opt/oms-web/runtime/php85-0069de279481`。第一次探针误把私有mount namespace的`/proc/PID/root`文本当真实root，已回退并改用实际exe/libcurl inode核验，随后切换通过。未来发布器拒绝旧组合，11项发布边界检查通过。 |
+| 宝塔 | 官方13.1.0源码配Python 3.13.16 / OpenSSL 3.5.9；更新PyJWT、Werkzeug、Pillow、urllib3、pymongo、certifi、cryptography和pip；Brotli从官方1.2.1源码构建，不能把尚未发布的PyPI版本号当成已安装。15份wheel逐个对照PyPI官方摘要后离线准备，正常图片/JWT/BSON/Brotli往返及依赖兼容检查通过。21:13:53 CST切换成功，面板根路径仍404，实际vhost聚合摘要保持，BT Nginx配置、双health、双站均通过；旧PHP8.2仍masked。 |
+
+Core导入/图片/复制/缓存/皮肤ZIP focused最终113/113通过，mania回放/legacy18/18、归档/native focused90/90、Desktop Release 0错误。新图片许可路径真实生效；旧NuGet五条索引警告没有隐藏。首次Core113项中的旧混合包/Realm快照失败已归因并修正真实支持的mania夹具，不恢复已退出的三玩法。BMS full尝试在测试host工作集约3.39 GB、系统可用约2.27 GiB时主动终止；终止前2244通过/15跳过仅为部分结果，未记作完整full通过或实机体验验收。
+
+面板旧代码、运行时、状态与init已在停止面板期间直接加密保全，190,741,338字节密文取回受限F盘，摘要、age认证末块、gzip CRC及22,326普通成员完整读取通过。第一次从临时systemd单元调用旧init脚本重启，子进程随临时单元结束被回收；发现后改用`systemctl restart bt.service`恢复，再用正式单元完成升级。候选准备还保留慢下载、仅收据变量缺失及版本字段定位错误的失败，均发生在独立候选区，未据这些失败改变正式业务库。
+
+当前恢复计划已将PHP对象指向新root，并增加panel-runtime/panel-source；当前DB仍通过SQLite backup API一致快照保全，旧完整面板密文与官方新源码在security-maintenance内。首次全备在任何上传前拒绝了尚未分类的新对象；独立工具以原包为基础只补两类映射，16项其它文件身份保持，现行为`f7b8b9b0a39b7971`。备份与真实age聚焦56项通过，保留首次27通过/7未启用的命令范围。新的完整云备份和实际取回尚在本轮收尾，上午11:54成功不能代签晚间变更。
+
+尚无厂商修复版本或没有真实攻击入口的项目仍单独登记：
+
+- 退役OMS Website的braces 3.0.3仍是注册表最新版本，3.0.4实际404；[上游问题](https://github.com/micromatch/braces/issues/70)尚未关闭。仅由本地webpack静态模式使用，没有公网提交glob入口；不制造不存在的override或将未修复版本写成已修。
+- Edge正式版155.0.4283.62仍对应[厂商10月20日待补丁说明](https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security)。Chrome已装修复版；不修改浏览器配置或把Edge厂商缺口说成工作区可自行补丁的依赖。
+- 托管Python自带SQLite仍为3.53.1，不称所有SQLite公告版本均已消除。[官方条件](https://sqlite.org/cves.html)中CVE-2026-11822/11824要求任意SQL、启用FTS5且关闭DEFENSIVE；OMS固定可信库、参数化查询且未使用FTS5，不存在用户上传任意DB/执行SQL的路径。面板SQL工具属于既有root管理权限，未开放匿名SQL入口。客户端实际SQLite已为3.54.1，不能用它代签服务端内嵌库。
+
 ## 验证与运行边界
+
+下方保留上午首次维护的证据身份；本轮晚间验证以上节为准。
 
 最终重新编译后，客户端 Release 外链 / 皮肤读图等回归 71 项通过，本地 BMS / 下载 / 导入专项 138 项通过，Desktop Release 编译通过；未应用 ImageSharp 3.2.0，故这些结果不能代签新版图片库。扩大 BMS 回归因空闲内存下降主动中断，既有单个皮肤产品 fixture 的数百绘制组合仍可占较高内存；不将部分 TRX 或已完成的 10 组 2077 通过 / 4 跳过冒充完整回归。当前导入改动按存储验收矩阵的 importer focused + Release 完成，细节取 [P1-A 本轮日志](../../../oms/doc_md/subline/P1-A/CHANGELOG.md#2026-10-22全工作区安全筛查与本地导入边界)。
 

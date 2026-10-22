@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 import tarfile
 
-RUNTIME_ARCHIVE = 'php85-8.5.12-alpine3242.tar.gz'
+RUNTIME_ARCHIVE = 'php85-8.5.12-alpine3243-curl8230.tar.gz'
 REQUIRED_PACKAGES = {
     'php85', 'php85-common', 'php85-fpm', 'php85-intl', 'php85-mbstring',
     'php85-ctype', 'php85-dom', 'php85-fileinfo', 'php85-iconv', 'php85-openssl',
@@ -30,6 +30,16 @@ def package_metadata(installed, alpine):
     match = re.fullmatch(r'8\.5\.(\d+)-r\d+', version)
     if match is None or int(match[1]) < 12:
         raise ValueError('PHP 8.5.12 or newer is required by the October 2026 security fixes')
+    for name, minimum in {'libcurl': (8, 23, 0), 'libssl3': (3, 5, 9),
+                          'libcrypto3': (3, 5, 9), 'c-ares': (1, 34, 9)}.items():
+        installed_version = re.fullmatch(r'(\d+)\.(\d+)\.(\d+)-r\d+', packages.get(name, ''))
+        if installed_version is None or tuple(map(int, installed_version.groups())) < minimum:
+            raise ValueError(f'{name} {".".join(map(str, minimum))} or newer is required in the PHP runtime')
+    if packages['libssl3'] != packages['libcrypto3']:
+        raise ValueError('PHP OpenSSL libraries must have the same package version')
+    ca_version = re.fullmatch(r'(\d{8})-r\d+', packages.get('ca-certificates-bundle', ''))
+    if ca_version is None or int(ca_version[1]) < 20261020:
+        raise ValueError('The PHP CA bundle must include the October 2026 revocations')
     if not alpine.startswith('3.24.'):
         raise ValueError('This publisher requires the reviewed Alpine 3.24 runtime')
     return {'php': version.split('-r')[0], 'alpine_base': alpine,

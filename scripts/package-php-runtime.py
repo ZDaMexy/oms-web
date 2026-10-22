@@ -6,7 +6,7 @@ import tarfile
 from php_runtime import inspect_runtime
 
 root, target = map(Path, sys.argv[1:])
-assert root.resolve() == root and root.name == 'r3-root'
+assert root.resolve() == root and root.name == 'r4-root'
 assert target.parent.is_dir() and not target.exists()
 
 def normalized(entry):

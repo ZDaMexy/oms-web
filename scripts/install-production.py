@@ -123,8 +123,8 @@ with tarfile.open(args.package) as archive:
     (destination / 'archive.db').symlink_to(projection)
     for path in ('bootstrap/cache', 'storage/framework/views', 'storage/framework/cache', 'storage/logs'):
         (destination / 'web' / path).mkdir(parents=True, exist_ok=True)
-subprocess.run(['/opt/oms-ir/tools/uv-0.13.4/uv', 'sync', '--project', str(destination / 'backend'), '--offline', '--frozen', '--no-dev', '--no-editable', '--managed-python', '--python', '3.12.14'], check=True,
+subprocess.run(['/opt/oms-ir/tools/uv-0.13.4/uv', 'sync', '--project', str(destination / 'backend'), '--offline', '--frozen', '--no-dev', '--no-editable', '--managed-python', '--python', '3.12.15'], check=True,
     env={**__import__('os').environ, 'UV_CACHE_DIR': '/opt/oms-ir/cache', 'UV_PYTHON_INSTALL_DIR': '/opt/oms-ir/python'})
-subprocess.run([str(destination / 'backend/.venv/bin/python'), '-c', 'import sqlite3, importlib.metadata as m; assert sqlite3.sqlite_version_info>=(3,51,3),sqlite3.sqlite_version; assert tuple(map(int,m.version("certifi").split(".")))>=(2026,10,19),"certifi trust store needs security update"'], check=True)
+subprocess.run([str(destination / 'backend/.venv/bin/python'), '-c', 'import sys,ssl,sqlite3,importlib.metadata as m; assert sys.version_info[:3]>=(3,12,15); assert tuple(map(int,ssl.OPENSSL_VERSION.split()[1].split(".")))>=(3,5,9),ssl.OPENSSL_VERSION; assert sqlite3.sqlite_version_info>=(3,51,3),sqlite3.sqlite_version; assert tuple(map(int,m.version("certifi").split(".")))>=(2026,10,19),"certifi trust store needs security update"'], check=True)
 (destination / '.ready').touch()
 print(json.dumps({'release': str(destination), 'runtime': str(runtime), 'linked_immutable_bytes': linked_bytes, 'copied_changed_bytes': copied_bytes, 'production_activated': False}))

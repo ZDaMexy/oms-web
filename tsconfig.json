@@ -22,7 +22,6 @@
     "target": "es2015",
     "types": [
       "jquery",
-      "bootstrap",
       "timeago",
       "hotwired__turbo"
     ],
