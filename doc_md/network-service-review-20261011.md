@@ -113,3 +113,11 @@ Web `node scripts/verify-browser-api.cjs` 的10组Node VM / 模拟fetch回归、
 ## 后续按测量推进
 
 发布空间、准确来源 / 备份、受影响有限运行及同库往返已通过，具体只取上方清理后发布；原持续运行、恢复和真人门保持各自日期。后续优先测有账号排行榜的SSR重复本人查询与难度表JSON每请求解析，再决定是否合并读取；不凭静态审查加私有缓存。vendor约534KiB、CSS约375KiB的未压缩构建提示需按页面水瀑 / 使用覆盖测量后处理，不能直接删上游资源。当前无idle轮询、聊天 / presence / 多人或谱包代理；继续保持显式查询、hash资源immutable及动态API no-store。
+
+## 当次维护与回退（历史）
+
+以下从维护页归回本次发布记录，仅保留当时目标、原件与验证范围；现行操作仍取[当前维护](production-maintenance.md#当前原生服务维护与回退2026-10-11)，不能套用旧轮次配置。
+
+直接上一版为 `a85aee3e3c45-b17354d27c6b / production-r1`；本轮真实三服务新→该版→新、同库 / schema保持已通过，原2026-10-08旧设计恢复保留原日期。该版本回退要求先新鲜固定helper备份 / F完整核验和最新配置保全，停止Web / cache与IR / catalog后，再按本轮 `network-deploy-20261011/production-private/before/` 五件原件恢复IR、catalog、Web、cache unit与OMS include，切current、daemon-reload、宝塔Nginx检查，启动IR / catalog、核双health、生成旧正式缓存、Nginx reload、启动FPM并核页面 / 资源 / 双站及三个实际PID。所有HTTP / catalog / PHP必须同步加载目标，不能仅切current；共享图片gzip维持本轮值，旧raw不覆盖现库。
+
+所有当前 / 直接上一版 / 固定D1维护与旧设计、B0 / FFF / 479 release仍保留；当前准确前后配置、两次备份、timer与空间仅取本轮记录。下一次操作前复核新流量 / 数据增长和最新配置，不能复用过时原件盲盖。

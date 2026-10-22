@@ -1,6 +1,6 @@
 # OMS Web 本地使用与恢复
 
-2026-10-22 生产安全更新取[专项记录](php-security-maintenance-20261022.md)。本轮没有启动或升级下方现存 WSL；其 PHP8.5.11 属旧验证记录，再次启用前须更新至受修复版本并重新验证本地启动 / 恢复，不能沿用旧恢复成功标记。
+2026-10-22 生产与本地开发依赖安全更新取[晚间专项记录](architecture-security-review-20261022.md#全量修复实施)。现存F盘WSL已更新，下表版本在本次文档审查中用实际命令重新核对；原本地HTTP、浏览器与两次恢复证据仍属10月7日，修复版环境的完整启动/恢复尚未复验。
 
 2026-10-09 客户端迁至 F:/zdamexy-workspace/oms，本页当前命令及脚本的保全 / archive 目录已接续；历史来源和生产原始证据仍保留原日期。开发环境迁移与原路径映射见 [客户端日志](../../../oms/doc_md/mainline/CHANGELOG.md#2026-10-09)。本轮只验证脚本语法，没有启动本地网站、执行恢复或刷新生产验收。
 
@@ -14,8 +14,8 @@
 | 项目 | 当前位置或范围 |
 | --- | --- |
 | 网站源码 | `F:/zdamexy-workspace/websites/oms-web`，`main`，保留完整上游历史 |
-| 运行环境 | 专用 WSL `oms-web-dev`，Alpine 3.24.2；VHD 位于 `F:/zdamexy-workspace/websites/oms-web/.dev-cache/wsl` |
-| 工具版本 | PHP 8.5.11、WSL Node 24.18.1、Python 3.14.8、Nginx 1.30.4、SQLite 3.53.4；变更后须重新恢复验证 |
+| 运行环境 | 专用 WSL `oms-web-dev`，Alpine 3.24.3；VHD 位于 `F:/zdamexy-workspace/websites/oms-web/.dev-cache/wsl` |
+| 工具版本 | PHP 8.5.12、官方 Node 24.22.1、Python 3.14.8 / OpenSSL 3.5.9、Nginx 1.30.6、SQLite 3.53.4；实际版本不代签完整启动 / 恢复 |
 | 玩家网页 | Nginx `127.0.0.1:8090`；PHP-FPM 只监听 `127.0.0.1:9070` |
 | 本地 API / 目录 worker | `127.0.0.1:8081` / `127.0.0.1:8082`，只使用本任务测试库 |
 | 活跃测试数据 | 网站 `.dev-cache/local-runtime/live.db`；账号、OMS UUID 记录、外部最佳状态与社区写入都在此库 |
@@ -79,7 +79,7 @@ wsl -d oms-web-dev --cd /mnt/f/zdamexy-workspace/websites/oms-web -- bash build.
 | `/download`、`/help` | 公开发行、启动/添加谱库步骤与开发状态准确；旧 `/#download` 能到独立下载页 |
 | `/beatmapsets?ruleset=bms` | 分别搜索 Ginger Rush 与 616；打开实际 MD5 详情，检查来源资格与未知信息，主动下载由原站提供的包，在 OMS 添加谱库后确认实际谱面 |
 | `/beatmapsets?ruleset=mania` | 使用 Sayobot 查询真实 mania 集合、详情和实际下载；混合包只导入原生 mania，缺失原 `.osu` MD5 时不伪关联榜单 |
-| `/ir`、`/ir?md5=实际MD5` | 搜索标题/作者/MD5、首末页及无结果；历史详情能独立打开，不因 Ginger/616 失败而丢失榜单；人数和总量来自完整公开范围 |
+| `/ir`、`/ir?md5=实际MD5` | 先选难度表和表内等级，按首字母 / 表内搜索浏览首末页与无结果，再进单曲 MD5 榜；段位组合或缺失 MD5 只跳原表。单曲榜不因 Ginger / 616 失败而丢失，人数和总量来自完整公开范围 |
 | 谱面内参考混榜与同条件 | 一个、多个、全部、空来源选择分别影响最佳分、独立灯、人数、排名和分页；切到服务已证明的条件后仍按全范围排名，未知来源/条件/原灯与 LR2IR 旧身份如实展示 |
 | `/users/实际OMS账号ID` | 登录自己的新账号、查看他人公开页；BMS/mania、来源、条件、公开最佳和近期最佳更新语义准确；不按同名合并历史身份，不显示虚构 PP、等级或逐局历史 |
 | 本人个人页 `?section=history` | “我的完整记录”只向本人开放，逐局显示 OMS BMS / mania 的真实 UUID、游玩/接收时间与完整原条件；包括非公开记录，不受公开来源/键型/条件筛选影响，不混入外部状态和历史摘要 |
@@ -89,7 +89,9 @@ wsl -d oms-web-dev --cd /mnt/f/zdamexy-workspace/websites/oms-web -- bash build.
 
 旧 `/ir/#history` 进入本人完整记录；未登录先到 `/account?section=history`，登录后使用“我的完整记录”链接。旧 `/ir/#keys` 进入账号页。当前没有成绩删除接口，网站不提供虚构的删除记录操作。
 
-网页验证须与真实 OMS 上传和读榜核对。同一 MD5、来源、条件、页码下，两端应显示一致的参考榜和同条件榜；账号切换不能接管旧待交内容或改变保存后的 UUID。客户端日常验收仍由用户通过 VS Code 非调试启动当前 `F:/zdamexy-workspace/oms`，主动使用已有按需 IR 设置；默认 endpoint 不改。本任务无需生成 Windows 发行包、`publish` 或额外安装副本。外部宿主真实交分与原生读榜及 P/C 其他真人门沿原专项继续记录，不能用网页或接口检查代签。
+当前客户端操作采用[固定 OMSIR 来源](../../../oms-server/oms_client_bridge_md/doc_md/other/oms-ir-account-login-snapshot-20261010.md)与[共同接线合同](../../../oms-server/dev_bridge_md/doc_md/subline/oms-player-site/constraints.md#客户端与网页入口)：原账号窗口直接注册 / 登录，选歌或本人记录按实际谱面主动查榜，无地址、启用开关或保存连接；旧 osu! API endpoint 空 / 在线开关 false。固定官方 OMSIR 不连接本文的隔离本地 API，本地账号与密钥不能用于该客户端的生产对照。
+
+网页与真实 OMS 上传 / 读榜的两端验收按[线上真人路径](production-maintenance.md#真人验收)使用原 OMS 账号。同一 MD5、来源、条件、页码下，两端应显示一致的参考榜和同条件榜；账号切换不能接管旧待交内容或改变保存后的 UUID。客户端由用户通过 VS Code 非调试启动 `F:/zdamexy-workspace/oms`，不生成 Windows 发行包、`publish` 或额外安装副本。外部宿主真实交分、原生读榜与 P/C 沿原专项逐项留证，隔离本地网页或接口检查不代签。
 
 ## 本地快照与两次空目录恢复
 

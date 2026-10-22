@@ -2,7 +2,7 @@
 
 原版 osu-web 已实际部署，当前状态为 **已部署待验收**。2026-10-08 20:35:11 CST 最终切入 `b879e4233818-b0feceae22e4` / schema3；共享主机完整运行、两次实际空目录恢复、完整 F 保全、八对 / 最大 raw / 额外 2 GiB 空间门、发布前后正式备份及新→旧→新同库回退均通过。公网页面、真实目录 / 参考混榜 / 公开个人、插件 / 源码下载和缓存核验通过；原 timer 已恢复 enabled / active / waiting。下载入库、真实账号 / 密钥、OMS 对照和固定播放器 P/C 仍需真人验收。维护、备份与回退取[维护说明](production-maintenance.md)，本轮发布和失败取[正式发布与收尾](#正式发布与收尾)。
 
-运行来源仍为 Backend `b879e42338183bed3a5b7de057817152a23de46c`、Web `b0feceae22e4af55dc9c974f39e4b5f40a02bfd1`，package SHA `01b2b54ac25cb6dce57dba5797bcbfaadc124f0bf3ef0d85fb73c971dd039568`。后续文档与外置检查工具提交不是运行版本。下文按原时点保留各轮进行中状态和真实失败；新结论不重标旧 false，不代签真人 P/C。
+本记录的 2026-10-08 最终运行来源为 Backend `b879e42338183bed3a5b7de057817152a23de46c`、Web `b0feceae22e4af55dc9c974f39e4b5f40a02bfd1`，package SHA `01b2b54ac25cb6dce57dba5797bcbfaadc124f0bf3ef0d85fb73c971dd039568`；后续发布的当前来源只取[维护说明](production-maintenance.md#当前来源与运行位置)。文档与外置检查工具提交不是运行版本。下文按原时点保留各轮进行中状态和真实失败；新结论不重标旧 false，不代签真人 P/C。
 
 ## 不可变来源与数据
 

@@ -21,3 +21,9 @@ TypeScript 检查通过；从已提交源码 `479987991a9ba349d45675c388b67c69ea
 两读取者12个真实请求的 0.506 秒有限窗口：最低MemAvailable 823,922,688 B，最高PHP采样 43,720,704 B，实际cgroup峰 67,706,880 B；swap / OOM / max / 重启零，原200MiB / high160 / CPU50%预算不改。最终空闲 4,591,403,008 B，比沿2026-10-08最大main＋WAL / 八对 / 额外2GiB保守预留 4,402,384,384 B高 189,018,624 B。本轮不重标旧1,800秒压力或两次空恢复。
 
 完整原始证据在 `F:\zdamexy-workspace\websites\oms-web\artifacts\lr2ir-source-presentation-20261009`；private恢复数据不入Git。准确当前来源、同库回退与真人门取[维护说明](production-maintenance.md)，共享配置投影同步[Homepage镜像](../../homepage-website/doc_md/other/oms-lr2ir-source-20261009.md)和[旧Website镜像](../../oms-website/doc_md/other/oms-lr2ir-source-20261009.md)。选择性文档提交与运行源码分别记录，既有其他项目差异保全；未发布Homepage内容或修改客户端。
+
+## 当次维护与回退（历史）
+
+以下从维护页归回本次发布记录，仅保留当时目标、原件与验证范围；现行操作仍取[当前维护](production-maintenance.md#当前原生服务维护与回退2026-10-11)，不能套用旧轮次配置。
+
+当次直接同库网页回退为 `b879e4233818-fffddaac1ce4 / production-r1`；先新备份和配置保全，再恢复本轮before的两Web unit与OMS include、核宝塔Nginx、切current / 重载并生成旧正式缓存 / 重启FPM，核有界就绪 / 双站 / 资源。当次主IR仍从B0加载，主IR / catalog / 固定维护不换源，不回灌raw；本轮未做实际往返。已无活动引用的6fb运行目录在全部字节 / 元数据核对、新鲜备份与再次核引用后退役，现从本轮受保护F全件归档恢复；B0、D1固定维护 / 旧设计和日备份保留。

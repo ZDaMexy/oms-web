@@ -109,6 +109,8 @@ Core导入/图片/复制/缓存/皮肤ZIP focused最终113/113通过，mania回�
 
 ## 验证与运行边界
 
+2026-10-23 文档专项复核补发现本地 Backend `.venv` 仍是 Python 3.12.14 / OpenSSL 3.5.8；这不改变上方已修复的服务器身份。本地已沿 F 盘托管解释器以 frozen lock 重建为 3.12.15 / 3.5.9，全部依赖包名 / 版本保持；启用真实 age 的完整 pytest 423 项通过，保留 1 条 Starlette httpx 弃用提示，SQLite 仍为上述受限入口下的 3.53.1。命令与维护入口取[Backend 本次记录](../../../oms-server/oms-backend/doc_md/mainline/changelog.md#2026-10-23-专项同步与本地运行时补齐)，本次没有新生产连接或部署。
+
 下方保留上午首次维护的证据身份；本轮晚间验证以上节为准。
 
 最终重新编译后，客户端 Release 外链 / 皮肤读图等回归 71 项通过，本地 BMS / 下载 / 导入专项 138 项通过，Desktop Release 编译通过；未应用 ImageSharp 3.2.0，故这些结果不能代签新版图片库。扩大 BMS 回归因空闲内存下降主动中断，既有单个皮肤产品 fixture 的数百绘制组合仍可占较高内存；不将部分 TRX 或已完成的 10 组 2077 通过 / 4 跳过冒充完整回归。当前导入改动按存储验收矩阵的 importer focused + Release 完成，细节取 [P1-A 本轮日志](../../../oms/doc_md/subline/P1-A/CHANGELOG.md#2026-10-22全工作区安全筛查与本地导入边界)。
