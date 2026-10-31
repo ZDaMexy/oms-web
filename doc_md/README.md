@@ -1,6 +1,6 @@
 # OMS Web 文档
 
-2026-11-01 [共享服务器运行时与安全维护](server-agent-security-20261101.md)是本轮共享事实权威：OMS / BT Python、BT init、SSH / UFW、特定 bwrap profile、真实候选定向验证及 BT 两包补修逐项接续；新 Bot 正式切换、独立状态备份、新全备恢复和维护重启仍待，系统上游项与原真人门保持。
+2026-11-01 [共享服务器运行时与安全维护](server-agent-security-20261101.md)是本轮共享事实权威：运行时、安全加固、Shiro v0.2 切换 / 同机恢复、旧面板 F 保全后退役、新全备与维护重启均已取得实际收据；49 对象及 catalog 完成，四 timer waiting。Backend `1de5eab` 组合回归 108 项通过，本地 npm 修复 `7000b90625` 已提交未部署、484 assets SHA 不变。本轮云端 age 解密 / 异机演练、两项上游 CVE 与原真人门保持；短 startup 样本不代签长期性能。
 
 2026-10-22 [全工作区架构安全筛查](architecture-security-review-20261022.md#全量修复实施)覆盖七仓、开发 / 部署与共享服务器；晚间已接入正规图片许可、原生媒体与构建链修复，记录实际验证、恢复材料及剩余上游/人工门。
 

@@ -1,10 +1,50 @@
 # 2026-11-01 共享服务器运行时与安全维护
 
-> **后续收据接续**：下文 04:57 段保留当时的验证范围。05:07 SSH / UFW 加固、05:15 受限 Linux QA、05:19 真实模型探针及 05:21 BT 两包补修已分别取得收据，见[后续加固与验证](#host-hardening)；新 Bot 正式切换、独立状态备份、新全备恢复和维护重启仍待后续收据。
+> **当前接续至 06:37 CST**：运行时、安全加固、Shiro v0.2 切换 / 同机恢复、[旧面板退役](#panel-retirement)、[新全备完成](#current-release-backup)及[维护重启](#maintenance-reboot)均已取得实际收据；四个 timer 均 enabled / active / waiting。[本地 Web 构建依赖修复](#web-dependency-security)已提交但未部署。真人验收、两项上游 CVE、本轮云端 age 解密 / 异机演练边界保持；下文 04:57 段保留当时范围。
 
 本记录是本轮 OMS / BT 运行时、共享主机清理与恢复边界的权威落点。截至 2026-11-01 04:57 CST，OMS HTTP、catalog 和固定备份 helper 已切至 Python 3.12.16，BT 面板已切至 Python 3.13.18；应用来源、同一业务库及依赖包名 / 版本保持。后续 SSH / UFW 加固、Shiro 新运行面与维护重启尚待各自实际收据，不能由这里的有限检查提前签收。
 
 Homepage、OMS 与 Shiro 仍是独立产品，只共享主机、Nginx、TLS 和 SSH。两站设施镜像见 [Homepage](../../homepage-website/doc_md/other/shared-agent-security-20261101.md) 与 [旧 OMS Website](../../oms-website/doc_md/other/shared-agent-security-20261101.md)。Bot 的当前发布、恢复和真人收发边界只取 [Shiro 部署记录](../../../shiro-bot/doc_md/mainline/qq-official-deployment.md)，不在本页复制业务合同。
+
+<a id="current-release-backup"></a>
+
+## 05:43～06:35 当前发布与备份状态
+
+05:43 CST，Shiro v0.2 已正式切至 `4dc8422e191447a7b842f59f2c7f594e49926450`；独立状态快照和同机新目录恢复已通过，准确来源、恢复范围与真人门只取 [Shiro 部署记录](../../../shiro-bot/doc_md/mainline/qq-official-deployment.md)。同机恢复不代替这轮云端全备的 age 解密或异机启动。
+
+Backend `1de5eab4f0743cda626ea70e935608bc1053b5a0` 已提交并推送，新增八类备份归档和按 plan 条件采集的主机元数据：只有纳入 Shiro roots 时才要求其账户、记录其 current / venv 和相关 unit。结合真实 age 的发布 guard / 备份聚焦回归共 **108 passed**，保留 **1 条既有 Starlette 提示**；这是本轮组合回归，不能以先前仅 guard 的 39 项概括，也不签收云端全备。
+
+05:54 CST，新工具 `/opt/oms-netdisk-backup/releases/d9a42ff093e1799d` 和 plan 已实际部署；旧 `f7b8b9b0a39b7971` 保留。plan SHA-256 为 `6f7b547d9c299ee598f7a30013dbbb4e44344851609e791ad711a58aa9416df6`，**42 个声明 roots，预期展开 49 个对象**；49 是计划预期，不是已上传对象数。八类新增标签为 `shiro-source`、`shiro-venv`、`shiro-gallery`、`shiro-config`、`shiro-snapshots`、`ssh-config`、`ufw-config`、`bwrap-policy`，归档映射只取 [Backend 分层记录](../../../oms-server/oms-backend/doc_md/other/netdisk-layout-20261017.md)。Shiro 仅收已完成的独立快照，不直接复制在线 SQLite / WAL；固定 helper 和 age 1.3.2 二进制保持，见 [full-plan-prepared.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/full-plan-prepared.json)。
+
+05:55:51 CST 已启动真实全备；05:57:13 CST 收据仍为 `oms-full-backup.service` activating、MainPID **146489**、InvocationID `d94fff5199f147b99e88feb09c1d6022`。full timer 已恢复 **enabled / active**，当时 substate 为 running，仍是同一 worker；恢复 Persistent timer 没有并行启动另一份全备。证据为 [启动记录](../../../shiro-bot/.pytest_cache/server-agent-20261101/full-backup-started.json)与 [timer 恢复记录](../../../shiro-bot/.pytest_cache/server-agent-20261101/full-timer-restored.json)。该 05:57 收据没有签收本轮完成、age 解密 / 异机启动或整机重启；后续旧面板退役见下段 06:29 记录。
+
+**06:35:34 CST 本轮全备完成**：同一 InvocationID 返回 ExecMainStatus=0 / Result=success，worker inactive，MainPID=0 / ControlPID=0，无 pending 或 last failure。42 个声明 roots 实际展开 **49 个对象及 catalog**；本轮新传输对象密文合计 **1,034,400,938 B**（不含 catalog）。catalog 密文 **12,326 B**，SHA-256 `e675b44bf3a1c7f2b99c4b7ddbfb1ac7a39605c1cd66a23941674f61a58754a2`。本轮新增 / 变化密文均由已部署工具上传后完整下载核 SHA；八类新增对象的 verified_at 均晚于本轮开始，未变化对象只做 metadata probe 后复用，不能写成 49 对象本轮全部重传 / 下载。准确终态见 [full-completion.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/full-completion.json)。
+
+host metadata 已实际收录 Shiro UID 994 / GID 984、当前 `4dc8422` / `venv-agent-20261101` 和启用的快照 timer；catalog 明确只收已完成快照，不复制在线 Shiro DB / 工作区。三 OMS timer 加 Shiro 独立快照 timer 均 **enabled / active / waiting**，完成时根分区 free **6,601,326,592 B**。没有读取恢复私钥，也没有验证本轮云端 age 解密或异机启动；全备成功与 Shiro 同机恢复继续分别记账。维护重启在备份 worker idle、Shiro 任务执行数 / 排队数均为 0 后发起，最终验证见[06:37 收据](#maintenance-reboot)。
+
+以上没有发布 OMS HTTP / Web 应用，现行应用与固定 helper 身份仍取下方 04:57 记录。
+
+<a id="panel-retirement"></a>
+
+## 06:29 旧面板历史目录退役
+
+06:29:16 CST，仅删除 `/www/server/panel.before-security-20261022`（device 64771 / inode 523268）和本次自有 transport archive。删除前已经在受限 F 盘逐普通文件 SHA 核对 **22,327 文件**，验证 **24,521 个 tar 成员**的 metadata / links 与完整 gzip EOF / CRC；未解压、未运行旧面板。保留归档 **220,333,211 B**，SHA-256 `f5ce966217e80fea8945898a6b65ca5671962245e988700cf8fcabad61bef085`；manifest SHA-256 `1e9a66ab46107815248f0e420eb8979c37649c1c5b768ca37afd185bac2b4a79`，主执行者独立重算两者通过。保全阶段见 [panel-preservation-verified.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/panel-preservation-verified.json)，其中“服务器源仍保留”只描述 06:24 当时交接点；最终删除结果取 [storage-panel-retired.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/storage-panel-retired.json)。
+
+删除前检查 **131 个进程 / 891 个 FD**，live references 与 unreadable surfaces 均为 **0**，现行 full plan 对该路径 overlap 为 **0**。复核 18 份 Nginx 配置，配置指纹 SHA-256 `47835bcc7386f6506d21b5037b8fc592d6dfd11111fd504fa932695b93824262` 前后保持；Nginx `-t`、双站 / 双 health 200、面板 HTTPS 404 基线通过，既有业务服务和 PID 保持、NRestarts=0；并行全备 MainPID 146489 未受干预。live panel 目录、现行 pyenv 与产品 current 指针保持。
+
+源 allocated 为 **762,077,184 B**，自有 transport archive allocated 为 **220,340,224 B**，收据确认二者均已不存在，F 保全件保持。实际 free bytes 从 **5,553,983,488 → 6,536,396,800 B**，净增加 **982,413,312 B**；该窗口有并行全备，这是磁盘净观察，不能冒充纯删除的理论增量，也不代表全备已经完成。
+
+<a id="maintenance-reboot"></a>
+
+## 06:37 维护重启与有限运行复核
+
+06:37:46 CST 已确认 boot ID 从 `c86831bc-72d2-4120-833a-0492c4fed5de` 变为 `90046c1e-0cff-4692-aa98-276bef790d7e`，运行内核仍为 **6.8.0-147-generic**，reboot-required 已消失，原提示来自 AppArmor 更新；这次重启没有把 WIP 的 CVE-2026-98260 修复到 148。终态取 [maintenance-reboot-verified.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/maintenance-reboot-verified.json)，细项取 [maintenance-observation-after.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/maintenance-observation-after.json)。
+
+业务服务均 active / NRestarts=0；备份 workers MainPID / ControlPID 均为 0，四个 timer enabled / active / waiting，准确下次触发时间取收据，不沿用重启前调度观察。新 SSH 公钥会话验证通过，key-only 配置、启用的 ssh.socket、UFW 双栈精确规则、bwrap AppArmor profile 与全局 userns restriction=1 均保持。配置 SHA、pyenv / venv / current links、OMS DB device 64771 / inode 265517 / schema3 / 22 表保持；BT-Panel 实际 executable 为公共 Python 3.13.18，原生 BT-Task executable 未改，init 与模板 SHA 一致。
+
+双站 / 双 health 200、Bot health ok（queued=0 / active=0）、内外 QQ challenge 200 及 Ed25519 验签、bad hex 403、面板 HTTPS 404、Nginx `-t` 均通过。真实 shiro-bot 身份与严格 unit / bwrap 在重启后复核保留的 synthetic 恢复态：两个原文件、两字“青色”记忆索引、`custom_sum_pair(20,22)=42`、已完成任务和 history 均保持；QQ / 模型调用 **0**，没有覆盖 live state。收据见 [post-reboot-agent-probe.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/post-reboot-agent-probe.json)，业务恢复合同仍只取 Shiro。
+
+06:37 的根分区 free **6,613,368,832 B（约 6.159 GiB）**，MemAvailable **965,308,416 B（约 920.59 MiB）**，swap 使用 0；约 6 秒 startup 样本 CPU busy **6.86%**、IOwait **0.42%**。这是重启后的短时观察，不证明长期吞吐、持续峰值或单由框架替换带来的资源节省。
 
 ## 当前运行时与应用来源
 
@@ -82,6 +122,8 @@ df -B1 /
 
 ## 恢复计划、证据与保留范围
 
+> 本节保留 **04:57 切换阶段**的 plan / 保全原文，以下“尚未新全备”是当时状态。后续新 plan、06:35 全备完成及 06:37 重启分别见[当前状态](#current-release-backup)与[重启收据](#maintenance-reboot)；本轮云端 age 解密 / 异机启动仍未验收。
+
 `/etc/oms-full-backup/plan.json` 仅修改必要解释器对象 / 来源说明：`python` root 改为 `/opt/python-runtimes`，`panel-runtime` root 改为 `/opt/bt-panel-runtime/py31318-20261101`，新增说明键 `python_runtime_security_20261101`。未改云端、OAuth 或密钥字段。新 plan SHA-256 为 `a190fb17f4822a95491376e3e45cfc0eb9f97e08610d823df626db0c74bce3b6`。
 
 **新公共 Python roots、面板 venv 和 init / 模板变更尚未由新的全量云备份及解密恢复签收。** 旧全备仍只证明原日期对象范围；本轮两份新业务库备份、配置保全与候选测试不能代替新 Linux 全机启动恢复。恢复流程继续取 [Backend 全备说明](../../../oms-server/oms-backend/doc_md/other/full-backup-20261017.md#操作与恢复顺序)，禁止为了“回退成功”覆盖回旧漏洞运行时。
@@ -137,13 +179,36 @@ UFW 保持 active / 默认拒绝入站，精确删除 **20/tcp、21/tcp、39000:
 
 补修前四环境实际元数据与 115 个去重 PyPI name/version 的 OSV batch 记录在 `dependency-security/`：OMS 与固定 helper 各 20 个公共包未返回匹配，本地 `oms-ir` 未发送公网；Bot 候选 34 包未返回匹配；BT 的 83 包未返回匹配，另外两包命中上述公告。05:25 CST 对已补修两版本重新查询 OSV 均未返回匹配，见 [postfix 收据](../../../shiro-bot/.pytest_cache/server-agent-20261101/dependency-security/osv-postfix-query.json)。初次查询没有失败或未完成分页；未知范围和 BT API 触达条件未由本次扫描证明。完整 [review-summary.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/dependency-security/review-summary.json)保留补修前时点，未命中不代表全无漏洞。
 
+<a id="web-dependency-security"></a>
+
+## Web 实际依赖与本地 npm 构建修复
+
+06:24 CST 精确 OSV 查询分别取实际 Composer installed metadata、Homepage 源码及实际构建 lock；不是只拿仓库声明代签服务器。原始范围与结果见 [web-osv-exact.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/dependency-security/web-osv-exact.json)及[摘要](../../../shiro-bot/.pytest_cache/server-agent-20261101/dependency-security/web-osv-summary.json)。
+
+| 对象 | 精确范围与本轮结果 |
+| --- | --- |
+| OMS Web 实际 Composer | `/opt/oms-ir/current/web/vendor/composer/installed.json` 的 74 个版本对未返回匹配；metadata SHA-256 `9491693ecc420dff10fb0c35cb7fe3487a4b89cf88ea31799bd0180db4bcbd16` |
+| Homepage 源码及实际构建 npm | 各 275 个版本对未返回匹配；两端 lock SHA-256 均为 `99e1588858ebe064e2b55b9a8a877584acdb9eb9c40d3734dc34ea57306751bd` |
+| OMS Web 本地 npm 修复前 | 316 个版本对中四包命中七条公告；这是构建依赖版本命中，实际触发条件如下，未证明线上可利用 |
+| OMS Web 本地 npm 修复后 | 295 个版本对的 batch 返回 HTTP 200，0 命中、0 未完分页；当前 lock SHA-256 `551b00e2f47463ea211946ee9d7605b9281ec19440c9d93bda504d5206a84038`，没有部署到服务器 |
+
+`fast-uri 3.1.8 → 3.1.9` 覆盖维护者的 [suffix scheme](https://github.com/fastify/fast-uri/security/advisories/GHSA-333x-w4r6-6crp)、[编码 scheme](https://github.com/fastify/fast-uri/security/advisories/GHSA-w74x-v6f9-j3xg)、[host canonicalization](https://github.com/fastify/fast-uri/security/advisories/GHSA-wjr9-j795-jxcr)、[相对路径](https://github.com/fastify/fast-uri/security/advisories/GHSA-xhq7-xmqj-769h)四项修复。当前调用来自 CSS 构建插件的 schema-utils / Ajv URI schema resolver，输入为构建 schema；没有确认不可信网页输入经这些 API 执行 URL 授权 / 路由。suffix 项另要求非默认 `reference:'suffix'`，不能把版本命中等同当前网页 XSS。
+
+`serialize-javascript 7.1.2 → 7.1.4` 保留 7.1.3 的[函数尾部 script escaping 修复](https://github.com/yahoo/serialize-javascript/security/advisories/GHSA-m5mm-p8h7-m29v)，并采用同系列 [7.1.4 方法序列化修正](https://github.com/yahoo/serialize-javascript/releases/tag/v7.1.4)。公告要求攻击者控制序列化函数的 source / `toString()`，再嵌入 script；普通字符串和正常函数不满足条件。当前 CSS 插件只有 worker 分支才序列化该选项，而仓库配置 `parallel:false`，未确认当前入口可触发。
+
+另外两项由重复的 ForkTsChecker 引入。[deepmerge 问题页](https://github.com/TehShrike/deepmerge/issues/273)所述为特定 target shape 下返回对象继承攻击者原型，未修改全局 Object.prototype；维护者有争议，npm 最新仍为 4.3.1，没有找到已发布补丁。当前只合并本地构建配置，未确认 HTTP 输入路径。[minimatch 维护者公告](https://github.com/isaacs/minimatch/security/advisories/GHSA-g3hv-75wg-m249)只列 10.2.6、`optimizationLevel>=2` 的 `firstPhasePreProcess`；OSV 的 `<11.0.1` 范围更宽，实际 3.1.5 不含该逻辑，不能直接提升为已证实的 v3 漏洞。
+
+实际修复仅删 ForkTsChecker 的 devDependency、webpack require 与实例：原 `ts-loader` 已设 `transpileOnly:false`，独立 `typecheck` 亦保持。随插件移除 22 个节点，全部属于其原依赖闭包；无新增节点、无 override，保留包只更新上述两个版本。三个源码文件已在验证后提交并推送为 `7000b906257a68776eec42d8d353ab3e3e50246a`，测试时保留 `e308a4a94f` HEAD / 工作树身份，没有把提交动作伪装成重新验收。
+
+实际环境为 Windows、Node 24.22.1 / npm 11.19.1，F 盘缓存；`npm ci --ignore-scripts --no-audit --no-fund`、`npm run typecheck`、`npm run production` 通过，构建保留三项既有体积 / entrypoint 建议。一次向真实 app 入口临时注入 TS2322 的生产配置负向探针被拒绝，入口 SHA 精确恢复；dotenv 配置调用禁用并阻断文件读取，未读生产配置。`public/assets` 现存 484 个文件前后 SHA 全部相同，未部署网站或改变线上 assets。完整[本地报告](../.dev-cache/npm-security-20261101/report.json)保留源码 SHA、依赖差异、负向恢复与原始日志；版本未匹配不保证不存在漏洞，也不代签 Linux 构建、网页功能或真人验收。
+
 <a id="release-runtime-guards"></a>
 
 ## 发布与回退源码防降级
 
 Backend 的 [prepare-release.sh](../../../oms-server/oms-backend/deploy/prepare-release.sh)、[activate-release.sh](../../../oms-server/oms-backend/deploy/activate-release.sh)及 Web [安装器](../scripts/install-production.py)已在本地固定公共 3.12.16 解释器，禁止托管旧版本选择与自动 Python 下载；创建发布目录前和生成 venv 后验证真实 base / Python / OpenSSL / SQLite / certifi，激活与回滚 previous 同样受门槛约束。应用 lock、发布白名单与不可变历史 manifest 保持，没有把固定 helper 改指向 HTTP current。
 
-真实只读验证发现首版 guard 把 OpenSSL 的 `(3,5,0,9,0)` 错当作三元组而误拒 3.5.9；原失败收据保留。修正为严格解析稳定版本字符串后，真实五元组夹具覆盖 3.5.8 拒绝、3.5.9 / 3.6.0 通过、预览及未知后缀拒绝，`-O` 不能绕过。最新定向为 **Backend 39 passed / Web 20 tests OK**，取代先前 29 / 18 数字；OMS / helper 实际各执行三条纯 guard，共 **6 passed**，见 [runtime-guards-verified.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/dependency-security/runtime-guards-verified.json)。这只是源码及纯 guard 验证，没有执行真实 uv sync、应用 build / activate 或改写服务器发布脚本。
+真实只读验证发现首版 guard 把 OpenSSL 的 `(3,5,0,9,0)` 错当作三元组而误拒 3.5.9；原失败收据保留。修正为严格解析稳定版本字符串后，真实五元组夹具覆盖 3.5.8 拒绝、3.5.9 / 3.6.0 通过、预览及未知后缀拒绝，`-O` 不能绕过。guard 定向为 **Backend 39 passed / Web 20 tests OK**，取代先前 29 / 18 数字；后续含备份与真实 age 的 **108 passed** 组合范围见[当前状态](#current-release-backup)。OMS / helper 实际各执行三条纯 guard，共 **6 passed**，见 [runtime-guards-verified.json](../../../shiro-bot/.pytest_cache/server-agent-20261101/dependency-security/runtime-guards-verified.json)。这只是源码及纯 guard 验证，没有执行真实 uv sync、应用 build / activate 或改写服务器发布脚本。
 
 <a id="remaining-security"></a>
 
@@ -159,6 +224,6 @@ Backend 的 [prepare-release.sh](../../../oms-server/oms-backend/deploy/prepare-
 
 04:55 仍观察到 root password SSH 允许及若干无监听旧端口放行；后续 key-only、精确 UFW 变更、新 SSH 会话和防锁死回滚验证尚待实际执行收据。自 10 月 22 日读取的 6,012 行 SSH 日志中 accepted password 为 0、failed password 为 446，不能把没有成功口令记录当成不需加固。
 
-05:07 的 SSH / UFW 收据已接续上段 04:55 待办；当前仍待新 Bot 正式切换、独立状态备份、新 full plan roots 的全备 / 解密恢复及维护重启各自收据。候选 Linux / 真实模型探针不能提前签收这些门。
+05:07 的 SSH / UFW 收据已接续上段 04:55 待办；新 Bot 正式切换、独立快照与同机恢复、新 full plan 全备完成、旧面板退役与维护重启均已取得上方实际收据。当前仍保留本轮云端 age 解密 / 异机启动、真人验收与两项上游 CVE 边界；候选探针、短 startup 样本和版本未匹配均不能代签这些门。
 
 本轮没有发布 Homepage / OMS 页面、改业务库内容、改 TLS 续期或提升 OMS 产品阶段。OMS 继续 **已部署待真人验收**，原账号 / 下载 / 桌面 / P-C 等剩余门只取 [现行真人验收](production-maintenance.md#真人验收)。双站 HTTPS 根页 200 不签实际续期；备份 timer 恢复不签新全备；受控脚本不签 QQ 真人收发。

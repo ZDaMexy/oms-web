@@ -1,6 +1,6 @@
 # OMS 原版 osu-web 试运行维护
 
-2026-11-01 05:07～05:25 CST 的 [后续安全收据](server-agent-security-20261101.md#host-hardening)已确认 SSH / UFW 加固、特定 bwrap profile、BT 两包离线补修及候选定向验证。发布 / 回滚源码 guard 的 39 / 20 项本地检查与 6 项实际纯 guard 验证见 [防降级记录](server-agent-security-20261101.md#release-runtime-guards)，不表示发布过新的 HTTP 应用。新 Bot 正式切换、独立状态备份、新全备恢复和维护重启仍待，系统 CVE / 既有 hold 与原真人门保持；下段为 04:57 阶段原记录。
+2026-11-01 接续至 06:37 CST：[当前共享状态](server-agent-security-20261101.md#current-release-backup)已确认 Shiro v0.2 切换 / 独立快照 / 同机恢复、旧面板 F 保全后退役、新 plan 全备完成和维护重启。Backend `1de5eab` 的真实 age 组合 **108 passed / 1 条既有提示**，guard 39 / Web 20 与 6 项实际纯 guard 保留各自范围。`d9a42ff093e1799d` 工具的 42 roots 实际展开 49 对象及 catalog，四 timer enabled / active / waiting；新 boot ID、业务、配置和 OMS 同库身份均复核通过。[本地 npm 修复](server-agent-security-20261101.md#web-dependency-security)已提交 `7000b90625`、未部署，484 个现有 assets SHA 不变。短 startup 资源样本只取[重启记录](server-agent-security-20261101.md#maintenance-reboot)，不签长期性能；本轮 cloud age 解密 / 异机演练、两项上游 CVE / 既有 hold 与真人门保持。没有新的 OMS HTTP / Web 服务器应用发布。下段为 04:57 阶段原记录。
 
 2026-11-01 04:57 CST [共享服务器运行时与安全维护](server-agent-security-20261101.md)已将 OMS HTTP / catalog / 固定 helper 切至公共 Python 3.12.16、BT 切至 3.13.18，标准库 OpenSSL 3.5.9 / SQLite 3.53.1 / Expat 2.9.0 实测通过；BT init 与源模板同步修复。应用来源、同一业务库和依赖版本保持，三 backup timer 已恢复。full plan 新 roots 尚待新全备 / 恢复签收；后续 SSH / UFW、维护重启与新 Shiro 结果待实际收据，原真人门不提升。
 
