@@ -7,7 +7,6 @@ const path = require('path');
 const Autoprefixer = require('autoprefixer');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const dotenv = require('dotenv');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
@@ -30,7 +29,6 @@ const entry = {
   'profile-page': resolvePath('resources/js/entrypoints/profile-page.tsx'),
 };
 const plugins = [
-  new ForkTsCheckerWebpackPlugin({ async: false, typescript: { memoryLimit: 256 } }),
   new webpack.ProvidePlugin({ $: 'jquery', _: 'lodash', jQuery: 'jquery', moment: 'moment', React: 'react', ReactDOM: 'react-dom' }),
   new webpack.IgnorePlugin({ contextRegExp: /moment$/, resourceRegExp: /^\.\/locale$/ }),
   new MiniCssExtractPlugin({ filename: outputFilename('css/[name]', '.css') }),
