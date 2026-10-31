@@ -9,6 +9,26 @@ import subprocess
 import tarfile
 from php_runtime import inspect_runtime
 
+PYTHON_RUNTIME = Path('/opt/python-runtimes/cpython-3.12.16-linux-x86_64-gnu')
+PYTHON_EXECUTABLE = PYTHON_RUNTIME / 'bin/python3'
+PYTHON_RUNTIME_GUARD = r'''import sys,ssl,sqlite3,re
+from pathlib import Path
+if sys.version_info[:2] != (3,12) or sys.version_info[:3] < (3,12,16):
+    raise RuntimeError("Python 3.12.16 or newer in the 3.12 series is required")
+if Path(sys.base_prefix).resolve() != Path(sys.argv[1]).resolve():
+    raise RuntimeError("The release must use the shared Python runtime")
+# Only stable OpenSSL versions and the optional standard release date qualify.
+openssl_version = re.fullmatch(r"OpenSSL ([0-9]+)\.([0-9]+)\.([0-9]+)(?: [0-9]{1,2} [A-Za-z]{3} [0-9]{4})?", ssl.OPENSSL_VERSION)
+if openssl_version is None or tuple(map(int,openssl_version.groups())) < (3,5,9):
+    raise RuntimeError("OpenSSL 3.5.9 or newer stable release is required")
+if sqlite3.sqlite_version_info < (3,51,3):
+    raise RuntimeError("SQLite 3.51.3 or newer is required")
+'''
+PYTHON_ENVIRONMENT_GUARD = PYTHON_RUNTIME_GUARD + '''import importlib.metadata as metadata
+if tuple(map(int,metadata.version("certifi").split("."))) < (2026,10,19):
+    raise RuntimeError("certifi trust store needs security update")
+'''
+
 # Public immutable sources are read by the unprivileged PHP/Nginx user even
 # when the owner launches this installer from a private 0077 maintenance unit.
 os.umask(0o022)
@@ -47,6 +67,9 @@ with tarfile.open(args.package) as archive:
     # Validate the bytes before creating any release/runtime directory. Old
     # application rollback must retain a patched runtime, not reactivate 8.5.11.
     php = inspect_runtime(args.php_runtime, manifest['php_runtime'])
+    # Reject an absent, old or misbound interpreter before extracting any
+    # runtime/release files. App rollback must retain this shared security floor.
+    subprocess.run([str(PYTHON_EXECUTABLE), '-c', PYTHON_RUNTIME_GUARD, str(PYTHON_RUNTIME)], check=True)
     rid = manifest['release_id']
     assert re.fullmatch(r'[0-9a-f]{12}-[0-9a-f]{12}', rid)
     for key in ('backend_commit', 'website_commit', 'client_commit'):
@@ -123,8 +146,8 @@ with tarfile.open(args.package) as archive:
     (destination / 'archive.db').symlink_to(projection)
     for path in ('bootstrap/cache', 'storage/framework/views', 'storage/framework/cache', 'storage/logs'):
         (destination / 'web' / path).mkdir(parents=True, exist_ok=True)
-subprocess.run(['/opt/oms-ir/tools/uv-0.13.4/uv', 'sync', '--project', str(destination / 'backend'), '--offline', '--frozen', '--no-dev', '--no-editable', '--managed-python', '--python', '3.12.15'], check=True,
-    env={**__import__('os').environ, 'UV_CACHE_DIR': '/opt/oms-ir/cache', 'UV_PYTHON_INSTALL_DIR': '/opt/oms-ir/python'})
-subprocess.run([str(destination / 'backend/.venv/bin/python'), '-c', 'import sys,ssl,sqlite3,importlib.metadata as m; assert sys.version_info[:3]>=(3,12,15); assert tuple(map(int,ssl.OPENSSL_VERSION.split()[1].split(".")))>=(3,5,9),ssl.OPENSSL_VERSION; assert sqlite3.sqlite_version_info>=(3,51,3),sqlite3.sqlite_version; assert tuple(map(int,m.version("certifi").split(".")))>=(2026,10,19),"certifi trust store needs security update"'], check=True)
+subprocess.run(['/opt/oms-ir/tools/uv-0.13.4/uv', 'sync', '--project', str(destination / 'backend'), '--offline', '--frozen', '--no-dev', '--no-editable', '--no-managed-python', '--no-python-downloads', '--python', str(PYTHON_EXECUTABLE)], check=True,
+    env={**os.environ, 'UV_CACHE_DIR': '/opt/oms-ir/cache'})
+subprocess.run([str(destination / 'backend/.venv/bin/python'), '-c', PYTHON_ENVIRONMENT_GUARD, str(PYTHON_RUNTIME)], check=True)
 (destination / '.ready').touch()
 print(json.dumps({'release': str(destination), 'runtime': str(runtime), 'linked_immutable_bytes': linked_bytes, 'copied_changed_bytes': copied_bytes, 'production_activated': False}))

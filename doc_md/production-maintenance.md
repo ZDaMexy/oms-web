@@ -1,6 +1,10 @@
 # OMS 原版 osu-web 试运行维护
 
-2026-10-22 [全工作区安全修复](architecture-security-review-20261022.md#全量修复实施)已将OMS/helper切换至Python3.12.15/OpenSSL3.5.9，独立PHP切换至`php85-0069de279481`的修复组合，宝塔为13.1.0/Python3.13.16；生产Node22.23.4、uv0.13.4及原证书补丁保持。原OMS HTTP应用不变，Homepage安全依赖另循其部署hook发布；当前恢复计划和独立备份工具已同步新root/目录分类。历史应用lock和manifest不改标签，回退不得重新引入旧运行时、CA或curl；具体版本、备份及未完成门取该记录。
+2026-11-01 05:07～05:25 CST 的 [后续安全收据](server-agent-security-20261101.md#host-hardening)已确认 SSH / UFW 加固、特定 bwrap profile、BT 两包离线补修及候选定向验证。发布 / 回滚源码 guard 的 39 / 20 项本地检查与 6 项实际纯 guard 验证见 [防降级记录](server-agent-security-20261101.md#release-runtime-guards)，不表示发布过新的 HTTP 应用。新 Bot 正式切换、独立状态备份、新全备恢复和维护重启仍待，系统 CVE / 既有 hold 与原真人门保持；下段为 04:57 阶段原记录。
+
+2026-11-01 04:57 CST [共享服务器运行时与安全维护](server-agent-security-20261101.md)已将 OMS HTTP / catalog / 固定 helper 切至公共 Python 3.12.16、BT 切至 3.13.18，标准库 OpenSSL 3.5.9 / SQLite 3.53.1 / Expat 2.9.0 实测通过；BT init 与源模板同步修复。应用来源、同一业务库和依赖版本保持，三 backup timer 已恢复。full plan 新 roots 尚待新全备 / 恢复签收；后续 SSH / UFW、维护重启与新 Shiro 结果待实际收据，原真人门不提升。
+
+2026-10-22 [全工作区安全修复](architecture-security-review-20261022.md#全量修复实施)是上一轮来源：当时 OMS/helper 为 Python3.12.15、BT 为 Python3.13.16，现已由上方运行时记录接续；独立PHP `php85-0069de279481` 修复组合、生产Node22.23.4、uv0.13.4及原证书补丁仍沿该轮证据。历史应用lock和manifest不改标签，回退不得重新引入旧运行时、CA或curl；原备份工具与当次恢复范围保留原日期。
 
 2026-10-22 已实施[PHP 与共享主机安全维护](php-security-maintenance-20261022.md)：生产 PHP8.5.12、旧 PHP8.2 停用、状态页访问修复、BT Nginx1.30.6 / 系统 OpenSSL3、启动依赖及内核更新，真实重启后双站与业务服务通过。应用 release 仍为 `824de121a686-494932756b74`，原应用 manifest 保留历史；当前 PHP 取实际 RootDirectory / 进程与独立安全收据。应用回退保留这些安全修复，不能重新启用旧 PHP。
 
@@ -12,7 +16,7 @@
 
 ## 当前来源与运行位置
 
-下表的HTTP源码绑定2026-10-11 16:34:47 CST实际发布记录；10月22日[安全维护](architecture-security-review-20261022.md#全量修复实施)另更新运行时并复核同一应用来源，PHP路径以该轮实际进程为准。10月16～17日清理与备份记录保留原时点。操作前仍按下方运行核对取得当时真实状态，文档HEAD不代表运行提交。
+下表的HTTP源码绑定2026-10-11 16:34:47 CST实际发布记录；11月1日[运行时维护](server-agent-security-20261101.md#当前运行时与应用来源)复核同一应用来源并更新 Python，PHP路径仍取10月22日实际进程。旧清理与备份记录保留原时点。操作前仍按下方运行核对取得当时真实状态，文档HEAD不代表运行提交。
 
 | 对象 | 最近发布记录的实际身份 |
 | --- | --- |
@@ -20,6 +24,7 @@
 | 服务源码 | Backend `824de121a6862d2f9b576f66a18715192fd0d57f`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
 | 原版页面源码 | Web `494932756b747edba791fd1499b83348ec49b963`；Laravel / Blade / React / Less / Turbo、AGPL / 归属及对应源码下载保持 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
+| OMS / helper Python 与 BT | 2026-11-01 已切至 Python 3.12.16 / 3.13.18；公共 base、独立 venv、BT 模板指纹及新 full plan roots 只取 [运行时权威记录](server-agent-security-20261101.md#当前运行时与应用来源) |
 | 源码 / 旧设计回退目标 | `/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04`；原设计完整外存备份在 F 盘，服务器没有另打旧设计备份包 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；该次发布保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
