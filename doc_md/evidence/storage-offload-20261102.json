@@ -1,0 +1,667 @@
+{
+  "format": "oms-storage-offload-receipt-v1",
+  "observedAt": "2026-11-02T04:10:38.886811+08:00",
+  "scope": "Selected operational metadata only; no credentials, private keys, conversation or workspace content.",
+  "disk": {
+    "totalBytes": 20747476992,
+    "usedBytes": 9377423360,
+    "availableBytes": 10290180096,
+    "usedPercent": "48%",
+    "baselineAvailableBytes": 6187626496,
+    "netAvailableGainBytes": 4102553600,
+    "restoreReserveBytes": 4402384384
+  },
+  "memory": {
+    "MemTotal": 1691312128,
+    "MemAvailable": 977498112,
+    "SwapTotal": 1074786304,
+    "SwapFree": 1074786304
+  },
+  "cpu": {
+    "vcpus": 2,
+    "sampleSeconds": 5,
+    "usagePercent": 1.208,
+    "iowaitPercent": 0.0,
+    "loadAverage": [
+      0.0,
+      0.06,
+      0.11
+    ],
+    "pressure": {
+      "cpu": [
+        "some avg10=0.48 avg60=0.23 avg300=1.76 total=599562864",
+        "full avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+      ],
+      "memory": [
+        "some avg10=0.00 avg60=0.00 avg300=0.00 total=7349918",
+        "full avg10=0.00 avg60=0.00 avg300=0.00 total=6682109"
+      ],
+      "io": [
+        "some avg10=0.00 avg60=0.04 avg300=0.73 total=110565545",
+        "full avg10=0.00 avg60=0.04 avg300=0.70 total=102893539"
+      ]
+    }
+  },
+  "services": {
+    "oms-ir": {
+      "MainPID": 865,
+      "NRestarts": 0,
+      "MemoryCurrent": 46317568,
+      "ActiveState": "active"
+    },
+    "oms-ir-catalog": {
+      "MainPID": 860,
+      "NRestarts": 0,
+      "MemoryCurrent": 36540416,
+      "ActiveState": "active"
+    },
+    "oms-web": {
+      "MainPID": 1422,
+      "NRestarts": 0,
+      "MemoryCurrent": 65323008,
+      "ActiveState": "active"
+    },
+    "nginx": {
+      "MainPID": 1085,
+      "NRestarts": 0,
+      "MemoryCurrent": 60313600,
+      "ActiveState": "active"
+    },
+    "shiro-agent": {
+      "MainPID": 18516,
+      "NRestarts": 0,
+      "MemoryCurrent": 99332096,
+      "ActiveState": "active"
+    }
+  },
+  "workers": {
+    "oms-ir-backup.service": {
+      "MainPID": 0,
+      "ControlPID": 0,
+      "Result": "success",
+      "ActiveState": "inactive"
+    },
+    "oms-netdisk-backup.service": {
+      "MainPID": 0,
+      "ControlPID": 0,
+      "Result": "success",
+      "ActiveState": "inactive"
+    },
+    "oms-full-backup.service": {
+      "MainPID": 0,
+      "ControlPID": 0,
+      "Result": "success",
+      "ActiveState": "inactive"
+    },
+    "oms-cold-archive.service": {
+      "MainPID": 0,
+      "ControlPID": 0,
+      "Result": "success",
+      "ActiveState": "inactive"
+    }
+  },
+  "timers": {
+    "oms-ir-backup.timer": {
+      "NextElapseUSecRealtime": "Mon 2026-11-02 04:18:26 CST",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "oms-netdisk-backup.timer": {
+      "NextElapseUSecRealtime": "Mon 2026-11-02 04:46:44 CST",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "oms-full-backup.timer": {
+      "NextElapseUSecRealtime": "Mon 2026-11-02 05:31:11 CST",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    }
+  },
+  "http": {
+    "https://zdamexy.work/": 200,
+    "https://oms.zdamexy.work/": 200,
+    "https://shiro.zdamexy.work/login": 200,
+    "https://shiro.zdamexy.work/api/config": 401,
+    "https://shiro.zdamexy.work/qq/webhook": 404,
+    "http://127.0.0.1:8081/health": 200,
+    "http://127.0.0.1:8082/health": 200
+  },
+  "nginxConfigCheckPassed": true,
+  "releaseDirectories": {
+    "oms": [
+      "824de121a686-494932756b74",
+      "d1f052b93a81-22b4ee54f237"
+    ],
+    "shiro": [
+      "c223044fae704bcacfc432651b94506442d59a14"
+    ],
+    "backupTool": [
+      "a0b7951e1832be3e"
+    ]
+  },
+  "candidate": {
+    "source": "e8ccfdc10775fd050466ba60145ba448f826fe02",
+    "materialized": false,
+    "activated": false,
+    "deltaBytes": 91705,
+    "deltaSha256": "2791fbfcf49c3df704404ae5ac36cafe925d86105049539765ba078fe70e3d47"
+  },
+  "cleanup": {
+    "cache": {
+      "at": "2026-11-02T01:45:54.692285+08:00",
+      "action": "regenerable-cache-cleanup",
+      "runtimeReferences": 0,
+      "healthBefore": {
+        "https://zdamexy.work/": 200,
+        "https://oms.zdamexy.work/": 200
+      },
+      "items": [
+        {
+          "path": "/root/.npm/_cacache",
+          "allocatedBefore": 83312640,
+          "cleared": true
+        },
+        {
+          "path": "/root/.cache/pip",
+          "allocatedBefore": 29593600,
+          "cleared": true
+        },
+        {
+          "path": "/opt/oms-ir/cache",
+          "allocatedBefore": 114941952,
+          "cleared": true
+        },
+        {
+          "path": "/var/cache/apt",
+          "allocatedBefore": 211476480,
+          "allocatedAfter": 28672,
+          "nativeClean": true
+        }
+      ],
+      "freeBefore": 6187626496,
+      "freeAfter": 6553989120
+    },
+    "journal": {
+      "at": "2026-11-02T02:02:06.148900+08:00",
+      "action": "journal-policy-and-native-vacuum",
+      "defaultBudgetMiB": 128,
+      "namespaceOmsBudgetMiB": 32,
+      "retentionDays": 14,
+      "freeBefore": 6122008576,
+      "freeAfter": 6577795072,
+      "businessPidsBefore": {
+        "oms-ir": "865",
+        "oms-ir-catalog": "860",
+        "oms-web": "1422",
+        "shiro-agent": "18516"
+      },
+      "businessPidsAfter": {
+        "oms-ir": "865",
+        "oms-ir-catalog": "860",
+        "oms-web": "1422",
+        "shiro-agent": "18516"
+      },
+      "vacuumSummary": [
+        "Vacuuming done, freed 0B of archived journals from /var/log/journal.",
+        "Vacuuming done, freed 0B of archived journals from /run/log/journal.",
+        "Vacuuming done, freed 0B of archived journals from /var/log/journal/02f0470de114415faa95c692858fbdb6."
+      ]
+    },
+    "sourceCompletedAt": "2026-11-01T19:24:52.706992Z",
+    "sourceFreeBefore": 6863048704,
+    "sourceFreeAfter": 9959051264,
+    "removedPaths": [
+      "/usr/bin/php",
+      "/usr/bin/php82-phpize",
+      "/usr/bin/php82",
+      "/usr/bin/php-fpm",
+      "/usr/bin/pear",
+      "/usr/bin/pecl",
+      "/usr/bin/php82-php-fpm",
+      "/usr/bin/phpize",
+      "/var/backups/oms-maintenance/full-remediation-20261022",
+      "/var/backups/oms-maintenance/architecture-20261022",
+      "/www/server/php/82",
+      "/etc/init.d/php-fpm-82",
+      "/opt/oms-ir/python",
+      "/opt/oms-ir/tools/uv-0.12.11",
+      "/opt/oms-ir/tools/architecture-security-20261022",
+      "/opt/oms-ir/tools/full-remediation-20261022",
+      "/opt/oms-web/maintenance",
+      "/var/backups/oms-maintenance/shiro-retire-20261101",
+      "/opt/shiro-bot",
+      "/opt/oms-ir/releases/cc37bdb8f3b4-f9a5afd99939",
+      "/opt/oms-ir/releases/a85aee3e3c45-b17354d27c6b",
+      "/opt/oms-ir/releases/d1f052b93a81-e6fdf914cb04",
+      "/opt/oms-ir/releases/b879e4233818-b0feceae22e4",
+      "/opt/oms-ir/releases/b879e4233818-fffddaac1ce4",
+      "/opt/oms-ir/releases/b879e4233818-479987991a9b",
+      "/opt/shiro-agent/releases/f655f43a14f7454e67d6672a30b3a5ea04115106",
+      "/opt/shiro-agent/releases/e8ccfdc10775fd050466ba60145ba448f826fe02",
+      "/www/backup/panel/2026-10-27.zip",
+      "/www/backup/panel/2026-10-29.zip",
+      "/www/backup/panel/2026-10-28.zip",
+      "/www/backup/panel/2026-10-26.zip",
+      "/www/backup/panel/2026-10-20.zip",
+      "/www/backup/panel/2026-10-22.zip",
+      "/www/backup/panel/2026-10-23.zip",
+      "/www/backup/panel/2026-10-21.zip",
+      "/www/backup/panel/2026-10-25.zip",
+      "/www/backup/panel/2026-10-19.zip",
+      "/www/backup/panel/2026-10-24.zip",
+      "/www/backup/panel/2026-10-30.zip",
+      "/www/backup/nginxBak",
+      "/www/backup/php82.Bak",
+      "/www/backup/php-fpm82.Bak"
+    ]
+  },
+  "cold": {
+    "lastSuccess": {
+      "catalog": {
+        "ciphertext": {
+          "bytes": 5134,
+          "sha256": "a524beeba775600ae5b15946a2334e84f2804d8b45f7eaa7757bdd84b305ea69"
+        },
+        "entries": 1,
+        "format": "oms-full-object-v1",
+        "fs_id": 1120832888751407,
+        "name": "cold-catalog",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/归档清单/oms-full-cold-catalog-be26c5dcad33bd57-a524beeba775600a.tar.gz.age",
+        "source_bytes": 15824,
+        "source_sha256": "be26c5dcad33bd5777051296b5352b82a478514ad7fa6bc4999645c4ccefa8c0",
+        "stored_at": "2026-11-01T19:21:55.412476Z",
+        "verified_at": "2026-11-01T19:21:58.852729Z"
+      },
+      "completed_at": "2026-11-01T19:21:58.887967Z",
+      "format": "oms-full-success-v1",
+      "new_object_ciphertext_bytes": 173784978,
+      "objects": 21
+    },
+    "objects": {
+      "cold-php": {
+        "ciphertext": {
+          "bytes": 166081091,
+          "sha256": "bc9561523f8ea663f56cba887596f8ca4a73327cd4fa801e7613dbe80248a2c5"
+        },
+        "entries": 4382,
+        "format": "oms-full-object-v1",
+        "fs_id": 618889425573743,
+        "name": "cold-php",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/运行环境/PHP/oms-full-cold-php-890cfe4cfb8eb02b-bc9561523f8ea663.tar.gz.age",
+        "source_bytes": 467026497,
+        "source_sha256": "890cfe4cfb8eb02b8a3e3d7143ed23d3a8308b0d698c7f1f41b51735bce0089a",
+        "verified_at": "2026-11-01T18:26:01.011880Z"
+      },
+      "cold-python": {
+        "ciphertext": {
+          "bytes": 112094047,
+          "sha256": "fbb0947c197769e114f2b9b67782814c54e17cea690a7e815d6e14f430e5002d"
+        },
+        "entries": 14183,
+        "format": "oms-full-object-v1",
+        "fs_id": 581197791746317,
+        "name": "cold-python",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/运行环境/Python/oms-full-cold-python-617a7a1548ae52bb-fbb0947c197769e1.tar.gz.age",
+        "source_bytes": 295662522,
+        "source_sha256": "617a7a1548ae52bb4971e9b3b4950627cf510d6ef7e34dc3ee6f0eb76b77f211",
+        "verified_at": "2026-11-01T18:30:25.524534Z"
+      },
+      "cold-release-maintenance-architecture": {
+        "ciphertext": {
+          "bytes": 131579351,
+          "sha256": "75078ceebf5c5919550178cd51da4160a634ae7ae75598434648995e6b71f3bc"
+        },
+        "entries": 22,
+        "format": "oms-full-object-v1",
+        "fs_id": 604641156331016,
+        "name": "cold-release-maintenance-architecture",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/maintenance-architecture/oms-full-cold-release-maintenance-architecture-02886bf50c73cc3e-75078ceebf5c5919.tar.gz.age",
+        "source_bytes": 131609237,
+        "source_sha256": "02886bf50c73cc3e2ac6615fffaa3ed6ec86f74e69be7593641e29dc69b2bebb",
+        "verified_at": "2026-11-01T18:19:50.942946Z"
+      },
+      "cold-release-oms-a85aee3e3c45-b17354d27c6b": {
+        "ciphertext": {
+          "bytes": 83002732,
+          "sha256": "caacc7f2d69e75fa9706a35ca6278bd5551c4d4a28673ad8d1bfae2074b6d26b"
+        },
+        "entries": 11551,
+        "format": "oms-full-object-v1",
+        "fs_id": 914793830135058,
+        "name": "cold-release-oms-a85aee3e3c45-b17354d27c6b",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-a85aee3e3c45-b17354d27c6b/oms-full-cold-release-oms-a85aee3e3c45-b17354d27c6b-ec608d6714232ece-caacc7f2d69e75fa.tar.gz.age",
+        "source_bytes": 142424874,
+        "source_sha256": "ec608d6714232ecee6d20a9eeb5c9ee7b825d53bd8eecec59a6f38808dfd61ee",
+        "verified_at": "2026-11-01T18:44:47.988220Z"
+      },
+      "cold-release-oms-b879e4233818-479987991a9b": {
+        "ciphertext": {
+          "bytes": 82180607,
+          "sha256": "afbac3b95f92fb6507606eab0eaf594b298f0a1561dca91f90006fd23b61828e"
+        },
+        "entries": 11546,
+        "format": "oms-full-object-v1",
+        "fs_id": 675139693756498,
+        "name": "cold-release-oms-b879e4233818-479987991a9b",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-b879e4233818-479987991a9b/oms-full-cold-release-oms-b879e4233818-479987991a9b-1f0e3f555ef03689-afbac3b95f92fb65.tar.gz.age",
+        "source_bytes": 141252755,
+        "source_sha256": "1f0e3f555ef03689e496ec132e77dca7d030f003d387fec05e31c34fe50a3f87",
+        "verified_at": "2026-11-01T18:53:55.577545Z"
+      },
+      "cold-release-oms-b879e4233818-b0feceae22e4": {
+        "ciphertext": {
+          "bytes": 65760207,
+          "sha256": "79d609ecdfd8e8c2d30e7f9afc54447af181d7edb2e9a9c69096378c07e7c905"
+        },
+        "entries": 11452,
+        "format": "oms-full-object-v1",
+        "fs_id": 503298405041830,
+        "name": "cold-release-oms-b879e4233818-b0feceae22e4",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-b879e4233818-b0feceae22e4/oms-full-cold-release-oms-b879e4233818-b0feceae22e4-297517ad712d0670-79d609ecdfd8e8c2.tar.gz.age",
+        "source_bytes": 106527362,
+        "source_sha256": "297517ad712d06706ae4e0d1ba9c381dc948109425b9173c54c007c56f6b146d",
+        "verified_at": "2026-11-01T18:47:35.919712Z"
+      },
+      "cold-release-oms-b879e4233818-fffddaac1ce4": {
+        "ciphertext": {
+          "bytes": 82065110,
+          "sha256": "fad639c37a3e28bf304563bc5e1beee84b630d4a5658a2400b877404819520f4"
+        },
+        "entries": 11543,
+        "format": "oms-full-object-v1",
+        "fs_id": 442482028772885,
+        "name": "cold-release-oms-b879e4233818-fffddaac1ce4",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-b879e4233818-fffddaac1ce4/oms-full-cold-release-oms-b879e4233818-fffddaac1ce4-ee5f5ab6b3b41231-fad639c37a3e28bf.tar.gz.age",
+        "source_bytes": 140797805,
+        "source_sha256": "ee5f5ab6b3b41231bfce6d70aec6f6999eb364d3d55e51d9584302c57378a66c",
+        "verified_at": "2026-11-01T18:50:42.005605Z"
+      },
+      "cold-release-oms-cc37bdb8f3b4-f9a5afd99939": {
+        "ciphertext": {
+          "bytes": 82362522,
+          "sha256": "ce3162979e104654a2ac6c488ec5620584d5939e63cdd288bbbe6764eadccbba"
+        },
+        "entries": 11556,
+        "format": "oms-full-object-v1",
+        "fs_id": 927527023168,
+        "name": "cold-release-oms-cc37bdb8f3b4-f9a5afd99939",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-cc37bdb8f3b4-f9a5afd99939/oms-full-cold-release-oms-cc37bdb8f3b4-f9a5afd99939-fafb3a20c1e1c951-ce3162979e104654.tar.gz.age",
+        "source_bytes": 141882407,
+        "source_sha256": "fafb3a20c1e1c9513b25ca778c993018396a92f32047e82313c4de9a10ac3e92",
+        "verified_at": "2026-11-01T18:41:39.634548Z"
+      },
+      "cold-release-oms-d1f052b93a81-e6fdf914cb04": {
+        "ciphertext": {
+          "bytes": 5640645,
+          "sha256": "12bd4a5b92b15d766b7be964965d437d9b385a242f26acbd68bf60360989e8f1"
+        },
+        "entries": 881,
+        "format": "oms-full-object-v1",
+        "fs_id": 27908564476522,
+        "name": "cold-release-oms-d1f052b93a81-e6fdf914cb04",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-d1f052b93a81-e6fdf914cb04/oms-full-cold-release-oms-d1f052b93a81-e6fdf914cb04-28532976fad67290-12bd4a5b92b15d76.tar.gz.age",
+        "source_bytes": 14949393,
+        "source_sha256": "28532976fad67290f04870df8d964a7fa5be1cd94f3154565a1643bbd89152ad",
+        "verified_at": "2026-11-01T18:45:05.171032Z"
+      },
+      "cold-release-oms-remediation-tools": {
+        "ciphertext": {
+          "bytes": 1656,
+          "sha256": "ced0830e88c22a43da5abb2a34c2f6897f42085dd4a00c9ebb8c32722dfedbcf"
+        },
+        "entries": 3,
+        "format": "oms-full-object-v1",
+        "fs_id": 5646247680718,
+        "name": "cold-release-oms-remediation-tools",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-remediation-tools/oms-full-cold-release-oms-remediation-tools-3bce28cae37f6673-ced0830e88c22a43.tar.gz.age",
+        "source_bytes": 3196,
+        "source_sha256": "3bce28cae37f6673962a8cc1f09ff753eac584997dca7d0fd97dc18511b0aebb",
+        "verified_at": "2026-11-01T18:38:29.332441Z"
+      },
+      "cold-release-oms-security-tools": {
+        "ciphertext": {
+          "bytes": 1456,
+          "sha256": "b8b4ac1c7cc72a5fb74975d15b09d6fb5ef1d114cfebf71ce8b6bb17856298bd"
+        },
+        "entries": 2,
+        "format": "oms-full-object-v1",
+        "fs_id": 393017915357013,
+        "name": "cold-release-oms-security-tools",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-security-tools/oms-full-cold-release-oms-security-tools-932fb999225dfd36-b8b4ac1c7cc72a5f.tar.gz.age",
+        "source_bytes": 2753,
+        "source_sha256": "932fb999225dfd36655496ef87aff575c8c6ea0aa6a9ef6979157e6947c26a65",
+        "verified_at": "2026-11-01T18:38:23.934479Z"
+      },
+      "cold-release-oms-web-build-20261022": {
+        "ciphertext": {
+          "bytes": 78184622,
+          "sha256": "899f2c9b7217c58c8a91aad021c1f263bc4c8bd46774bb15af9fc7d1192c2c4c"
+        },
+        "entries": 2186,
+        "format": "oms-full-object-v1",
+        "fs_id": 449443788847726,
+        "name": "cold-release-oms-web-build-20261022",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/oms-web-build-20261022/oms-full-cold-release-oms-web-build-20261022-ae727b20b028c13b-899f2c9b7217c58c.tar.gz.age",
+        "source_bytes": 162270668,
+        "source_sha256": "ae727b20b028c13b7eea55b061d3e0b1adc20f0d3bd72c2befb125ddfe63c669",
+        "verified_at": "2026-11-01T19:18:22.883889Z"
+      },
+      "cold-release-php82-cli-links": {
+        "ciphertext": {
+          "bytes": 766,
+          "sha256": "788a369fdeafe1101db1d0a7c38c570e80916b2da276ec648d4460349201375b"
+        },
+        "entries": 1,
+        "format": "oms-full-object-v1",
+        "fs_id": 383095069408757,
+        "name": "cold-release-php82-cli-links",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/php82-cli-links/oms-full-cold-release-php82-cli-links-c3d7a642aeca66d0-788a369fdeafe110.tar.gz.age",
+        "source_bytes": 816,
+        "source_sha256": "c3d7a642aeca66d06983c2c73f8d5e42861e863e0c3e82a836f2f0c4295fd14d",
+        "verified_at": "2026-11-01T19:15:25.608839Z"
+      },
+      "cold-release-php82-init": {
+        "ciphertext": {
+          "bytes": 1484,
+          "sha256": "e812f9585ca11ea7836ef6fc8237fd9aba589cfdb1e26143198d4be68bfb64fc"
+        },
+        "entries": 1,
+        "format": "oms-full-object-v1",
+        "fs_id": 697957703724688,
+        "name": "cold-release-php82-init",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/php82-init/oms-full-cold-release-php82-init-9cee401084d63f0c-e812f9585ca11ea7.tar.gz.age",
+        "source_bytes": 2408,
+        "source_sha256": "9cee401084d63f0c02dcfbe2006aa03d44298e3a08eb17d36f8b198d831118eb",
+        "verified_at": "2026-11-01T18:26:05.260264Z"
+      },
+      "cold-release-retired-shiro-runtime": {
+        "ciphertext": {
+          "bytes": 22863403,
+          "sha256": "5d2c719dee2e51febb02c649ae1f77ee77e66e396cebe23e37ba74410524591f"
+        },
+        "entries": 4790,
+        "format": "oms-full-object-v1",
+        "fs_id": 512759251198078,
+        "name": "cold-release-retired-shiro-runtime",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/retired-shiro-runtime/oms-full-cold-release-retired-shiro-runtime-166b45091fb8474e-5d2c719dee2e51fe.tar.gz.age",
+        "source_bytes": 67728153,
+        "source_sha256": "166b45091fb8474e5cd4580e7208df0f45a405be14886eceb99649d4d2a46318",
+        "verified_at": "2026-11-01T19:21:55.371070Z"
+      },
+      "cold-release-shiro-e8ccfdc10775fd050466ba60145ba448f826fe02": {
+        "ciphertext": {
+          "bytes": 110905499,
+          "sha256": "b9bf388e63ac7af99e803907323ce5a653e639f3d787cb52c83682722876e405"
+        },
+        "entries": 1568,
+        "format": "oms-full-object-v1",
+        "fs_id": 854219044965107,
+        "name": "cold-release-shiro-e8ccfdc10775fd050466ba60145ba448f826fe02",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/shiro-e8ccfdc10775fd050466ba60145ba448f826fe02/oms-full-cold-release-shiro-e8ccfdc10775fd050466ba60145ba448f826fe02-a85602e0175701a0-b9bf388e63ac7af9.tar.gz.age",
+        "source_bytes": 241588139,
+        "source_sha256": "a85602e0175701a0ed1fcaa5bcfc5a9d6a889d4f5c7db5c1e4d89480a7b0b5e0",
+        "verified_at": "2026-11-01T19:01:59.835116Z"
+      },
+      "cold-release-shiro-f655f43a14f7454e67d6672a30b3a5ea04115106": {
+        "ciphertext": {
+          "bytes": 110910019,
+          "sha256": "7b050a0b49b7efc1ec9caef4d0f09a16e18518ea5a2e3dad6f5aa9b8feb49b95"
+        },
+        "entries": 1635,
+        "format": "oms-full-object-v1",
+        "fs_id": 539308109238223,
+        "name": "cold-release-shiro-f655f43a14f7454e67d6672a30b3a5ea04115106",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/shiro-f655f43a14f7454e67d6672a30b3a5ea04115106/oms-full-cold-release-shiro-f655f43a14f7454e67d6672a30b3a5ea04115106-057b3a67c4926573-7b050a0b49b7efc1.tar.gz.age",
+        "source_bytes": 241582040,
+        "source_sha256": "057b3a67c492657351046963e1304ae489eb83db6939193a7bab49ea7e52a9a2",
+        "verified_at": "2026-11-01T18:57:57.940566Z"
+      },
+      "cold-release-shiro-retire-20261101": {
+        "ciphertext": {
+          "bytes": 72736187,
+          "sha256": "82fcfa9628fb0c2ab469686a46841be8a33bfe3e1a7ee61e88d5d643bb8b8a48"
+        },
+        "entries": 32,
+        "format": "oms-full-object-v1",
+        "fs_id": 892241719903171,
+        "name": "cold-release-shiro-retire-20261101",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/shiro-retire-20261101/oms-full-cold-release-shiro-retire-20261101-3f951e481245fc18-82fcfa9628fb0c2a.tar.gz.age",
+        "source_bytes": 84983561,
+        "source_sha256": "3f951e481245fc18e42733349b5540ae8482187b48158c9961ea460864afdeac",
+        "verified_at": "2026-11-01T19:20:59.254846Z"
+      },
+      "cold-release-www-backups": {
+        "ciphertext": {
+          "bytes": 174245277,
+          "sha256": "389383b78182ab1f4fd935d504528d00bfa37eabab959d1ea04ed04bd0188115"
+        },
+        "entries": 29,
+        "format": "oms-full-object-v1",
+        "fs_id": 568102575784197,
+        "name": "cold-release-www-backups",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/发布版本/www-backups/oms-full-cold-release-www-backups-12e5f4a35e7a316c-389383b78182ab1f.tar.gz.age",
+        "source_bytes": 237401215,
+        "source_sha256": "12e5f4a35e7a316c805afb78dd755a61ad07e5503759ab82c2aa9e246f9796a3",
+        "verified_at": "2026-11-01T18:38:18.641454Z"
+      },
+      "cold-security-maintenance": {
+        "ciphertext": {
+          "bytes": 431779193,
+          "sha256": "1ce3670e8a26dc86c1acf21dad36725bbc86d89efa7b4bb7b402c4b0ab43efc3"
+        },
+        "entries": 7329,
+        "format": "oms-full-object-v1",
+        "fs_id": 28198242278472,
+        "name": "cold-security-maintenance",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/服务配置/安全维护原件/oms-full-cold-security-maintenance-763d1fe3e31f1ef2-1ce3670e8a26dc86.tar.gz.age",
+        "source_bytes": 571753071,
+        "source_sha256": "763d1fe3e31f1ef2cefc4ad8d33a511109feb6f7f48e3bd1b5a70d45878c60fa",
+        "verified_at": "2026-11-01T18:15:10.483487Z"
+      },
+      "cold-uv": {
+        "ciphertext": {
+          "bytes": 40743784,
+          "sha256": "0ab038a4413a0ed2becf4f0c5bda2a5f9c06274f69ac758d1030db410bc4917d"
+        },
+        "entries": 4,
+        "format": "oms-full-object-v1",
+        "fs_id": 642498542628616,
+        "name": "cold-uv",
+        "remote_path": "/apps/OMS服务器备份/版本对象/冷归档/运行环境/uv/oms-full-cold-uv-fe7b034ed50b4a1f-0ab038a4413a0ed2.tar.gz.age",
+        "source_bytes": 69164234,
+        "source_sha256": "fe7b034ed50b4a1fe828c2670d55616ddf84d33c41f5e37e92fb102cf760afe8",
+        "verified_at": "2026-11-01T18:31:56.502329Z"
+      }
+    },
+    "totalNewObjectCiphertextBytes": 1853139658
+  },
+  "productionBackup": {
+    "planRoots": 42,
+    "planSha256": "ea014d23a64e50f652fee697fef08d3a2638d7e256631b252260346b44f17eff",
+    "lastSuccess": {
+      "catalog": {
+        "ciphertext": {
+          "bytes": 11640,
+          "sha256": "7b67ae4c2db9752e3cd01bf5c86c19042395161d49da223f3385fce9b6c3c596"
+        },
+        "entries": 1,
+        "format": "oms-full-object-v1",
+        "fs_id": 1073875644389571,
+        "name": "catalog",
+        "remote_path": "/apps/OMS服务器备份/恢复目录/2026/11/02/oms-full-catalog-7b67ae4c2db9752e3cd01bf5c86c1904.tar.gz.age",
+        "source_bytes": 33919,
+        "source_sha256": "65a0a50e5a5b4ca1146f75d182cadfc6662442c5d74fbccda186231dfc1e2506",
+        "stored_at": "2026-11-01T20:06:12.976690Z",
+        "verified_at": "2026-11-01T20:06:16.893079Z"
+      },
+      "completed_at": "2026-11-01T20:06:16.929236Z",
+      "format": "oms-full-success-v1",
+      "new_object_ciphertext_bytes": 9114189,
+      "objects": 43
+    },
+    "tool": "a0b7951e1832be3e",
+    "source": "04572daa70c95327b882ab3f9cd10278e7a4ca88"
+  },
+  "hbr": {
+    "units": {
+      "hbrclient.service": {
+        "MainPID": 0,
+        "LoadState": "masked",
+        "ActiveState": "inactive"
+      },
+      "hbrclientupdater.service": {
+        "MainPID": 0,
+        "LoadState": "masked",
+        "ActiveState": "inactive"
+      }
+    },
+    "localDirectoryExists": false,
+    "processes": [],
+    "retiredAt": "2026-11-02T04:01:45.504075+08:00",
+    "freeBefore": 9956487168,
+    "freeAfter": 10290221056,
+    "vendorUninstallerExitCode": 0,
+    "oldBackupToolsRetired": [
+      {
+        "path": "/opt/oms-netdisk-backup/releases/609219de45268500",
+        "source": "d1a98533cbe7b1cd7643a552168966205a161d70"
+      },
+      {
+        "path": "/opt/oms-netdisk-backup/releases/da6084e4c2262c98",
+        "source": "24d38cf8318ff4f9d28e5c844b63290dd8e680fb"
+      },
+      {
+        "path": "/opt/oms-netdisk-backup/releases/215ada6e46e0f0b7",
+        "source": "f06e133c29d592095ae21026317da02a362a1503"
+      },
+      {
+        "path": "/opt/oms-netdisk-backup/releases/d9a42ff093e1799d",
+        "source": "1de5eab4f0743cda626ea70e935608bc1053b5a0"
+      },
+      {
+        "path": "/opt/oms-netdisk-backup/releases/f7b8b9b0a39b7971",
+        "source": "24d38cf8318ff4f9d28e5c844b63290dd8e680fb"
+      },
+      {
+        "path": "/opt/oms-netdisk-backup/releases/4dcca758e4b826a3",
+        "source": "6cbe050247d32c89c5e7bf4cecece55281978f1b"
+      }
+    ],
+    "cloudRestorePointsDeleted": false,
+    "cloudPlanPauseEvidence": "owner confirmed; no independent account API verification",
+    "humanCreator": "not established",
+    "directoryBirthCst": "2026-04-21 12:57:02 +0800"
+  },
+  "validation": {
+    "backendRealAgeTestsPassed": 88,
+    "skipped": 0,
+    "productionAgePrivateKeyDecryptionThisRound": false,
+    "newLinuxFullRestoreThisRound": false,
+    "shiroForcedWakeOrActivation": false,
+    "cognitiveStateInAppendOnlyBackup": false,
+    "dynamicWebSettingsOffsiteExport": false
+  }
+}
