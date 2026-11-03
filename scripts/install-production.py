@@ -146,7 +146,7 @@ with tarfile.open(args.package) as archive:
     (destination / 'archive.db').symlink_to(projection)
     for path in ('bootstrap/cache', 'storage/framework/views', 'storage/framework/cache', 'storage/logs'):
         (destination / 'web' / path).mkdir(parents=True, exist_ok=True)
-subprocess.run(['/opt/oms-ir/tools/uv-0.13.4/uv', 'sync', '--project', str(destination / 'backend'), '--offline', '--frozen', '--no-dev', '--no-editable', '--no-managed-python', '--no-python-downloads', '--python', str(PYTHON_EXECUTABLE)], check=True,
+subprocess.run(['/opt/oms-ir/tools/uv-0.13.4/uv', 'sync', '--project', str(destination / 'backend'), '--offline', '--frozen', '--no-dev', '--no-install-project', '--no-editable', '--no-managed-python', '--no-python-downloads', '--python', str(PYTHON_EXECUTABLE)], check=True,
     env={**os.environ, 'UV_CACHE_DIR': '/opt/oms-ir/cache'})
 subprocess.run([str(destination / 'backend/.venv/bin/python'), '-c', PYTHON_ENVIRONMENT_GUARD, str(PYTHON_RUNTIME)], check=True)
 (destination / '.ready').touch()

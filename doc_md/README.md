@@ -1,6 +1,6 @@
 # OMS Web 文档
 
-2026-11-04 [玩家服务专项](oms-player-services-20261104.md)同步 Backend / Web / Shiro，补玩家搜索、成绩筛选 / 判定 / 等级和 mania 难度到真实 MD5 榜；本机候选已实现，生产来源取维护。
+2026-11-04 [玩家服务专项](oms-player-services-20261104.md)同步 Backend / Web / Shiro，补玩家搜索、成绩筛选 / 判定 / 等级和 mania 难度到真实 MD5 榜；已于 05:18 发布，准确来源、依赖准备、备份与边界取专项。
 
 2026-11-03 [Shiro 公开服务](../../../oms-server/dev_bridge_md/doc_md/mainline/shiro-services.md)采用现有 OMS 公开查询、谱面详情和原站下载入口，由独立 Bot 提供自然语言服务及图卡。本仓没有代码、资源、账号或生产发布变化；Bot 的实现及上线取[Shiro 进度](../../../Shiro-Agent/doc_md/mainline/progress.md)，网页 / 客户端原真人门保持。
 

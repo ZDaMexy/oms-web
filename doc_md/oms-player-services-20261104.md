@@ -31,10 +31,28 @@ OMS 没有已采用的 BMS PP / 地力规则、逐物件时间线或公开全部
 
 ## 本机证据与发布边界
 
-开发候选尚未发布；运行源码仍取[生产维护](production-maintenance.md#当前来源与运行位置)。本页不以文档 HEAD 表示已上线。
+实际运行来源与切换收据见下方[生产发布](#生产发布)，文档后续提交不重复部署代码。
 
 本机真实 FastAPI / 合成账号串通了用户名→单曲→两人对照→整榜 player；实际 worker 输出两模式单人 / 对照、谱面与表内曲目图。Web 本机 Linux typecheck / 生产构建及 56 项 HTTP 检查通过，覆盖原登录、个人页、目录 / 榜、社区与内容入口；这些不代替普通浏览器交互或真人 QQ 使用。
 
 原生 mania 公开网络样本 BID `3938188` / SID `1908399`（FREEDOM DiVE，4K）读取原 `.osu` 得到 MD5 `557247da54c661e876d501b688201417`、SHA256 `d516b56947c35207c2951305599e9328a8043b550230873bc326381dc25f0d41`。这是一个公开文件身份样本，不是全部目录验证或玩家成绩。
 
 真实模型也使用合成账号 / 公开模型 API：最初暴露等级目标猜数和两模式判定混用，已通过功能模块的等级目标参数、明确标注的判定 / 差值修复。模型、资源、正式包与 QQ 边界的最新结果取[Shiro 进度](../../../Shiro-Agent/doc_md/mainline/progress.md)，Backend 最终软件结果取[其进度](../../../oms-server/oms-backend/doc_md/mainline/dev-progress.md)。
+
+## 生产发布
+
+**2026-11-04 05:18:59.648 CST**，OMS 切入 `fb2493cd7027-6dddd07312e4`：Backend `fb2493cd7027715f61c619ebb08e8b4c5d57f5c2`、Web `6dddd07312e4554269408318bb112e41dfd59090`，客户端字段来源仍为 ab58abd。原 `824de121a686-494932756b74` 保留为这次同 schema 回退，固定 D1/22b 日备份 helper 保持。数据库 device64771 / inode265517、schema3 / 22 表与结构指纹切前切后相同。主 IR / catalog / FPM 新 PID 92811 / 92810 / 92901，NRestarts=0；原受修复 Python / PHP、权限与安全配置保持。
+
+正式包 74,023,644 B，SHA256 `474cd534460de01254a38f2560dd3cbeaabef3ef62c5b7e5af5a95bced96cb4b`，完整核对 9,688 项运行文件，运行目录已移除 web/scripts 工程脚本；对应源码压缩包按 AGPL 保留。491 编译文件与 294 份已提交构建输入绑定；曾因第三方 LICENSE 的 CRLF / LF 差异拒绝签收，还原提交原字节后重新构建通过，没有修改许可正文。
+
+安装准备曾因服务器缓存缺当前锁定依赖而停止，业务未切换。本机按 uv.lock 下载并核 hash 的 Linux 生产 wheels 共20包 / 3,879,005 B；原生 Ubuntu 独立 Backend venv 的完整结果为 **486 passed / 16 skipped / 1 条既有提示**，应用运行文件与 fb2493c 相同，测试夹具补丁为 `37747bf`，仅将应私有的两个测试目录明确创建为0700。Windows完整结果487 passed / 15 skipped；两边 skip 与既有 age / 平台条件分别保留。解释器为公开固定3.12.16下载包的只读引用，不借 Shiro 的依赖环境。Web本机56项真实HTTP、typecheck / 生产构建、浏览器玩家查找 / 成绩布局与真实 mania 详情分别通过；发布器 Python 运行时9项通过，保留既有资源警告。
+
+服务用已核验发布目录直接 `python -m oms_ir` 运行，安装 / 恢复只同步锁定生产依赖（`uv sync --frozen --no-dev --no-install-project`，离线时预备批准 wheels），不在服务器构建项目或安装 setuptools。该维护修正随后回写两个正式准备入口，不改变上述已部署应用文件。服务器新环境实测 Python3.12.16 / OpenSSL3.5.9 / SQLite3.53.1 / FastAPI0.139.2 / certifi2026.10.19。
+
+公网只读复核：名字查找、表 manifest、通常表 ☆1 每页5条 / 总14条、真实 mania BID3938188 的 file-content MD5 和 client-content 均200；CSS完整SHA匹配新包，Homepage200且主PID保持。希洛随后于05:21:40.859 CST切入7c04a1d，准确产物 / 保持项取[其生产记录](../../../Shiro-Agent/doc_md/mainline/production.md#2026-11-04-oms-玩家服务发布)。没有以这些核对签收普通玩家账号、真实游玩或QQ自然聊天体验。
+
+固定 helper 的前 / 后新鲜一致备份 Invocation 为 `f27faea95e8343d3955a840d5d394df7` / `e6198a500cd744d381c6a30c3a03da62`；gzip9,075 / 9,094 B，raw均241,664 B，F私有目录完整CRC / SHA / integrity / FK / schema / 22表核验通过。配置与激活收据为 `/var/backups/oms-maintenance/oms-player-services-20261104/`，本机操作 / 包证据在忽略的 `artifacts/oms-player-services-20261104/`；没有将生产资料用于QA。
+
+单独回退希洛可消费当前OMS的兼容旧接口；若OMS退到824/494，先在空闲点将希洛退至5a3b109，再按本次配置原件成对回退四个OMS单元与Nginx路径，保留已修复Python/PHP及当前同一数据库。旧OMS没有新查人 / 详情接口，不能让7c04工具继续调用它；不回灌旧认知或数据库。
+
+维护入口修正的补充验证：Backend发布来源 / 运行时39项及准备脚本bash语法通过，Web Python发布guard9项通过；应用文件和上述已发布来源保持。

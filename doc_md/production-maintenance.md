@@ -1,5 +1,7 @@
 # OMS 原版 osu-web 试运行维护
 
+2026-11-04 [玩家服务发布](oms-player-services-20261104.md#生产发布)接续当前运行：`fb2493cd7027-6dddd07312e4`，前版824/494保留为当前schema3回退，固定helper与受修复运行时保持。下方10月11日操作示例保留历史范围；新操作按本轮准确收据保留当前安全配置、同一业务库和新依赖。
+
 2026-11-02 [存储清理与百度冷归档](storage-offload-20261102.md)接续当前主机目录、日志预算和备份工具：历史 OMS 包 / 旧运行时 / 维护原件已完整云端校验后迁出，主机仅保留当前 OMS 与固定 helper。旧回退目标先按冷归档取回并重新准备；下方 10 月 16 日的八包保留及 11 月 1 日的 49 对象全备属于历史时点，不作为现机目录清单。应用来源和原真人门保持。
 
 2026-11-01 接续至 06:37 CST：[当前共享状态](server-agent-security-20261101.md#current-release-backup)已确认 Shiro v0.2 切换 / 独立快照 / 同机恢复、旧面板 F 保全后退役、新 plan 全备完成和维护重启。Backend `1de5eab` 的真实 age 组合 **108 passed / 1 条既有提示**，guard 39 / Web 20 与 6 项实际纯 guard 保留各自范围。`d9a42ff093e1799d` 工具的 42 roots 实际展开 49 对象及 catalog，四 timer enabled / active / waiting；新 boot ID、业务、配置和 OMS 同库身份均复核通过。[本地 npm 修复](server-agent-security-20261101.md#web-dependency-security)已提交 `7000b90625`、未部署，484 个现有 assets SHA 不变。短 startup 资源样本只取[重启记录](server-agent-security-20261101.md#maintenance-reboot)，不签长期性能；本轮 cloud age 解密 / 异机演练、两项上游 CVE / 既有 hold 与真人门保持。没有新的 OMS HTTP / Web 服务器应用发布。下段为 04:57 阶段原记录。
@@ -18,20 +20,21 @@
 
 ## 当前来源与运行位置
 
-下表的HTTP源码绑定2026-10-11 16:34:47 CST实际发布记录；11月1日[运行时维护](server-agent-security-20261101.md#当前运行时与应用来源)复核同一应用来源并更新 Python，PHP路径仍取10月22日实际进程。旧清理与备份记录保留原时点。操作前仍按下方运行核对取得当时真实状态，文档HEAD不代表运行提交。
+下表 HTTP 来源绑定 2026-11-04 玩家服务实际发布；运行时继承 11 月 1 日的 Python 安全维护及 10 月 22 日的 PHP 修复。准确产物、备份与同库身份取[专项生产记录](oms-player-services-20261104.md#生产发布)，旧发布和清理保留各自日期。操作前仍复核实际 current / unit / manifest。
 
 | 对象 | 最近发布记录的实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/824de121a686-494932756b74`，2026-10-11 16:34:47 CST最终切入 |
-| 服务源码 | Backend `824de121a6862d2f9b576f66a18715192fd0d57f`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
-| 原版页面源码 | Web `494932756b747edba791fd1499b83348ec49b963`；Laravel / Blade / React / Less / Turbo、AGPL / 归属及对应源码下载保持 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/fb2493cd7027-6dddd07312e4`，2026-11-04 05:18:59.648 CST最终切入 |
+| 服务源码 | Backend `fb2493cd7027715f61c619ebb08e8b4c5d57f5c2`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
+| 原版页面源码 | Web `6dddd07312e4554269408318bb112e41dfd59090`；Laravel / Blade / React / Less / Turbo、AGPL / 归属及对应源码下载保持 |
+| 上一应用回退 | `/opt/oms-ir/releases/824de121a686-494932756b74`；保留当前受修复运行时，联合回退顺序取本轮专项 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | OMS / helper Python 与 BT | 2026-11-01 已切至 Python 3.12.16 / 3.13.18；公共 base、独立 venv、BT 模板指纹及新 full plan roots 只取 [运行时权威记录](server-agent-security-20261101.md#当前运行时与应用来源) |
 | 源码 / 旧设计回退来源 | `d1f052b93a81-e6fdf914cb04` 已迁入[冷归档](storage-offload-20261102.md)，服务器没有展开目录；原 F 盘保全职责保持。回退先取回并核验，再用已修复运行时重新准备 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；该次发布保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-0069de279481`；独立 oms-web 用户，只读 `/app`，当前库版本与实际进程校验取本页顶部晚间安全记录；BT旧PHP8.2仍masked |
-| 当前可写缓存 / 日志 | `/var/cache/oms-web/824de121a686-494932756b74/production-r1`；bootstrap / storage私有、PHP日志沿原位置 |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/fb2493cd7027-6dddd07312e4/production-r1`；bootstrap / storage私有、PHP日志沿原位置 |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
 上述 Web / Backend 是运行提交，文档HEAD、历史取证和外置检查工具各自记录。客户端现行原生服务完整来源取[2026-10-11配套](client-native-services-20261011.md#2026-10-12客户端页面纠正)，直接登录与待交仍沿原来源；下方2026-10-10接线为原提交历史。旧ppy API为空 / 总开关false，用户从F工作区VS Code非调试验收，未生成Windows发行、publish或安装副本。
