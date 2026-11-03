@@ -11,6 +11,7 @@ export default function Header({ controller }: { controller: Controller }) {
   return <HeaderV4 theme='users' links={[
     { title: '个人', url: '/users/' + id, active: true },
     { title: '帖子', url: '/community?author_id=' + id },
+    { title: '查找玩家', url: '/users' },
     { title: '玩家榜', url: '/rankings?' + new URLSearchParams({ ruleset: mode, keymode }) },
   ]} contentAppend={controller.section==='history'?undefined:<div className='beatmapsets-search__filters oms-profile-filters'>
     <ModeFilters mode={mode} keymode={keymode} onChange={changes => update(changes)} />

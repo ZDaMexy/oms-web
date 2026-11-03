@@ -30,6 +30,17 @@ export default function Main(_props: { container: HTMLElement }) {
       {controller.user != null && <div className='user-profile-pages'>
         {section==='history' ? (controller.own ? <History controller={controller}/> : <section className='page-extra'><p>完整记录仅本人登录后可查看。</p></section>) : <section className='page-extra' id={section === 'best' ? 'top_ranks' : 'recent_activity'}>
           <h2 className='title title--page-extra'>{section === 'best' ? '公开最佳成绩' : '近期最佳更新'}</h2>
+          <form className='oms-record-filters' onSubmit={event => { event.preventDefault(); const fields = new FormData(event.currentTarget); update({ q: String(fields.get('q') ?? '') || null, md5: null }); }}>
+            <label>查找成绩 <input type='search' name='q' key={query.get('q') ?? ''} defaultValue={query.get('q') ?? ''} maxLength={200} placeholder='曲名、作者或难度名' /></label>
+            <button type='submit'>查找</button>
+            {query.has('md5') && <button type='button' onClick={() => update({ md5: null })}>查看全部谱面</button>}
+          </form>
+          {section === 'best' && <label className='score-condition-filter'>排序
+            <select value={query.get('sort') ?? 'recent'} onChange={event => update({ sort: event.target.value })}>
+              <option value='recent'>最近更新</option><option value='score'>{controller.mode === 'bms' ? 'EX 分数' : '总分'}</option>
+              {controller.mode === 'bms' && <option value='rate'>EX 率</option>}
+            </select>
+          </label>}
           <label className='score-condition-filter'>条件
             <select value={query.get('condition') ?? ''} onChange={event => update({ condition: event.target.value || null })}>
               <option value=''>所选来源的全部条件</option>

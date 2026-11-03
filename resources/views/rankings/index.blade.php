@@ -16,6 +16,7 @@
     @include('layout._page_header_v4', ['params' => ['theme' => 'rankings', 'links' => [
         ['active' => true, 'title' => '玩家榜', 'url' => route('rankings')],
         ['title' => '谱面榜', 'url' => route('ir')],
+        ['title' => '查找玩家', 'url' => route('users.index')],
     ]]])
     <div class="osu-page osu-page--ranking-info">
         <div class="sort sort--ranking-header"><div class="sort__items">

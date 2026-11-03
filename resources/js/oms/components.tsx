@@ -22,7 +22,7 @@ export function Paginator({ page, limit, total, onPage }: { page: number; limit:
 }
 export function ModeFilters({ mode, keymode, onChange }: { mode: Ruleset; keymode: string; onChange: (changes: Record<string, string | null>) => void }) {
   return <>
-    <SearchFilter title='玩法' options={[{id:'bms',name:'BMS'},{id:'mania',name:'mania'}]} selected={[mode]} onChange={values => onChange({ruleset:values[0],keymode:values[0] === 'bms' ? 'bms_7k' : 'mania_4k',sources:null,source:null,condition:null})} />
+    <SearchFilter title='玩法' options={[{id:'bms',name:'BMS'},{id:'mania',name:'mania'}]} selected={[mode]} onChange={values => onChange({ruleset:values[0],keymode:values[0] === 'bms' ? 'bms_7k' : 'mania_4k',sources:null,source:null,condition:null,sort:null,md5:null})} />
     <SearchFilter title='键型' options={keys(mode).map(id=>({id,name:id.replace('bms_','BMS ').replace('pms_','PMS ').replace('mania_','')}))} selected={[keymode]} onChange={values=>onChange({keymode:values[0],condition:null})}/>
   </>;
 }

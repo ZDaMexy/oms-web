@@ -508,6 +508,7 @@ function page_title(): string
         'beatmaps' => '谱面',
         'beatmapset' => '谱面',
         'profile' => '个人页',
+        'players' => '查找玩家',
         'rankings' => '玩家榜',
         'community' => '社区',
         'topic' => '社区',

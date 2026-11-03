@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 import { Details, LampBadge } from 'oms/components';
+import { bmsJudgements, maniaJudgements, judgementLabels as labels, judgementHelp, Judgements } from 'oms/judgements';
 import { lr2irClientNames, sourceNames } from 'oms/page';
 import { omsOptions, ScoreOption, scoreOptions } from 'oms/score-options';
 import { Board, BoardRow, OmsPlay } from 'oms/types';
@@ -17,10 +18,6 @@ const fields: Record<string, string> = {
   judge_algorithm: '判定算法', gauge_rules: '通关规则', total: 'TOTAL', long_note_mode: '长音符模式', branch_policy: '分支规则',
   assist: '辅助设置', frequency: '频率', played_at: '游玩时间', sha256: 'SHA256',
 };
-const bmsJudgements = ['pg', 'gr', 'gd', 'bd', 'pr', 'ep'] as const;
-const maniaJudgements = ['perfect', 'great', 'good', 'ok', 'meh', 'miss'] as const;
-const labels: Record<string, string> = { pg: 'PG', gr: 'GR', gd: 'GD', bd: 'BD', pr: 'PR', ep: 'EP', perfect: 'PERFECT', great: 'GREAT', good: 'GOOD', ok: 'OK', meh: 'MEH', miss: 'MISS' };
-const judgementHelp: Record<string, string> = { pg: 'PGREAT', gr: 'GREAT', gd: 'GOOD', bd: 'BAD', pr: 'POOR · 沿用来源定义；OpenLR2 包含空 POOR', ep: '空 POOR · OMS 与 Java 单独收录，旧库与 OpenLR2 无法拆分' };
 
 function Player({ row }: { row: BoardRow }) {
   return row.identity.namespace === 'oms'
@@ -49,12 +46,6 @@ function Options({ options }: { options: ScoreOption[] }) {
       <i className={'fas fa-' + option.icon} aria-hidden='true' /><span>{option.code}</span>{option.detail && <small>{option.detail}</small>}
     </span>)}
   </span>;
-}
-
-function Judgements({ statistics, mania = false }: { statistics: Record<string, number | null>; mania?: boolean }) {
-  return <dl className={bn + '__judgements'}>{(mania ? maniaJudgements : bmsJudgements).map(key => <div key={key} className={bn + '__judgement ' + bn + '__judgement--' + key} title={judgementHelp[key]}>
-    <dt>{labels[key]}</dt><dd className={statistics[key] === 0 ? bn + '__zero' : undefined}>{number(statistics[key] ?? (mania ? 0 : null))}</dd>
-  </div>)}</dl>;
 }
 
 function BmsDetails({ row }: { row: BoardRow }) {

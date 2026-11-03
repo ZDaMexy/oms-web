@@ -86,9 +86,12 @@ class OmsController extends Controller
 
     public function profileLegacy(Request $request)
     {
-        $query = $this->queryInput($request, [], ['id']);
+        $query = $this->queryInput($request, ['q' => '', 'page' => 1, 'limit' => 20], ['id', 'q', 'page']);
         if (!isset($query['id'])) {
-            return redirect()->route('account.edit');
+            return $this->page('users.index', 'players', [
+                'context' => $query,
+                'players' => trim($query['q']) === '' ? null : $this->api->getJson('/api/ir/v1/users/search', $query),
+            ]);
         }
         return $this->profile($request, $query['id']);
     }
@@ -201,10 +204,15 @@ class OmsController extends Controller
 
     public function difficultyTable(Request $request, string $table): JsonResponse
     {
-        $context = $this->queryInput($request, ['q' => '', 'page' => 1, 'initial' => ''], ['q', 'page', 'initial', 'level']);
+        $context = $this->queryInput($request, ['q' => '', 'page' => 1, 'initial' => ''], ['q', 'page', 'initial', 'level', 'limit']);
         $context['table'] = $table;
 
         return response()->json($this->difficultyTables->charts($context), 200, ['Cache-Control' => 'no-store']);
+    }
+
+    public function difficultyTables(): JsonResponse
+    {
+        return response()->json($this->difficultyTables->listing(), 200, ['Cache-Control' => 'no-store']);
     }
 
     public function account(): View
@@ -227,7 +235,7 @@ class OmsController extends Controller
             'action' => snake_case($request->route()->getActionMethod()),
             'section' => [
                 'beatmaps' => 'beatmaps', 'beatmapset' => 'beatmaps',
-                'profile' => 'user', 'rankings' => 'rankings', 'ir' => 'rankings',
+                'profile' => 'user', 'rankings' => 'rankings', 'ir' => 'rankings', 'players' => 'rankings',
                 'community' => 'community', 'topic' => 'community', 'community-new' => 'community',
                 'help' => 'help', 'account' => 'home',
             ][$page] ?? 'home',

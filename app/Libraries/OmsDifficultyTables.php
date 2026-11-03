@@ -33,10 +33,12 @@ class OmsDifficultyTables
         $query = trim($context['q'] ?? '');
         $initial = $context['initial'] ?? '';
         $page = (string) ($context['page'] ?? 1);
+        $limit = (string) ($context['limit'] ?? 50);
         abort_unless(mb_strlen($query) <= 200
             && preg_match('/^(?:|[A-Z]|0-9|#)$/D', $initial) === 1
             && preg_match('/^[1-9][0-9]{0,6}$/D', $page) === 1
-            && (int) $page <= 1000000, 422);
+            && (int) $page <= 1000000
+            && preg_match('/^[1-9][0-9]?$/D', $limit) === 1 && (int) $limit <= 50, 422);
 
         // Snapshots are sorted across the complete table before filtering or
         // paging. No score population, source eligibility or rank is inferred.
@@ -81,9 +83,9 @@ class OmsDifficultyTables
 
         return [
             'table' => $table,
-            'items' => array_slice($matches, ((int) $page - 1) * 50, 50),
+            'items' => array_slice($matches, ((int) $page - 1) * (int) $limit, (int) $limit),
             'page' => (int) $page,
-            'limit' => 50,
+            'limit' => (int) $limit,
             'total' => count($matches),
             'initial_counts' => (object) $initials,
             'levels' => $levels,

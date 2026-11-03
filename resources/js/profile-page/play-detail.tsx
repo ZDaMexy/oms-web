@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { Details, LampBadge } from 'oms/components';
+import { Judgements } from 'oms/judgements';
 import { chartUrl, sourceNames } from 'oms/page';
 import { PublicBest } from 'oms/types';
 
@@ -10,6 +11,7 @@ export default function PlayDetail({ item }: { item: PublicBest }) {
   const score = item.score;
   const name = item.chart.title ?? '曲名未提供';
   const received = item.activity?.order_at ?? score.received_at;
+  const analysis = item.analysis;
   return <div className='play-detail play-detail--highlightable play-detail--oms'>
     <div className='play-detail__group play-detail__group--top'>
       <div className='play-detail__detail'>
@@ -36,6 +38,18 @@ export default function PlayDetail({ item }: { item: PublicBest }) {
           <div>{item.ruleset === 'bms' ? <LampBadge lamp={score.lamp} /> : <>{score.accuracy != null && <span>{(score.accuracy * 100).toFixed(2)}% · </span>}{score.passed == null ? '未提供通关状态' : score.passed ? '已通关' : '未通关'}</>}</div>
         </div>
       </div>
+    </div>
+    <div className='play-detail__analysis'>
+      <dl className='play-detail__facts'>
+        {analysis.ex_rate != null && <div><dt>{analysis.grade} · EX 率</dt><dd>{(analysis.ex_rate * 100).toFixed(2)}%</dd></div>}
+        <div><dt>最大连击</dt><dd>{score.max_combo?.toLocaleString('zh-CN') ?? '—'}</dd></div>
+        <div><dt>{item.ruleset === 'bms' ? 'PG / GR' : 'MAX / 300'}</dt><dd>{analysis.perfect_great_ratio?.toFixed(2) ?? (score.statistics[item.ruleset === 'bms' ? 'gr' : 'great'] === 0 ? '无 ' + (item.ruleset === 'bms' ? 'GR' : '300') : '—')}</dd></div>
+        {analysis.next_grade != null && <div><dt>距 {analysis.next_grade.grade}</dt><dd>+{analysis.next_grade.needed.toLocaleString('zh-CN')} EX</dd></div>}
+      </dl>
+      <Judgements statistics={score.statistics} mania={item.ruleset === 'mania'} />
+      <a href={chartUrl(item.chart.md5, item.ruleset, item.ruleset === 'bms'
+        ? { sources: score.source, mode: item.board_scope.mode, ...(item.board_scope.condition == null ? {} : { condition: item.board_scope.condition }) }
+        : { group: item.board_scope.group! })}>查看这张谱的榜单</a>
     </div>
     <details className='play-detail__record'>
       <summary>条件与成绩详情</summary>

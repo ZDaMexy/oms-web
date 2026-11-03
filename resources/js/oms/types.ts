@@ -40,16 +40,23 @@ export interface Candidate {
 }
 export interface BmsDetail { ruleset: 'bms'; chart: Chart | null; candidates: Candidate[]; recommended_source: string | null; source_status: SourceStatus[] }
 export interface ManiaDetail { ruleset: 'mania'; set: CatalogSet; mixed_modes: boolean; download: { full_url: string; novideo_url: string }; source_status: SourceStatus[] }
+export interface ManiaIdentity { ruleset: 'mania'; sid: number; bid: number; chart: Chart & { md5: string; sha256: string }; identity: 'file-content'; source_url: string }
 export interface Source { code: string; label: string; available: boolean; record_kind: string; verification: string }
 export interface PublicBest {
-  chart: Pick<Chart, 'md5' | 'sha256' | 'title' | 'artist' | 'difficulty'>;
+  chart: Pick<Chart, 'md5' | 'sha256' | 'title' | 'artist' | 'difficulty'> & { md5: string };
   ruleset: Ruleset; condition_scope: Condition;
   score: {
     record_id: string; record_kind: 'play' | 'best_state'; source: string;
     ex_score: number | null; max_ex_score: number | null; total_score: number | null;
     total_score_version: number | null; accuracy: number | null; passed: boolean | null;
     played_at: string | null; received_at: string; conditions: Record<string, unknown>; unknown_fields: string[]; lamp: Lamp | null;
+    statistics: Record<string, number | null>; native_statistics: Record<string, number | null>;
+    maximum_statistics: Record<string, number> | null; max_combo: number | null;
+    mods: ScoreMod[] | null; client_version: string | null; ruleset_data: Record<string, unknown> | null;
   };
+  analysis: { accuracy_basis: string; perfect_great_ratio: number | null; ex_rate?: number; ex_lost?: number; grade?: string;
+    next_grade?: { grade: string; ex_score: number; needed: number } | null };
+  board_scope: { group: string | null; condition: string | null; mode: 'reference' | 'comparable' };
   best_lamps: Lamp[];
   activity?: { kind: string; order_at: string; played_at: string | null };
 }

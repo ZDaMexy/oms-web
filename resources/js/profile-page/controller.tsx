@@ -22,6 +22,8 @@ export default function useController() {
   const performance = useApi<Performance>(user == null || section === 'history' ? null : `/api/ir/v1/users/${encodeURIComponent(id)}/performance?${scope}`);
   const selected = new URLSearchParams(scope);
   if (query.has('condition')) selected.set('condition', query.get('condition')!);
+  for (const key of ['q', 'md5']) if (query.has(key)) selected.set(key, query.get(key)!);
+  if (section === 'best' && query.has('sort')) selected.set('sort', query.get('sort')!);
   selected.set('page', query.get('page') ?? '1');
   selected.set('limit', '20');
   const records = useApi<Page<PublicBest>>(user == null || section === 'history' ? null : `/api/ir/v1/users/${encodeURIComponent(id)}/public-${section === 'best' ? 'bests' : 'recent'}?${selected}`);

@@ -44,6 +44,15 @@
 
   &__beatmap-picker-box {
     flex: 1 0 auto;
+    .beatmap-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+    .beatmap-picker__beatmap {
+      display: block;
+      padding: 6px 10px;
+      border-radius: 4px;
+      background: hsla(var(--hsl-b6), 0.65);
+      color: hsl(var(--hsl-l1));
+      &[aria-current="true"] { background: hsl(var(--hsl-c2)); color: hsl(var(--hsl-b6)); }
+    }
   }
 
   &__buttons {

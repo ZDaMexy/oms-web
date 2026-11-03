@@ -9,8 +9,8 @@ import { BmsDetail, IrChart, ManiaDetail } from 'oms/types';
 import * as React from 'react';
 import Stats from './stats';
 
-interface Props {detail:BmsDetail|ManiaDetail;md5:string|null;sha256:string|null;selectedSource:string|null;onSource:(source:string|null)=>void}
-export default function Header({detail,md5,sha256,selectedSource,onSource}:Props) {
+interface Props {detail:BmsDetail|ManiaDetail;md5:string|null;sha256:string|null;selectedSource:string|null;onSource:(source:string|null)=>void; selectedBid:string|null;onBid:(bid:string)=>void}
+export default function Header({detail,md5,sha256,selectedSource,onSource,selectedBid,onBid}:Props) {
   const [downloading,setDownloading]=React.useState(false);
   const [downloadError,setDownloadError]=React.useState<string|null>(null);
   const downloadController=React.useRef<AbortController>();
@@ -27,7 +27,7 @@ export default function Header({detail,md5,sha256,selectedSource,onSource}:Props
     };
   },[md5,selectedSource]);
   const candidate=detail.ruleset==='bms'?detail.candidates.find(value=>value.source===(selectedSource??detail.recommended_source)):null;
-  const chart=detail.ruleset==='bms'?detail.chart:detail.set.charts[0];
+  const chart=detail.ruleset==='bms'?detail.chart:detail.set.charts.find(item=>String(item.bid)===selectedBid);
   const cover=detail.ruleset==='bms'?candidate?.cover_url:detail.set.cover_url;
   const charts=detail.ruleset==='bms'?candidate?.charts:detail.set.charts;
   const hasStats=chart!=null&&[chart.keymode,chart.bpm,chart.notes,chart.length_seconds].some(value=>value!=null);
@@ -37,7 +37,10 @@ export default function Header({detail,md5,sha256,selectedSource,onSource}:Props
     <div className='beatmapset-header__cover'>{cover!=null&&<div className='beatmapset-cover beatmapset-cover--full' style={{backgroundImage:`url("${cover}")`}}/>}</div>
     <div className='beatmapset-header__box beatmapset-header__box--main'>
       <div className='beatmapset-header__beatmap-picker-box'><div className='beatmap-picker'>
-        {charts?.map(item=>item.md5!=null?<a className='beatmap-picker__beatmap' key={item.md5} href={chartUrl(item.md5,detail.ruleset,detail.ruleset==='mania'?{sid:String(detail.set.sid)}:{})}>{item.difficulty??'难度名未知'} · {item.keymode??'键型未知'}</a>:<span className='beatmap-picker__beatmap' key={item.bid}>{item.difficulty??'难度名未知'} · {item.keymode??'键型未知'}</span>)}
+        {charts?.map(item=>detail.ruleset==='mania'?<a className='beatmap-picker__beatmap' key={item.bid}
+          aria-current={String(item.bid)===selectedBid?'true':undefined} href={'/beatmaps?ruleset=mania&sid='+detail.set.sid+'&bid='+item.bid}
+          onClick={event=>{event.preventDefault();onBid(String(item.bid));}}>{item.difficulty} · {item.keymode} {item.star_rating==null?'':item.star_rating.toFixed(2)+'★'}</a>
+          :item.md5!=null?<a className='beatmap-picker__beatmap' key={item.md5} href={chartUrl(item.md5,detail.ruleset)}>{item.difficulty??'难度名未知'} · {item.keymode??'键型未知'}</a>:<span className='beatmap-picker__beatmap' key={item.bid}>{item.difficulty??'难度名未知'} · {item.keymode??'键型未知'}</span>)}
       </div></div>
       <span className='beatmapset-header__details-text beatmapset-header__details-text--title'>{(detail.ruleset==='bms'?chart?.title:detail.set.title)??md5??'标题未知'}</span>
       <span className='beatmapset-header__details-text beatmapset-header__details-text--artist'>{(detail.ruleset==='bms'?chart?.artist:detail.set.artist)??'艺术家未知'}</span>
