@@ -46,7 +46,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     heads = {name: git(repo, 'rev-parse', 'HEAD').decode().strip() for name, repo in [('backend', BACKEND), ('website', WEB), ('client', CLIENT)]}
-    web_paths = ('app', 'config', 'routes', 'bootstrap', 'resources/views', 'resources/lang', 'resources/oms', 'public', 'deploy', 'scripts', 'artisan', 'composer.json', 'composer.lock', 'LICENCE')
+    web_paths = ('app', 'config', 'routes', 'bootstrap', 'resources/views', 'resources/lang', 'resources/oms', 'public', 'deploy', 'artisan', 'composer.json', 'composer.lock', 'LICENCE')
     build_paths = ('resources/js', 'resources/css', 'resources/fonts', 'package.json', 'package-lock.json', 'webpack.config.js', 'tsconfig.json', '.node-version')
     if git(WEB, 'status', '--porcelain', '--untracked-files=no', '--', *web_paths) or git(WEB, 'status', '--porcelain', '--', *build_paths):
         raise ValueError('Commit the reviewed native runtime and publisher before exporting')
