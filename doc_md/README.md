@@ -1,5 +1,7 @@
 # OMS Web 文档
 
+2026-11-03 [Shiro 公开服务](../../../oms-server/dev_bridge_md/doc_md/mainline/shiro-services.md)采用现有 OMS 公开查询、谱面详情和原站下载入口，由独立 Bot 提供自然语言服务及图卡。本仓没有代码、资源、账号或生产发布变化；Bot 的实现及上线取[Shiro 进度](../../../Shiro-Agent/doc_md/mainline/progress.md)，网页 / 客户端原真人门保持。
+
 2026-11-02 [存储清理与冷归档](storage-offload-20261102.md)接续共享主机磁盘、日志预算和百度网盘维护事实；历史原件冷迁出、阿里云本机客户端退役与新全备均已完成，脱敏收据及实际恢复边界在该记录。应用来源与原真人门保持。
 
 2026-11-01 [共享服务器运行时与安全维护](server-agent-security-20261101.md)是本轮共享事实权威：运行时、安全加固、Shiro v0.2 切换 / 同机恢复、旧面板 F 保全后退役、新全备与维护重启均已取得实际收据；49 对象及 catalog 完成，四 timer waiting。Backend `1de5eab` 组合回归 108 项通过，本地 npm 修复 `7000b90625` 已提交未部署、484 assets SHA 不变。本轮云端 age 解密 / 异机演练、两项上游 CVE 与原真人门保持；短 startup 样本不代签长期性能。
