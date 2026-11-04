@@ -1,20 +1,6 @@
 # OMS Web 文档
 
-2026-11-04 [玩家服务专项](oms-player-services-20261104.md)同步 Backend / Web / Shiro，补玩家搜索、成绩筛选 / 判定 / 等级和 mania 难度到真实 MD5 榜；已于 05:18 发布，准确来源、依赖准备、备份与边界取专项。
-
-2026-11-03 [Shiro 公开服务](../../../oms-server/dev_bridge_md/doc_md/mainline/shiro-services.md)采用现有 OMS 公开查询、谱面详情和原站下载入口，由独立 Bot 提供自然语言服务及图卡。本仓没有代码、资源、账号或生产发布变化；Bot 的实现及上线取[Shiro 进度](../../../Shiro-Agent/doc_md/mainline/progress.md)，网页 / 客户端原真人门保持。
-
-2026-11-02 [存储清理与冷归档](storage-offload-20261102.md)接续共享主机磁盘、日志预算和百度网盘维护事实；历史原件冷迁出、阿里云本机客户端退役与新全备均已完成，脱敏收据及实际恢复边界在该记录。应用来源与原真人门保持。
-
-2026-11-01 [共享服务器运行时与安全维护](server-agent-security-20261101.md)是本轮共享事实权威：运行时、安全加固、Shiro v0.2 切换 / 同机恢复、旧面板 F 保全后退役、新全备与维护重启均已取得实际收据；49 对象及 catalog 完成，四 timer waiting。Backend `1de5eab` 组合回归 108 项通过，本地 npm 修复 `7000b90625` 已提交未部署、484 assets SHA 不变。本轮云端 age 解密 / 异机演练、两项上游 CVE 与原真人门保持；短 startup 样本不代签长期性能。
-
-2026-10-22 [全工作区架构安全筛查](architecture-security-review-20261022.md#全量修复实施)覆盖七仓、开发 / 部署与共享服务器；晚间已接入正规图片许可、原生媒体与构建链修复，记录实际验证、恢复材料及剩余上游/人工门。
-
-2026-10-22 [PHP 与共享服务器安全维护](php-security-maintenance-20261022.md)记录受修复运行时、Nginx / 内核更新、真实重启、恢复范围和未来发布的旧版本拦截；应用版本与原真人门保持。
-
-2026-10-11 [端内在线服务配套](client-native-services-20261011.md)记录原生页面采用、桌面社区认证、结构化新闻 / 帮助及准确本地 / 发布证据；现行服务操作继续取维护说明。
-
-当前原版网站已部署待验收，先读取当前维护与使用说明；日期化记录只证明各自版本和当次范围，未完成门只取[线上真人验收](production-maintenance.md#真人验收)。
+当前原版网站已部署待验收。功能范围取 [OMS.md](../OMS.md)，准确运行来源和未完成真人门取维护说明；日期化报告只证明各自版本与当次范围。11 月 4 日玩家服务已发布，Shiro 独立状态取[其进度](../../../Shiro-Agent/doc_md/mainline/progress.md)。
 
 - [玩家范围与状态](../OMS.md)：现生产与隔离本地工作区分别说明。
 - [线上维护、备份与真人验收](production-maintenance.md)：当前准确来源、日备份 / F 外取、同库回退及 P→C 路径。
@@ -25,6 +11,13 @@
 - [玩家网站合同](../../../oms-server/dev_bridge_md/doc_md/subline/oms-player-site/constraints.md)：来源、身份、下载与公开语义。
 
 ## 日期化实施与发布证据
+
+- [2026-11-04 玩家服务](oms-player-services-20261104.md)：查人、成绩详情、mania 原谱身份与实际发布 / 备份。
+- [2026-11-03 Shiro 消费者合同](../../../oms-server/dev_bridge_md/doc_md/mainline/shiro-services.md)：独立 Bot 采用既有 OMS 公开查询；11 月 4 日扩充后的接口沿同一合同。
+- [2026-11-01 共享运行时与安全维护](server-agent-security-20261101.md)：运行时、主机安全、当次全备与重启；“本地 npm 修复未部署”等停点只属当时，后续应用发布取 11 月 4 日。
+- [2026-10-22 架构安全筛查](architecture-security-review-20261022.md#全量修复实施)与[PHP / 主机维护](php-security-maintenance-20261022.md)：修复、恢复材料与未完成范围。
+- [2026-10-11 端内在线服务配套](client-native-services-20261011.md)：原生内容、桌面社区认证与当次发布。
+- [2026-11-05 工作区文档审查](../../../oms-server/dev_bridge_md/doc_md/mainline/changelog.md#2026-11-05-全工作区进度与文档记忆审查)：当前 / 历史纠偏、收据复核与本轮检查范围；没有重新部署。
 
 - [2026-11-02 存储清理与冷归档](storage-offload-20261102.md)：磁盘盘账、退役来源、网盘校验及恢复入口的本轮权威记录。
 
