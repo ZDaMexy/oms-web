@@ -1,6 +1,6 @@
 # OMS 原版 osu-web 试运行维护
 
-当前状态为**已部署待真人验收**。最近已登记的 OMS 应用发布是 2026-11-04 [玩家服务](oms-player-services-20261104.md#生产发布)，准确身份见下表；本文不从文档 HEAD 推断实时生产。
+当前状态为**已部署待真人验收**。最近生产切换是 [2026-11-19 依赖安全维护](#2026-11-19-依赖安全维护)。产品功能沿用 2026-11-04 [玩家服务发布](oms-player-services-20261104.md#生产发布)，准确身份见下表。
 
 2026-11-12 共享主机整机迁移至 `47.95.29.3`（旧 `39.105.55.78` 已停止），运行身份、备份与回退边界不变；当前主机 / SSH 别名 / 数据安全取[共享迁移镜像](../../homepage-website/doc_md/other/shared-server-migration-20261112.md)。下表路由配置文件名（如 `39.105.55.78.conf`）随镜像沿用，不代表当前公网 IP。客户端原生页面与固定 OMSIR 的来源继续取 [Client Bridge](../../../oms-server/oms_client_bridge_md/doc_md/mainline/dev-progress.md)，网站发布不生成 Windows 发行包。
 
@@ -8,26 +8,35 @@
 
 ## 当前来源与运行位置
 
-下表 HTTP 来源绑定 2026-11-04 玩家服务实际发布；运行时继承 11 月 1 日的 Python 安全维护及 10 月 22 日的 PHP 修复。准确产物、备份与同库身份取[专项生产记录](oms-player-services-20261104.md#生产发布)，旧发布和清理保留各自日期。操作前仍复核实际 current / unit / manifest。
+下表 HTTP 来源绑定 2026-11-19 实际发布，Python 和 PHP 运行时分别沿用 11 月 1 日和 10 月 22 日安全维护。准确产物、备份与同库身份取[本轮收据](#2026-11-19-依赖安全维护)。操作前复核实际 current、unit 与 manifest。
 
 | 对象 | 最近发布记录的实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/fb2493cd7027-6dddd07312e4`，2026-11-04 05:18:59.648 CST最终切入 |
-| 服务源码 | Backend `fb2493cd7027715f61c619ebb08e8b4c5d57f5c2`；账号、成绩、社区仍为 FastAPI / SQLite 唯一权威 |
-| 原版页面源码 | Web `6dddd07312e4554269408318bb112e41dfd59090`；Laravel / Blade / React / Less / Turbo、AGPL / 归属及对应源码下载保持 |
-| 上一应用回退 | `/opt/oms-ir/releases/824de121a686-494932756b74`；保留当前受修复运行时，联合回退顺序取本轮专项 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/909f8ff7d4de-c26b894f9f53`，2026-11-19 00:55:09 CST 切入 |
+| 服务源码 | Backend `909f8ff7d4dec7aabe9839eaa7744d997ec018f5`。账号、成绩、社区由 FastAPI / SQLite 管理 |
+| 原版页面源码 | Web `c26b894f9f53606e140173dc5ed139847c42cf6f`，Laravel `13.41.0` 与 Symfony HttpFoundation `8.1.11` |
+| 上一应用回退 | `/opt/oms-ir/releases/fb2493cd7027-6dddd07312e4`。旧 Web 依赖仅供紧急故障处置，恢复后接回安全包 |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | OMS / helper Python 与 BT | 2026-11-01 已切至 Python 3.12.16 / 3.13.18；公共 base、独立 venv、BT 模板指纹及新 full plan roots 只取 [运行时权威记录](server-agent-security-20261101.md#当前运行时与应用来源) |
 | 源码 / 旧设计回退来源 | `d1f052b93a81-e6fdf914cb04` 已迁入[冷归档](storage-offload-20261102.md)，服务器没有展开目录；原 F 盘保全职责保持。回退先取回并核验，再用已修复运行时重新准备 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；该次发布保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-0069de279481`；独立 oms-web 用户，只读 `/app`，库版本与实际进程校验取[10 月 22 日安全收据](architecture-security-review-20261022.md#全量修复实施)；BT旧PHP8.2仍masked |
-| 当前可写缓存 / 日志 | `/var/cache/oms-web/fb2493cd7027-6dddd07312e4/production-r1`；bootstrap / storage私有、PHP日志沿原位置 |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/909f8ff7d4de-c26b894f9f53/production-r1`，bootstrap 和 storage 私有，PHP 日志沿原位置 |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
 上述 Web / Backend 是运行提交，文档HEAD、历史取证和外置检查工具各自记录。客户端现行原生服务完整来源取[2026-10-11配套](client-native-services-20261011.md#2026-10-12客户端页面纠正)，直接登录与待交仍沿原来源；下方2026-10-10接线为原提交历史。旧ppy API为空 / 总开关false，用户从F工作区VS Code非调试验收，未生成Windows发行、publish或安装副本。
 
 插件沿原八个批准文件的完整字节 / 版本清单：beatoraja 0.8.8、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86 / x64。网页能下载插件不代表这些真实宿主已完成交分、原生读榜及玩法矩阵验收。
+
+## 2026-11-19 依赖安全维护
+
+Laravel `13.35.0 → 13.41.0`，覆盖临时签名 URL 与进程并发修复。Symfony HttpFoundation、HttpKernel 和 Routing 升至 `8.1.11`，Mime 升至 `8.1.10`。应用源码中未查到上述 Laravel 公告对应的调用，现行包仍应用安全更新。参见 [Laravel 签名 URL 公告](https://github.com/laravel/framework/security/advisories/GHSA-v5ch-g375-82r6)、[Laravel 进程并发公告](https://github.com/laravel/framework/security/advisories/GHSA-63hm-g96r-2m2q)、[Symfony 公告](https://github.com/symfony/symfony/security/advisories/GHSA-3h27-hjv7-fqjx)。
+
+- 本机 Composer 审计无公告命中，56 项 HTTP 检查通过。完整包 `oms-native-909f8ff7d4de-c26b894f9f53.tar.gz`，74,052,885 B，SHA-256 `0b43ef88a8db94ebcdf87255a1e36b885a4d8ffccb69c8fe0a2be8a00dd94486`。生产安装复核 9,734 项运行文件。编译网页资源 491 项和应用适配代码与上一包字节一致。生产 Python 依赖由原锁定 wheel 离线安装，实际环境的 20 个 PyPI 包版本在 [OSV](https://osv.dev/) 无公告命中。PHP 使用既有 `8.5.12` 运行时。
+- 固定备份 helper 分别在 00:54:54 与 00:59:07 CST 生成部署前后快照，外取至 F 盘受限位置后核验 SHA-256、gzip、SQLite `integrity_check` 和外键，均为 schema3 / 22 表。主库始终是 `/var/lib/oms-ir/ir.db` 同一 dev / inode。切换收据及四个单元、Nginx include 原件位于 `/var/backups/oms-maintenance/oms-web-security-20261119/`。本机证据位于 `artifacts/server-security-20261119/`。
+- 生产切换和主机重启后，OMS 两个回环健康地址及 HTTPS 首页、新闻和 IR 均 200。谱面表与玩家搜索的公开只读接口返回预期结构。公网 `/assets/css/app.47ec0cf3.css` 与正式包 SHA-256 一致，`a971f7f2826b7f7125e3e86797a0c46d65d6e13dedcfce34a5ef3b6d7d479ba6`。确认运行配置、隔离定义和原数据路径。共享主机版本、其它站点及系统检查见 [11 月 19 日双站镜像](../../homepage-website/doc_md/other/shared-server-security-20261119.md)。
+- 01:19:32 CST，加密全备成功，目录含 47 个数据对象，新增对象密文共 293,802,288 B。新 OMS / Shiro 包、Nginx 二进制、数据库快照、维护材料与总目录的完整密文回读已核。恢复主机元数据指向两个现行发布包，三个 timer 均 waiting。收据为本机 `artifacts/server-security-20261119/cloud-backup-verified.json`。完成后根盘可用 30,064,615,424 B。本轮移除 27 个 OMS 上传与准备临时文件，逻辑大小共 102,148,972 B。
 
 <a id="当前原生服务维护与回退2026-10-11"></a>
 
@@ -35,7 +44,7 @@
 
 操作前核实际 current、unit、manifest、运行时和同一业务库，再取得新鲜固定 helper 一致备份并完成 F 盘核验；暂停 timer 前保存其状态，等待在途备份结束。停止 Web / cache、主 IR / catalog 后，基于当前安全配置成对调整应用 / 缓存路径，核配置再切换，随后重启相关服务、清旧 OPcache、核双 health、页面资源和双站。保留当前数据，不回灌发布前 raw；失败如实保留停点。
 
-11 月 4 日已登记的直接上一版是 `824de121a686-494932756b74`，固定 `d1f052b93a81-22b4ee54f237` 只用于维护，不随 HTTP 回退。该次四个 OMS 单元和 Nginx 配对原件、依赖及准备方式取[生产收据](oms-player-services-20261104.md#生产发布)。回退保留已修复 Python / PHP、cache 启动依赖、Nginx 安全限制和 schema3；不能整份覆盖 10 月 8 日或 11 日旧配置。
+11 月 19 日的直接上一版是 `fb2493cd7027-6dddd07312e4`，保有 11 月 4 日玩家服务。该版本含旧 Web 依赖，应急回退使用本轮配对配置并优先接回安全包。固定 `d1f052b93a81-22b4ee54f237` 只用于维护，不随 HTTP 回退。更早的 `824de121a686-494932756b74` 及其准备方式取[11 月 4 日收据](oms-player-services-20261104.md#生产发布)。回退保留已修复 Python / PHP、cache 启动依赖、Nginx 安全限制和 schema3；不能整份覆盖 10 月 8 日或 11 日旧配置。
 
 旧 OMS 缺 11 月 4 日新增的玩家 / 详情接口。联合回退必须先核[当前 Shiro 来源、v3 数据与恢复边界](../../../Shiro-Agent/doc_md/mainline/production.md#遗忘恢复与后续发布)，按实际兼容性安排消费者；11 月 4 日清晨的 `5a3b109` 只是当次配套目标，已冷迁出，不能直接作为以后新版 Shiro 的常规回退。无法证明当前数据和遗忘语义兼容时前向修复，不回灌旧认知。
 
@@ -63,7 +72,7 @@
 
 ## 运行与资源核对
 
-最近应用切换与有限健康观察取[11 月 4 日发布](oms-player-services-20261104.md#生产发布)；10 月 11 日安装 / 三次切换 / 90 秒共载取[原生服务记录](client-native-services-20261011.md#资源与安全清理)，保留原日期、来源与范围。前一网络轮已发布网页身份复用、一次下载解析与同键合并 / 图片gzip，证据保留原日期，不混计本轮收益。客户端内容无启动预取 / 空闲轮询，按页请求、取消迟到结果、300秒有界缓存；谱包不经OMS代理。有限请求不签全站CPU / 长期流量提升，增长重新预算。
+最近应用切换与有限健康观察取[11 月 19 日安全维护](#2026-11-19-依赖安全维护)；10 月 11 日安装 / 三次切换 / 90 秒共载取[原生服务记录](client-native-services-20261011.md#资源与安全清理)，保留原日期、来源与范围。前一网络轮已发布网页身份复用、一次下载解析与同键合并 / 图片gzip，证据保留原日期，不混计本轮收益。客户端内容无启动预取 / 空闲轮询，按页请求、取消迟到结果、300秒有界缓存；谱包不经OMS代理。有限请求不签全站CPU / 长期流量提升，增长重新预算。
 
 | 单元 | 固定预算和行为 |
 | --- | --- |
@@ -95,11 +104,11 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 
 ## 日备份与 F 盘外取
 
-最近已登记的盘账是[2026-11-04 发布清理](oms-player-services-20261104.md#云备份与发布清理)：05:36 CST 根盘可用 9,955,516,416 B。原 4.10 GiB 恢复预留保持；这不是实时磁盘读数。10 月 17 日约 7.74 GiB 只属于[当次清理](../../../oms-server/oms-backend/doc_md/other/netdisk-layout-20261017.md#清理收尾)，不刷新完整容量 / 恢复证据。
+最近已登记盘账随 [2026-11-19 安全维护](#2026-11-19-依赖安全维护)保存，原 4.10 GiB 恢复预留继续适用。之前的盘账沿 [11 月 4 日发布清理](oms-player-services-20261104.md#云备份与发布清理)与 [10 月 17 日分层归档](../../../oms-server/oms-backend/doc_md/other/netdisk-layout-20261017.md#清理收尾)保留日期。
 
-固定本地timer定义为每日04:15 CST、随机延迟至多300秒、Persistent=true；实际终态按每次运行收据读取，最近已登记的发布前后备份取[11 月 4 日记录](oms-player-services-20261104.md#生产发布)。实际下一次触发时间随当时systemd状态读取，不承诺固定秒数。
+固定本地timer定义为每日04:15 CST、随机延迟至多300秒、Persistent=true；实际终态按每次运行收据读取，最近已登记的发布前后备份取[11 月 19 日记录](#2026-11-19-依赖安全维护)。实际下一次触发时间随当时systemd状态读取，不承诺固定秒数。
 
-两个云 timer 的首次启用取分层归档记录；最近已登记全备为[11 月 4 日 46 对象及完整密文回读](oms-player-services-20261104.md#云备份与发布清理)，没有新增该批云端解密或异机重建验收；timer启用不等于某次上传成功，失败记录必须核对。云端不自动裁剪历史；恢复旧平铺总目录时沿[分层定位规则](../../../oms-server/oms-backend/doc_md/other/netdisk-layout-20261017.md#路径与恢复引用)，实际操作和新Linux重建步骤取[全备说明](../../../oms-server/oms-backend/doc_md/other/full-backup-20261017.md#操作与恢复顺序)。本地每日快照的七天清理与云端保留分别执行。
+两个云 timer 的首次启用取分层归档记录，最近加密全备与新对象回读见 [11 月 19 日收据](#2026-11-19-依赖安全维护)。云端解密与异机重建各按其实际证据登记。云端不自动裁剪历史，恢复旧平铺总目录沿[分层定位规则](../../../oms-server/oms-backend/doc_md/other/netdisk-layout-20261017.md#路径与恢复引用)，实际操作和新 Linux 重建步骤取[全备说明](../../../oms-server/oms-backend/doc_md/other/full-backup-20261017.md#操作与恢复顺序)。本地每日快照的七天清理与云端保留分别执行。
 
 日备份仍在 `/var/backups/oms-ir/daily-<UTC时间>.db.gz`，同名 `.json` 最后发布。固定 helper 只取一次真实 current，sidecar绑定当时运行 manifest及维护来源；旧 sidecar不改标签。只有完整核验的日备份对可按原 keep-days7清理，预算按八对计算；孤立件、失败件、手工恢复与发布前快照不当成合格 daily 自动删除。
 
