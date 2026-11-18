@@ -4,7 +4,7 @@
 
 2026-11-12 共享主机整机迁移至 `47.95.29.3`（旧 `39.105.55.78` 已停止），运行身份、备份与回退边界不变；当前主机 / SSH 别名 / 数据安全取[共享迁移镜像](../../homepage-website/doc_md/other/shared-server-migration-20261112.md)。下表路由配置文件名（如 `39.105.55.78.conf`）随镜像沿用，不代表当前公网 IP。客户端原生页面与固定 OMSIR 的来源继续取 [Client Bridge](../../../oms-server/oms_client_bridge_md/doc_md/mainline/dev-progress.md)，网站发布不生成 Windows 发行包。
 
-运行时安全与共享配置沿 [11 月 1 日维护](server-agent-security-20261101.md#当前运行时与应用来源)和 [10 月 22 日安全修复](architecture-security-review-20261022.md#全量修复实施)。[11 月 2 日冷归档](storage-offload-20261102.md)是迁出当时的目录清单；11 月 4 日又保留了新应用与直接上一版，当前保留项见下表。备份、盘账和不同恢复范围见[日备份与外取](#日备份与-f-盘外取)。旧发布、失败和当次验证按[日期化记录](README.md#日期化实施与发布证据)读取。
+现行 HTTP 包、直接回退和固定维护包见下表。共享主机的最新安全配置与核验取 [11 月 19 日双站镜像](../../homepage-website/doc_md/other/shared-server-security-20261119.md)，Python 和 PHP 的运行时来源分别取 [11 月 1 日维护](server-agent-security-20261101.md#当前运行时与应用来源)和 [10 月 22 日安全修复](architecture-security-review-20261022.md#全量修复实施)。[11 月 2 日冷归档](storage-offload-20261102.md)记录当时的迁出清单。备份、盘账和各类恢复取[日备份与外取](#日备份与-f-盘外取)，旧发布、失败和当次验证按[日期化记录](README.md#日期化实施与发布证据)读取。
 
 ## 当前来源与运行位置
 

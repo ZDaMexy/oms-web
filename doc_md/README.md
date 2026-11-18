@@ -12,9 +12,10 @@
 
 ## 日期化实施与发布证据
 
+- [2026-11-19 依赖安全维护](production-maintenance.md#2026-11-19-依赖安全维护)：现行运行包、发布前后备份及加密全备回读。
 - [2026-11-04 玩家服务](oms-player-services-20261104.md)：查人、成绩详情、mania 原谱身份与实际发布 / 备份。
 - [2026-11-03 Shiro 消费者合同](../../../oms-server/dev_bridge_md/doc_md/mainline/shiro-services.md)：独立 Bot 采用既有 OMS 公开查询；11 月 4 日扩充后的接口沿同一合同。
-- [2026-11-01 共享运行时与安全维护](server-agent-security-20261101.md)：运行时、主机安全、当次全备与重启；“本地 npm 修复未部署”等停点只属当时，后续应用发布取 11 月 4 日。
+- [2026-11-01 共享运行时与安全维护](server-agent-security-20261101.md)：Python 运行时、主机安全、当次全备与重启。
 - [2026-10-22 架构安全筛查](architecture-security-review-20261022.md#全量修复实施)与[PHP / 主机维护](php-security-maintenance-20261022.md)：修复、恢复材料与未完成范围。
 - [2026-10-11 端内在线服务配套](client-native-services-20261011.md)：原生内容、桌面社区认证与当次发布。
 - [2026-11-05 工作区文档审查](../../../oms-server/dev_bridge_md/doc_md/mainline/changelog.md#2026-11-05-全工作区进度与文档记忆审查)：当前 / 历史纠偏、收据复核与本轮检查范围；没有重新部署。
