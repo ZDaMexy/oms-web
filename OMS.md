@@ -10,4 +10,4 @@
 
 本地视觉已获用户认可；线上普通浏览器刷新、实际下载入库、真实账号 / 密钥、OMS 对照和固定播放器 P/C 仍待真人验收，具体路径取[维护说明](doc_md/production-maintenance.md#真人验收)。
 
-当前运行、固定维护与同库回退的准确来源只取[维护说明](doc_md/production-maintenance.md#当前来源与运行位置)，实际发布、资源、恢复和备份证据取[生产记录](doc_md/production-deployment-20261007.md#正式发布与收尾)。旧静态 `oms-frontend` 设计及完整历史只作保全 / 回退来源；本地证据保留原日期与范围，不提升为生产通过。
+当前运行、固定维护与同库回退的准确来源只取[维护说明](doc_md/production-maintenance.md#当前来源与运行位置)。首次原版发布、资源评估和两次空目录恢复取[首次正式发布与收尾](doc_md/production-deployment-20261007.md#正式发布与收尾)，后续版本证据沿[日期化记录](doc_md/README.md#日期化实施与发布证据)。旧静态 `oms-frontend` 设计及完整历史只作保全 / 回退来源。本地证据按原日期与范围适用。
