@@ -106,7 +106,7 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 
 18:47 CST，`/opt/oms-ir/current` 仍解析为 `909f8ff7d4de-c26b894f9f53`。IR、目录和 Web 三个单元均 `active/running`，自动重启计数为 0。两个回环 `/health`、OMS HTTPS 首页、新闻及 `/ir`、Homepage HTTPS 首页均返回 200。共享根盘该时点可用 29,320,118,272 B，既定恢复预留为 4.10 GiB。
 
-数据库日备份、数据库云备份与全备 timer 均 `enabled/active/waiting`，各自当天最近的 oneshot 分别于 04:20:20、04:46:39、05:38:41 CST 退出，主进程状态码均为 0。该次只读取 systemd、路径、盘量和有限 HTTP 状态；密文回读沿 11 月 19 日原记录，外取、解密恢复、真人及性能证据仍沿各自日期。服务运行与部署来源保持原样。
+数据库日备份、数据库云备份与全备 timer 均 `enabled/active/waiting`，各自当天最近的 oneshot 分别于 04:20:20、04:46:39、05:38:41 CST 退出，主进程状态码均为 0。现行全备目录与最近一次完成收据均记录 50 个对象，含现行 OMS 和 Shiro 代码以及 Shiro 启动配置；其中现行 OMS 对象沿 11 月 19 日既有校验，Shiro `0d7d8dd` 对象的既有密文核验时间为 11 月 21 日 05:43 CST。Shiro 认知及工作区沿[既定排除范围](../../../Shiro-Agent/doc_md/mainline/production.md#遗忘恢复与后续发布)。本次只读复核取 systemd、现行路径、盘量、有限 HTTP 和主机全备收据；新云回读、外取、解密恢复、真人与性能证据仍沿各自已记录日期。
 
 ## 日备份与 F 盘外取
 
@@ -114,7 +114,7 @@ HTTP / PHP通过真实请求触发；不新增后台扫描、聊天、presence�
 
 固定本地timer定义为每日04:15 CST、随机延迟至多300秒、Persistent=true；实际终态按每次运行收据读取，最近已登记的发布前后备份取[11 月 19 日记录](#2026-11-19-依赖安全维护)。实际下一次触发时间随当时systemd状态读取，不承诺固定秒数。
 
-两个云 timer 的首次启用取分层归档记录，最近加密全备与新对象回读见 [11 月 19 日收据](#2026-11-19-依赖安全维护)。云端解密与异机重建各按其实际证据登记。云端不自动裁剪历史，恢复旧平铺总目录沿[分层定位规则](../../../oms-server/oms-backend/doc_md/other/netdisk-layout-20261017.md#路径与恢复引用)，实际操作和新 Linux 重建步骤取[全备说明](../../../oms-server/oms-backend/doc_md/other/full-backup-20261017.md#操作与恢复顺序)。本地每日快照的七天清理与云端保留分别执行。
+两个云 timer 的首次启用取分层归档记录。最近全备完成收据和已登记的现行代码对象核验时间取[11 月 22 日只读复核](#2026-11-22-只读运行复核)；11 月 19 日发布批次的新增对象明细取[原收据](#2026-11-19-依赖安全维护)。云端解密与异机重建各按其实际证据登记。云端不自动裁剪历史，恢复旧平铺总目录沿[分层定位规则](../../../oms-server/oms-backend/doc_md/other/netdisk-layout-20261017.md#路径与恢复引用)，实际操作和新 Linux 重建步骤取[全备说明](../../../oms-server/oms-backend/doc_md/other/full-backup-20261017.md#操作与恢复顺序)。本地每日快照的七天清理与云端保留分别执行。
 
 日备份仍在 `/var/backups/oms-ir/daily-<UTC时间>.db.gz`，同名 `.json` 最后发布。固定 helper 只取一次真实 current，sidecar绑定当时运行 manifest及维护来源；旧 sidecar不改标签。只有完整核验的日备份对可按原 keep-days7清理，预算按八对计算；孤立件、失败件、手工恢复与发布前快照不当成合格 daily 自动删除。
 
