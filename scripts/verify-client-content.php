@@ -144,13 +144,20 @@ try {
     $helpPage = getPage('/help');
     check($helpPage->getStatusCode() === 200, 'The real help route must render.');
     $html = $helpPage->getContent();
+    $helpDocument = Dom\HTMLDocument::createFromString($html, LIBXML_NOERROR, 'UTF-8');
     foreach (['start', 'library', 'ir', 'scores', 'players', 'java-ir', 'openlr2-ir', 'feedback'] as $anchor) {
         check(str_contains($html, 'id="'.$anchor.'"'), 'Existing help anchor is missing: '.$anchor);
         check(in_array($anchor, array_column($help, 'id'), true), 'Published help ID must retain the existing anchor: '.$anchor);
     }
     foreach ($help as $section) {
         check(str_contains($html, 'href="#'.$section['id'].'"'), 'Help table of contents must link to the source ID.');
-        check(str_contains($html, e($section['heading'])) && str_contains($html, e($section['text'])), 'Website help must render the shared heading and full text.');
+        $heading = $helpDocument->getElementById($section['id']);
+        $paragraphs = [];
+        for ($paragraph = $heading?->nextElementSibling; $paragraph?->localName === 'p'; $paragraph = $paragraph->nextElementSibling) {
+            $paragraphs[] = preg_replace('/\s+/u', ' ', trim($paragraph->textContent));
+        }
+        $expected = preg_replace('/\s+/u', ' ', trim($section['text']));
+        check($heading?->textContent === $section['heading'] && implode(' ', $paragraphs) === $expected, 'Website help must render the shared heading and full text.');
         foreach ($section['links'] ?? [] as $link) {
             check(str_contains($html, 'href="'.e($link['href']).'"') && str_contains($html, e($link['label'])), 'Website help must render shared links.');
         }
