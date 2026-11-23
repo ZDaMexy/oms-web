@@ -16,7 +16,6 @@ export default function DetailStats({ data }: { data: Performance }) {
           <dl className='profile-stats__entry'><dt className='profile-stats__key'>公开最佳</dt><dd className='profile-stats__value'>{data.totals.public_best_count.toLocaleString('zh-CN')}</dd></dl>
         </div>
       </div>
-      <p>所选来源中的公开成绩</p>
     </div>
     <div className='profile-detail-stats__separator' />
     <div className='profile-detail-stats__lanes'>{data.lanes.length === 0 ? <p>这个范围还没有公开成绩。</p> : data.lanes.map(lane =>

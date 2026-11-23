@@ -7,8 +7,12 @@
     @include('layout._page_header_v4', ['params' => ['theme' => 'settings']])
     <div class="osu-page osu-page--account-edit">
         <div class="account-edit account-edit--first">
-            <div class="account-edit__section"><h2 class="account-edit__section-title">账号</h2></div>
-            <p data-oms-auth="guest">打开导航中的登录入口，登录或创建 OMS 账号，即可查看自己的记录、管理播放器密钥。离线游玩无需账号。</p>
+            <div class="account-edit__section" data-oms-auth="user" hidden><h2 class="account-edit__section-title">账号</h2></div>
+            <div class="account-edit__guest" data-oms-auth="guest">
+                <h1>登录 OMS</h1>
+                <p>查看自己的成绩，管理播放器密钥。</p>
+                <button class="btn-osu-big btn-osu-big--account-edit js-click-menu" type="button" data-click-menu-target="nav2-login-box">登录或注册</button>
+            </div>
             <div class="account-edit__input-groups" data-oms-auth="user" hidden>
                 <div class="account-edit__input-group"><div class="account-edit-entry account-edit-entry--read-only">
                     <div class="account-edit-entry__label">用户名</div><div class="account-edit-entry__input" data-oms-username></div>
@@ -20,7 +24,7 @@
             </div>
         </div>
         <div class="account-edit" data-oms-auth="user" hidden>
-            <div class="account-edit__section"><h2 class="account-edit__section-title">播放器密钥</h2><p>为每种播放器创建对应的密钥，用它连接 OMS。密钥只显示一次，请保存到播放器设置中。</p></div>
+            <div class="account-edit__section"><h2 class="account-edit__section-title">播放器密钥</h2><p>为播放器创建专用密钥。密钥只显示一次，请复制到播放器设置。</p><p><a href="/help#players">插件与设置</a></p></div>
             <div class="account-edit__input-groups">
                 <form id="oms-key-create" class="account-edit__input-group" method="POST" action="/api/ir/v1/integration-keys">
                     <label class="account-edit-entry"><span class="account-edit-entry__label">播放器</span><select class="account-edit-entry__input" name="source"><option value="beatoraja">beatoraja</option><option value="lr2oraja">LR2oraja</option><option value="lr2oraja_ed">Endless Dream</option><option value="openlr2">OpenLR2</option></select></label>
@@ -31,7 +35,6 @@
                 </form>
                 <div class="account-edit__input-group"><table class="ranking-page-table"><thead><tr><th class="ranking-page-table__heading">播放器</th><th class="ranking-page-table__heading">名称</th><th class="ranking-page-table__heading">状态</th><th class="ranking-page-table__heading"></th></tr></thead><tbody data-oms-keys></tbody></table></div>
             </div>
-            <p><a href="/help#players">各播放器设置与插件</a></p>
         </div>
     </div>
     @include('oms._page_data')

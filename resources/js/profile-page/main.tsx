@@ -47,7 +47,7 @@ export default function Main(_props: { container: HTMLElement }) {
               {performance.data?.lanes.map(lane => <option key={lane.condition_scope.id} value={lane.condition_scope.id}>{lane.condition_scope.label}</option>)}
             </select>
           </label>
-          {section === 'recent' && <p className='beatmapset-scoreboard__notice'>按网站收到最佳成绩的时间排列。这里只显示最佳成绩的更新；每次 OMS 游玩的记录在本人登录后的“我的完整记录”中查看。</p>}
+          {section === 'recent' && <p className='beatmapset-scoreboard__notice'>按最佳成绩的上传时间排列。</p>}
           <Status error={records.error} ready={records.data != null} />
           {records.data != null && <>
             <p>{records.data.total.toLocaleString('zh-CN')} 条公开最佳</p>

@@ -22,7 +22,6 @@
         <form id="oms-register" class="login-box__section login-box__section--register"
             action="/api/ir/v1/auth/register" method="POST">
             <h2 class="login-box__row login-box__row--title">创建 OMS 账号</h2>
-            <div class="login-box__row">离线游玩无需账号。账号用于提交成绩和参与社区。</div>
             <div class="login-box__row">用户名为 3–24 位英文字母、数字或下划线；密码为 10–128 个字符。</div>
             <div class="login-box__row login-box__row--inputs">
                 <input class="login-box__form-input" name="username" placeholder="用户名" autocomplete="username" required>

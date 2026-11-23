@@ -65,12 +65,11 @@ export function IrSearchContent({ query, update, initial }: Props) {
           <input aria-label='搜索表内曲目' type='search' maxLength={200} disabled={table == null} value={text} onChange={event => setText(event.target.value)} placeholder='在这张表中搜索曲名或作者'/>
           <button type='submit' disabled={table == null} aria-label='搜索表内曲目'><span className='fas fa-search'/></button>
         </form>
-        <p className='difficulty-tables__source'>收录 <a href={initial.difficulty_tables.index_url} target='_blank' rel='noopener noreferrer'>Zris 镜像目录</a>的全部选项 · 数据 {initial.difficulty_tables.fetched_at.slice(0, 10)}</p>
       </div>
     </div>
     <div className='osu-page'>
       <div className='difficulty-tables'>
-        {table == null ? <div className='difficulty-tables__empty'><span className='fas fa-list'/><h2>先选一张难度表</h2><p>选表后可筛选难度，再按曲名首字母排列。点击曲目查看成绩榜。</p></div> : <>
+        {table == null ? <p className='difficulty-tables__empty'>选择一张 BMS 难度表，再点曲名查看成绩。</p> : <>
           {selected != null && <div className='difficulty-tables__heading'><h2>{selected.name}</h2><a href={selected.source_url ?? selected.url} target='_blank' rel='noopener noreferrer'>原表 <span className='fas fa-external-link-alt'/></a></div>}
           <nav className='difficulty-tables__initials' aria-label='按曲名首字母筛选'>
             {['', ...initials].map(value => <button type='button' key={value} aria-pressed={value === letter}
@@ -90,7 +89,7 @@ export function IrSearchContent({ query, update, initial }: Props) {
                     {item.md5 == null ? <span>{item.title ?? '曲名未提供'}</span> : <a href={chartUrl(item.md5)}>{item.title ?? '曲名未提供'}</a>}
                     {item.artist != null && <span className='difficulty-tables__artist'>{item.artist}</span>}
                   </div>
-                  {item.md5 == null ? <a className='difficulty-tables__unavailable' href={result.data!.table.source_url ?? result.data!.table.url} target='_blank' rel='noopener noreferrer' title='这条记录没有有效的单曲 MD5，查看原表'>查看原表</a> : <a className='difficulty-tables__board' href={chartUrl(item.md5)} aria-label={'查看 ' + (item.title ?? '这张谱面') + ' 的成绩榜'}><span className='fas fa-list-ol'/><span>成绩榜</span></a>}
+                  {item.md5 == null ? <a className='difficulty-tables__unavailable' href={result.data!.table.source_url ?? result.data!.table.url} target='_blank' rel='noopener noreferrer' title='这条曲目请在原表查看'>查看原表</a> : <a className='difficulty-tables__board' href={chartUrl(item.md5)} aria-label={'查看 ' + (item.title ?? '这张谱面') + ' 的成绩榜'}><span className='fas fa-list-ol'/><span>成绩榜</span></a>}
                 </div>
               </React.Fragment>)}
             </div>
@@ -98,6 +97,7 @@ export function IrSearchContent({ query, update, initial }: Props) {
             <Paginator page={result.data.page} total={result.data.total} limit={result.data.limit} onPage={value => update({ page: String(value) })}/>
           </>}
         </>}
+        <p className='difficulty-tables__source'>难度表来自 <a href={initial.difficulty_tables.index_url} target='_blank' rel='noopener noreferrer'>Zris 镜像</a> · {initial.difficulty_tables.fetched_at.slice(0, 10)}</p>
       </div>
     </div>
   </>;

@@ -8,11 +8,23 @@
     <div class="osu-page osu-page--wiki">
         <div class="wiki-page">
             <div class="wiki-page__toc">
-                <h2 class="title title--small">2026</h2>
-                @foreach ($news as $post)<p><a href="{{ route('news.show', $post['slug']) }}">{{ $post['title'] }}</a></p>@endforeach
+                <nav aria-label="按年份浏览">
+                    <ul class="wiki-toc-list">
+                        @foreach (array_unique(array_map(fn ($post) => substr($post['published_at'], 0, 4), $news)) as $year)
+                            <li><a href="#news-{{ $year }}">{{ $year }}</a></li>
+                        @endforeach
+                    </ul>
+                </nav>
             </div>
             <div class="wiki-page__content"><div class="news-index">
-                @foreach ($news as $post)<div class="news-index__item">@include('home._user_news_post_preview', ['collapsed' => false])</div>@endforeach
+                <h1 class="title">新闻</h1>
+                @foreach ($news as $post)
+                    @php($year = substr($post['published_at'], 0, 4))
+                    @if ($loop->first || $year !== substr($news[$loop->index - 1]['published_at'], 0, 4))
+                        <h2 id="news-{{ $year }}" class="title title--small">{{ $year }}</h2>
+                    @endif
+                    @include('home._user_news_post_preview')
+                @endforeach
             </div></div>
         </div>
     </div>

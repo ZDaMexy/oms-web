@@ -37,8 +37,15 @@ export function SearchContent({query,mode,update}:Props) {
       </form>
       <div className='beatmapsets-search__filter-grid'>
         <SearchFilter grid title='玩法' options={[{id:'bms',name:'BMS'},{id:'mania',name:'mania'}]} selected={[mode]} onChange={values=>update({ruleset:values[0],source:values[0]==='bms'?'ginger':'sayobot',keys:null,page:'1',cursor:'0'})}/>
-        <SearchFilter grid title='来源' options={mode==='bms'?[{id:'ginger',name:'Ginger Rush'},{id:'616',name:'616'}]:[{id:'sayobot',name:'Sayobot'}]} selected={[source]} onChange={values=>update({source:values[0],page:'1',cursor:'0'})}/>
-        <SearchFilter grid title='键型' options={[{id:'',name:'全部'},...keys(mode).map(id=>({id,name:id.replace('bms_','BMS ').replace('pms_','PMS ').replace('mania_','')}))]} selected={[keymode??'']} onChange={values=>update({keys:values[0]||null,page:'1',cursor:'0'})}/>
+        {mode === 'bms' && <SearchFilter grid title='谱面来源' options={[{id:'ginger',name:'Ginger Rush'},{id:'616',name:'616'}]} selected={[source]} onChange={values=>update({source:values[0],page:'1',cursor:'0'})}/>}
+        {mode === 'bms'
+          ? <SearchFilter grid title='键型' options={[{id:'',name:'全部'},...keys(mode).map(id=>({id,name:id.replace('bms_','BMS ').replace('pms_','PMS ')}))]} selected={[keymode??'']} onChange={values=>update({keys:values[0]||null,page:'1',cursor:'0'})}/>
+          : <label className='beatmapsets-search__keymode'><span>键型</span>
+            <select value={keymode ?? ''} onChange={event => update({keys:event.target.value || null,page:'1',cursor:'0'})}>
+              <option value=''>全部键型</option>
+              {keys(mode).map(id => <option key={id} value={id}>{id.slice(6).toUpperCase()}</option>)}
+            </select>
+          </label>}
       </div>
     </div></div>
     <div className='js-sticky-header'/>

@@ -39,9 +39,9 @@ export default function Main(_props: {container:HTMLElement}) {
     <div className='osu-page osu-page--generic-compact'>
       {irOnly?tableChart!=null?<>
         <IrHeader detail={{ruleset:'bms',chart:{md5:tableChart.md5,sha256:null,title:tableChart.title,artist:tableChart.artist,difficulty:tableChart.level==null||tableChart.level===''?null:(initial.difficulty_table?.symbol??'')+tableChart.level}}}/>
-        <p className='difficulty-tables__provenance'>曲名与表内等级来自 {initial.difficulty_table!.name}；成绩按这张谱面的 MD5 查询。</p>
+        <p className='difficulty-tables__provenance'>难度表 · {initial.difficulty_table!.name}</p>
       </>:<><Status error={irMetadata.error} ready={ir!=null}/>{ir!=null&&<><IrHeader detail={ir}/><IrInfo detail={ir}/></>}</>:
-        <>{endpoint==null?<p>{mode==='mania'&&md5!=null?'这张谱面尚未找到对应的 Sayobot 谱包。':'地址缺少谱面 MD5 或谱面集编号，请重新选择谱面。'}</p>:<Status error={metadata.error} ready={detail!=null}/>}
+        <>{endpoint==null?<p>{mode==='mania'&&md5!=null?'这张谱面尚未找到对应的 Sayobot 谱包。':'请从谱面列表选择一张谱面。'}</p>:<Status error={metadata.error} ready={detail!=null}/>}
           {detail!=null&&<><Header detail={detail} md5={md5} sha256={sha256} selectedSource={query.get('download_source')} onSource={source=>update({download_source:source})}
             selectedBid={selectedBid} onBid={bid=>update({bid,md5:null,group:null,condition:null})}/><Info detail={detail}/></>}</>}
       <div className='user-profile-pages user-profile-pages--no-tabs'>

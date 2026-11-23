@@ -7,11 +7,16 @@
     @include('home._user_header_default')
     <div class="osu-page osu-page--wiki">
         <div class="wiki-page">
-            <div class="wiki-page__toc"><p><a href="{{ route('news.index') }}">全部新闻</a></p>
-                @foreach ($news as $other)<p><a href="{{ route('news.show', $other['slug']) }}">{{ $other['title'] }}</a></p>@endforeach
-            </div>
+            <nav class="wiki-page__toc" aria-label="新闻导航">
+                <p><a href="{{ route('news.index') }}">← 全部新闻</a></p>
+                <ul class="wiki-toc-list">
+                    @foreach ($news as $other)
+                        <li><a href="{{ route('news.show', $other['slug']) }}" @if ($other['slug'] === $post['slug']) aria-current="page" @endif>{{ $other['title'] }}</a></li>
+                    @endforeach
+                </ul>
+            </nav>
             <div class="wiki-page__content"><article class="news-show">
-                <div class="news-show__info"><h1 class="news-show__title">{{ $post['title'] }}</h1><p>{{ $post['published_at'] }}</p></div>
+                <div class="news-show__info"><time datetime="{{ $post['published_at'] }}">{{ $post['published_at'] }}</time><h1 class="news-show__title">{{ $post['title'] }}</h1></div>
                 @foreach ($post['body'] as $paragraph)
                     @isset($paragraph['heading'])<h2>{{ $paragraph['heading'] }}</h2>@endisset
                     <p>{{ $paragraph['text'] }}</p>

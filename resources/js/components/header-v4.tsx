@@ -181,7 +181,7 @@ export default class HeaderV4 extends React.Component<Props> {
 
   private title() {
     const page = parseJson<{page: string}>('json-oms-page');
-    const titles: Record<string,string> = {beatmaps:'谱面',beatmapset:'谱面',profile:'个人',rankings:'玩家榜'};
+    const titles: Record<string,string> = {beatmaps:'谱面',beatmapset:'谱面',profile:'个人页',rankings:'玩家榜',ir:'谱面榜'};
     return titles[page.page] ?? 'OMS';
   }
 }

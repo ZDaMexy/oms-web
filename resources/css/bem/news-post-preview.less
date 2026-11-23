@@ -2,100 +2,63 @@
 // See the LICENCE file in the repository root for full licence text.
 
 .news-post-preview {
-  @top: news-post-preview;
+  display: block;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: @osu-colour-b4;
+  color: @osu-colour-c1;
 
-  .default-box-shadow();
-  margin-bottom: 5px;
-
-  &--collapsed {
-    margin-bottom: 0px;
-    box-shadow: none;
-  }
-
-  &__body {
-    display: flex;
-    background: @osu-colour-b4;
+  &:hover, &:focus-visible {
+    background: @osu-colour-b3;
+    color: #fff;
+    text-decoration: none;
   }
 
   &__image {
     .at2x-simple-var(--bg);
-    width: 100%;
-    height: 130px;
-    background-size: cover;
-    background-position: 50%;
     display: block;
-    background-color: hsl(var(--hsl-b6));
-    .@{top}--collapsed & {
-      display: none;
+    width: 100%;
+    aspect-ratio: 4 / 1;
+    background-size: cover;
+    background-position: center;
+  }
+
+  &__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 16px;
+    padding: 14px 16px;
+
+    @media @desktop {
+      grid-template-columns: 86px minmax(0, 1fr) auto;
+      align-items: baseline;
     }
   }
 
   &__post-date {
-    flex: none;
-    width: 70px;
-    border-right: 1px solid @osu-colour-l1;
-    margin: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
     color: @osu-colour-l1;
-    padding-right: 10px;
-    text-align: right;
-
-    .@{top}--collapsed & {
-      flex-direction: row;
-      justify-content: flex-end;
-      align-items: baseline;
-      margin: 0px 10px;
-      padding: 5px 10px 5px 0;
-    }
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
   }
 
-  &__date {
-    font-size: @font-size--title-small-3;
-    font-weight: 800;
-    .@{top}--collapsed & {
-      font-size: @font-size--title-small;
-      font-weight: bold;
-    }
-  }
-
-  &__month-year {
-    font-size: @font-size--small-2;
-    .@{top}--collapsed & {
-      font-size: @font-size--title-small;
-    }
-  }
-
-  &__post-right {
-    margin-right: @font-size--small;
-    .@{top}--collapsed & {
-      display: flex;
-      align-items: center;
-    }
-  }
+  &__post-right { grid-area: 2 / 1; }
 
   &__post-title {
-    display: block;
-    color: white;
-    .link-hover({ color: white });
-    font-size: @font-size--title-small-3;
-    margin: 5px 0 10px;
-    font-weight: bold;
-
-    .@{top}--collapsed & {
-      margin: 0;
-      font-size: @font-size--title-small;
-    }
+    margin: 0 0 4px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 650;
   }
 
-  &__post-content {
-    .content-font();
-    font-size: @font-size--title-small;
-    line-height: 1.7;
+  &__post-content { margin: 0; font-size: 13px; line-height: 1.65; }
 
-    .@{top}--collapsed & {
-      display: none;
-    }
+  &__arrow {
+    grid-area: 2 / 2;
+    color: @osu-colour-l1;
+  }
+
+  @media @desktop {
+    &__post-right, &__arrow { grid-area: auto; }
   }
 }

@@ -2,105 +2,163 @@
 // See the LICENCE file in the repository root for full licence text.
 
 .user-home {
-  .default-box-shadow();
-  display: flex;
-  background: @osu-colour-b5;
-  flex-direction: column;
+  display: grid;
+  gap: 24px;
+  padding: 24px @gutter-v2;
 
   @media @desktop {
-    padding: 0 @gutter-v2-desktop;
-    flex-direction: row;
-    align-items: flex-start;
+    grid-template-columns: minmax(0, 1fr) 230px;
+    gap: 32px;
+    padding: 32px @gutter-v2-desktop 40px;
   }
 
-  &__beatmap-list-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin: 0;
-    padding: 20px 0 10px;
-    font-size: @font-size--title-small-3;
-    color: @osu-colour-l1;
-    font-weight: bold;
-  }
-
-  &__beatmapsets {
+  &__hero {
     display: grid;
-    gap: 10px;
-    font-size: @font-size--title-small;
-    line-height: 1.7;
+    align-items: center;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 85% 18%, #4c2f5f 0%, transparent 67%), #201d31;
+    border-bottom: 3px solid #d78abb;
+
+    @media @desktop {
+      min-height: 320px;
+    }
+  }
+
+  &__intro {
+    padding: 38px @gutter-v2 42px;
+    color: #fff4fc;
+
+    @media @desktop {
+      padding: 48px clamp(36px, 5vw, 76px);
+    }
+
+    h1 {
+      color: inherit;
+      font-size: clamp(52px, 9vw, 96px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -.06em;
+      margin: 0 0 14px;
+    }
 
     p {
-      margin: 0;
+      color: #ead9ee;
+      font-size: clamp(16px, 2vw, 22px);
+      margin: 0 0 26px;
     }
   }
 
-  &__buttons {
-    display: grid;
-    gap: 10px;
-  }
-
-  &__left-section {
-    padding-bottom: 20px;
-    flex: none;
-    width: 100%;
-
-    @media @desktop {
-      margin-right: 10px;
-      width: calc(60% - 10px);
-    }
-  }
-
-  &__left-title {
-    margin: 0;
-    padding: 20px 0 10px @gutter-v2;
-    font-size: @font-size--large;
-    font-weight: bold;
-    color: @osu-colour-l1;
-
+  &__actions {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+  }
+
+  &__download {
+    --bg: #f2c5e2;
+    --hover-bg: #ffe2f3;
+    --colour: #2a1b34;
+    --hover-colour: var(--colour);
+    padding: 12px 16px;
+    font-size: 14px;
+
+    i { margin-right: 5px; }
+  }
+
+  &__browse {
+    color: #fff4fc;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 0;
+  }
+
+  &__playfield {
+    position: absolute;
+    z-index: -1;
+    inset: -30% 0 -15% auto;
+    width: 42%;
+    transform: skewX(-20deg);
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-inline: 1px solid #c98dd94d;
+    opacity: .18;
 
     @media @desktop {
-      padding-left: 0;
+      inset-inline-end: 7%;
+      opacity: 1;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 78% 0 auto;
+      height: 3px;
+      background: #ffd0df;
+      box-shadow: 0 0 18px #f7b4e9;
+    }
+
+    span {
+      border-right: 1px solid #c98dd94d;
+      background: linear-gradient(to top, #b879bf25, transparent 70%);
+
+      &::before {
+        content: '';
+        display: block;
+        position: relative;
+        top: var(--note-position, 52%);
+        height: 12px;
+        margin-inline: 5px;
+        border-radius: 3px;
+        background: #f0b6db;
+        box-shadow: 0 0 15px #eb9bce61;
+      }
+
+      &:nth-child(even)::before { background: #c0b4ff; }
+      &:nth-child(2) { --note-position: 70%; }
+      &:nth-child(3) { --note-position: 36%; }
+      &:nth-child(4) { --note-position: 59%; }
+      &:nth-child(5) { --note-position: 43%; }
+      &:nth-child(6) { --note-position: 73%; }
+      &:nth-child(7) { --note-position: 28%; }
     }
   }
 
-  &__news-posts-group {
-    .default-box-shadow();
-    display: block;
-    padding: 5px 0;
-    background-color: @osu-colour-b4;
-    margin-bottom: 5px;
+  &__section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
 
-    &--more {
-      .link-plain();
-      .link-hover({ color: white });
-      color: @osu-colour-l1;
-      padding: 20px;
-      text-align: center;
-    }
+    h2 { margin: 0; font-size: 21px; }
   }
 
-  &__right-sidebar {
-    --padding-x: 20px;
-    background-color: @osu-colour-b4;
-    width: 100%;
-    margin: 0;
-    padding: 20px var(--padding-x);
+  &__links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 4px;
 
     @media @desktop {
-      .default-box-shadow();
-      --padding-x: 10px;
-      margin-left: 10px;
-      margin-bottom: 10px;
-      width: calc(40% - 10px);
-      padding-bottom: 10px;
+      grid-template-columns: 1fr;
+      margin-top: 37px;
     }
-  }
 
-  &__status-box {
-    padding-bottom: 20px;
+    a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 5px;
+      background: hsl(var(--hsl-b4));
+      color: hsl(var(--hsl-c1));
+      padding: 12px;
+
+      &:hover, &:focus-visible { background: hsl(var(--hsl-b3)); }
+    }
+
+    i { color: hsl(var(--hsl-l1)); width: 18px; text-align: center; }
   }
 }

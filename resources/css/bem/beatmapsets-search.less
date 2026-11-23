@@ -62,15 +62,25 @@
   }
 
   &__filter-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px 10px;
     position: relative;
-    align-items: baseline;
+    align-items: start;
+  }
 
-    @media @desktop {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0 10px;
+  &__keymode {
+    display: contents;
+
+    span { align-self: center; font-size: 12px; }
+    select {
+      justify-self: start;
+      padding: 6px 10px;
+      border: 1px solid hsl(var(--hsl-b1));
+      border-radius: 4px;
+      background: hsl(var(--hsl-b3));
+      color: hsl(var(--hsl-c1));
+      font: inherit;
     }
   }
 
@@ -106,6 +116,7 @@
 
   &__input {
     flex-grow: 1;
+    min-width: 0;
     padding: 10px;
     color: hsl(var(--hsl-c1));
 
@@ -122,10 +133,11 @@
   &__input-container {
     color: hsl(var(--hsl-l1));
     font-size: @font-size--large;
-    margin: 20px 0;
+    margin: 12px 0 16px;
     position: relative;
 
     border: 1px solid hsl(var(--hsl-b4));
+    border-radius: 6px;
     background-color: hsl(var(--hsl-b2));
 
     display: flex;

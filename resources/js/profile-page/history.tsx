@@ -12,7 +12,7 @@ export default function History({controller}:{controller:Controller}) {
   const {history,update} = controller;
   return <section className='page-extra' id='history'>
     <h2 className='title title--page-extra'>我的完整记录</h2>
-    <p className='beatmapset-scoreboard__notice'>仅你可见。这里列出已上传的 OMS 游玩记录，包括未进入公开榜的成绩，按网站收到成绩的顺序排列。上方的公开成绩筛选不影响此列表。</p>
+    <p className='beatmapset-scoreboard__notice'>仅你可见。按上传时间列出每局 OMS 成绩，包括未公开的记录。</p>
     <Status error={history.error} ready={history.data!=null}/>
     {history.data!=null && <>
       <p>{history.data.total.toLocaleString('zh-CN')} 局 OMS 游玩</p>

@@ -539,6 +539,7 @@ function nav_links(): array
             '_' => route('rankings'),
             '玩家榜' => route('rankings'),
             '谱面榜' => route('ir'),
+            '查找玩家' => route('users.index'),
         ],
         'community' => [
             '_' => route('forum.forums.index'),

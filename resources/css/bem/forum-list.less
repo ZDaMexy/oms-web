@@ -30,12 +30,26 @@
 
     &--search {
       .default-gutter-v2();
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 8px;
       margin: 0;
+
+      .account-edit-entry__input { min-width: 0; width: 100%; font-size: 13px; }
+      .btn-osu-big { min-height: 36px; padding-inline: 10px; }
     }
   }
+
+  &__heading {
+    .default-gutter-v2();
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 22px 16px;
+    h1 { margin: 0; font-size: 24px; }
+  }
+
+  &__empty { text-align: center; padding: 20px @gutter-v2 28px; margin: 0; color: @osu-colour-c2; }
 
   &__menu {
     margin-left: auto;

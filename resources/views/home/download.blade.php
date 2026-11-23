@@ -6,45 +6,48 @@
 @section('content')
     @include('home._user_header_default')
     <div class="osu-page osu-page--generic-compact"><div class="download-page">
-        <div class="download-page__header"><div class="download-page__banner">
-            <div class="download-page__banner-content download-page__banner-content--main">
+        <div class="download-page__header">
+            <div class="download-page__banner-content">
                 <div class="download-page__intro">
                     <h1>下载 OMS</h1>
-                    <p class="download-page__tagline">BMS · mania</p>
-                    <p>Windows 音乐游戏客户端。离线游玩不需要注册。</p>
+                    <p>解压后即可离线游玩 BMS 和 mania。</p>
                 </div>
                 <div class="download-page__release">
                     <a class="btn-osu-big btn-osu-big--download" href="{{ $omsData['release_url'] }}">
-                    <div class="btn-osu-big__content"><div class="btn-osu-big__left">前往 GitHub 下载
-                        <div><div class="btn-osu-big__text-top btn-osu-big__text-top--download">OMS</div>Windows · ZIP</div>
-                        <div class="btn-osu-big__text-bottom btn-osu-big__text-bottom--download-version">20260626</div>
-                    </div><span class="btn-osu-big__icon"><span class="svg-icon svg-icon--download"></span></span></div>
+                        <span class="btn-osu-big__content">
+                            <span><strong>从 GitHub 下载</strong><small>20260626 · Windows · ZIP</small></span>
+                            <i class="fas fa-download" aria-hidden="true"></i>
+                        </span>
                     </a>
-                    <p>当前公开版为 20260626，尚不包含 IR。<a href="/help#ir">开发版连接说明</a></p>
+                    <p>IR 在开发版试运行。<a href="{{ route('help') }}#ir">开发版使用说明</a></p>
                 </div>
             </div>
+        </div>
+        <div class="download-page__guide"><div class="download-page__guide-content">
+            <h2>开始游玩</h2>
+            <ol class="download-page__steps">
+                <li class="download-page__step">
+                    <h3>解压并运行</h3>
+                    <p>把 ZIP 解压到可写目录，运行 OMS。</p>
+                </li>
+                <li class="download-page__step">
+                    <h3>添加谱面</h3>
+                    <p>把整首歌的文件夹放进 <code>chartbms</code> 或 <code>chartmania</code>。</p>
+                    <a href="{{ route('help') }}#library">谱面导入指南</a>
+                </li>
+                <li class="download-page__step">
+                    <h3>设置键位</h3>
+                    <p>确认当前玩法的键位，然后选一张谱面开始游玩。</p>
+                </li>
+            </ol>
         </div></div>
         <div class="download-page__guide"><div class="download-page__guide-content">
-            <div class="download-page__steps">
-                <div class="download-page__step"><span class="download-page__step-number">1</span>
-                    <div class="download-page__text download-page__text--title">解压客户端</div>
-                    <div class="download-page__text download-page__text--description">在 GitHub 发行页下载 ZIP，解压到可写目录后运行 OMS。</div>
-                </div>
-                <div class="download-page__step"><span class="download-page__step-number">2</span>
-                    <div class="download-page__text download-page__text--title">放入谱面</div>
-                    <div class="download-page__text download-page__text--description">把完整歌曲文件夹放入 <code>chartbms</code>（BMS）或 <code>chartmania</code>（mania）。<a href="/help#library">添加谱面的方法</a></div>
-                </div>
-                <div class="download-page__step"><span class="download-page__step-number">3</span>
-                    <div class="download-page__text download-page__text--title">设置键位，开始游玩</div>
-                    <div class="download-page__text download-page__text--description">在设置中确认 BMS 或 mania 的键位，再到选歌页选择谱面。</div>
-                </div>
+            <h2>其他播放器</h2>
+            <p>beatoraja、LR2oraja、Endless Dream 和 OpenLR2 可下载试运行插件。</p>
+            <div class="download-page__links">
+                <a href="{{ route('help') }}#players">下载插件与安装指南</a>
+                <a href="/omsir-openlr2.example.json" download="omsir.json" data-turbo="false">OpenLR2 配置模板</a>
             </div>
-        </div></div>
-        <div class="download-page__guide"><div class="download-page__guide-content">
-            <h2>其他播放器连接 OMSIR</h2>
-            <p>beatoraja 0.8.8、LR2oraja build11611350155、Endless Dream v0.4.0、OpenLR2 v260915 的试运行插件已提供。</p>
-            <p><a href="/help#players">插件下载与完整安装步骤</a> · <a href="/omsir-openlr2.example.json" download="omsir.json" data-turbo="false">OpenLR2 配置模板</a></p>
-            <p>经典原版 LR2 的实时插件尚未提供。旧 LR2IR 成绩已作为基底收录。</p>
         </div></div>
     </div></div>
 @endsection

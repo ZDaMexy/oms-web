@@ -12,6 +12,7 @@ export function Status({ error, ready }: { error?: string; ready: boolean }) {
 }
 export function Paginator({ page, limit, total, onPage }: { page: number; limit: number; total: number; onPage: (page: number) => void }) {
   const last = Math.max(1, Math.ceil(total / limit));
+  if (page === 1 && last === 1) return null;
   return <div className='pagination-v2'>
     <button type='button' className='pagination-v2__link' disabled={page <= 1} onClick={() => onPage(1)}>第一页</button>
     <button type='button' className='pagination-v2__link' disabled={page <= 1} onClick={() => onPage(page - 1)}>上一页</button>
@@ -45,12 +46,12 @@ export function Sources({ value, onChange, live = false, mode = 'bms' }: { value
     <div className='score-source-filter__heading'><span>客户端</span><div className='score-source-filter__actions'>
       <button type='button' onClick={() => onChange(sources.filter(source => source.available).map(source => source.code).join(','))}>全选</button>
       <button type='button' onClick={() => onChange('')}>清空</button>
-      <a href='/help#players'>接入说明</a>
     </div></div>
     <div className='score-source-filter__options'>{clients.map(option)}</div>
     <details className='score-source-filter__versions'><summary>版本与未确认标记</summary>
       <ul>{clients.map(source => <li key={source.code}>{source.code === 'lr2ir.v3.lr2' ? 'LR2：收录旧库成绩，经典 LR2 实时插件尚未提供。' : source.label}</li>)}</ul>
-      {uncertain.length > 0 && <><p>旧库还有未确认的客户端标记，默认保留在榜单中；原值可在成绩详情查看。</p><div className='score-source-filter__options'>{uncertain.map(option)}</div></>}
+      {uncertain.length > 0 && <><p>榜单默认包含客户端未确认的旧成绩。原标记见成绩详情。</p><div className='score-source-filter__options'>{uncertain.map(option)}</div></>}
+      <a href='/help#players'>播放器连接指南</a>
     </details>
   </div>;
 }
