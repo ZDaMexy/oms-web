@@ -1,6 +1,6 @@
 # OMS 原版 osu-web 试运行维护
 
-当前状态为**已部署待真人验收**。最近生产切换是 [2026-11-26 beatoraja 0.8.9 接入](beatoraja-089-20261126.md#生产发布)。产品功能沿用 2026-11-04 [玩家服务发布](oms-player-services-20261104.md#生产发布)，准确身份见下表。
+当前状态为**已部署待真人验收**。最近生产切换是 [2026-11-26 Windows 公开下载修复](#2026-11-26-windows-公开下载修复)。产品功能沿用 2026-11-04 [玩家服务发布](oms-player-services-20261104.md#生产发布)，准确身份见下表。
 
 2026-11-12 共享主机整机迁移至 `47.95.29.3`（旧 `39.105.55.78` 已停止），运行身份、备份与回退边界不变；当前主机 / SSH 别名 / 数据安全取[共享迁移镜像](../../homepage-website/doc_md/other/shared-server-migration-20261112.md)。下表路由配置文件名（如 `39.105.55.78.conf`）随镜像沿用，不代表当前公网 IP。客户端原生页面与固定 OMSIR 的来源继续取 [Client Bridge](../../../oms-server/oms_client_bridge_md/doc_md/mainline/dev-progress.md)，网站发布不生成 Windows 发行包。
 
@@ -8,26 +8,32 @@
 
 ## 当前来源与运行位置
 
-下表 HTTP 来源绑定 2026-11-26 实际发布，Python 和 PHP 运行时分别沿用 11 月 1 日和 10 月 22 日安全维护。准确产物、备份与同库身份取[本轮收据](beatoraja-089-20261126.md#生产发布)。操作前复核实际 current、unit 与 manifest。
+下表 HTTP 来源绑定 2026-11-26 实际发布，Python 和 PHP 运行时分别沿用 11 月 1 日和 10 月 22 日安全维护。准确产物、备份与同库身份取[本轮收据](#2026-11-26-windows-公开下载修复)。操作前复核实际 current、unit 与 manifest。
 
 | 对象 | 最近发布记录的实际身份 |
 | --- | --- |
-| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/e32f44e38310-496bb6c60614`，2026-11-26 12:56:13 CST 核验 |
-| 服务源码 | Backend `e32f44e383103250f45b919ff6838ee014d6957c`。账号、成绩、社区由 FastAPI / SQLite 管理 |
-| 原版页面源码 | Web `496bb6c60614cd751124ad07ad9d78c70ec80698`，Laravel `13.41.0` 与 Symfony HttpFoundation `8.1.11` |
-| 上一应用回退 | `/opt/oms-ir/releases/909f8ff7d4de-2a9db1bb8cd1`，11 月 24 日网页发布包 |
+| HTTP / 网页运行包 | `/opt/oms-ir/current` → `/opt/oms-ir/releases/717be961dde9-7b67b8e7ce7c`，2026-11-26 19:49:08 CST 核验 |
+| 服务源码 | Backend `717be961dde9a0a1f96d2c66491cbe9e3ed4aeba`，与前一版运行文件字节一致。账号、成绩、社区由 FastAPI / SQLite 管理 |
+| 原版页面源码 | Web `7b67b8e7ce7c66dcbd25449d9c01eee9b4ac43d4`，Laravel `13.41.0` 与 Symfony HttpFoundation `8.1.11` |
+| 上一应用回退 | `/opt/oms-ir/releases/e32f44e38310-496bb6c60614`，[11 月 26 日中午发布包](beatoraja-089-20261126.md#生产发布) |
 | 固定维护代码 | `/opt/oms-ir/releases/d1f052b93a81-22b4ee54f237`；日备份 unit 直接指向此包，不能随 HTTP 回退覆盖或当闲置目录清理 |
 | OMS / helper Python 与 BT | 2026-11-01 已切至 Python 3.12.16 / 3.13.18；公共 base、独立 venv、BT 模板指纹及新 full plan roots 只取 [运行时权威记录](server-agent-security-20261101.md#当前运行时与应用来源) |
 | 源码 / 旧设计回退来源 | `d1f052b93a81-e6fdf914cb04` 已迁入[冷归档](storage-offload-20261102.md)，服务器没有展开目录；原 F 盘保全职责保持。回退先取回并核验，再用已修复运行时重新准备 |
 | 实际业务库 | `/var/lib/oms-ir/ir.db` / schema3 / 22表；该次发布保留同一 dev / inode，无生产 raw 恢复或样本数据迁入 |
 | 全量公开历史 | `/opt/oms-ir/archives/lr2ir-v3-public-1-e8f5702701bb5382b93ec572815e07306b9017b124fee505152e47723ac0acdd.db`；只读25,562,325存储摘要 / 334,117谱面，其中25,560,957合格摘要，隔离行不参与榜 |
 | PHP 环境 | `/opt/oms-web/runtime/php85-0069de279481`；独立 oms-web 用户，只读 `/app`，库版本与实际进程校验取[10 月 22 日安全收据](architecture-security-review-20261022.md#全量修复实施)；BT旧PHP8.2仍masked |
-| 当前可写缓存 / 日志 | `/var/cache/oms-web/e32f44e38310-496bb6c60614/production-r1`，bootstrap 和 storage 私有，PHP 日志沿原位置 |
+| 当前可写缓存 / 日志 | `/var/cache/oms-web/717be961dde9-7b67b8e7ce7c/production-r1`，bootstrap 和 storage 私有，PHP 日志沿原位置 |
 | 实际 OMS 路由 | 宝塔 `39.105.55.78.conf` 与 `extension/39.105.55.78/oms-ir.conf` 配对；共享 Nginx、个人站、证书、ACME规则保留 |
 
 上述 Web / Backend 是运行提交，文档HEAD、历史取证和外置检查工具各自记录。客户端现行原生服务完整来源取[2026-10-11配套](client-native-services-20261011.md#2026-10-12客户端页面纠正)，直接登录与待交仍沿原来源；下方2026-10-10接线为原提交历史。旧ppy API为空 / 总开关false，用户从F工作区VS Code非调试验收，未生成Windows发行、publish或安装副本。
 
 线上插件为 beatoraja 0.8.8／0.8.9、LR2oraja build11611350155、ED v0.4.0、OpenLR2 v260915 x86／x64。0.8.9 使用独立固定适配器，已核真实宿主子进程和隔离合成成绩。真实游玩、原生界面和玩法矩阵按[验收说明](../../../oms-server/oms-backend/adapters/ACCEPTANCE.md)登记。
+
+## 2026-11-26 Windows 公开下载修复
+
+19:49:08 CST 切换至 `717be961dde9-7b67b8e7ce7c`。下载页和 6 月 26 日的共享新闻都指向 GitHub `delta`，实际公开附件仍是 `oms_20260626.zip`。包的 SHA-256 为 `6779837d642bb2500f39343b9f057c7288f432505357a3c8c65695b7e2fde5fc`，沿用实际 PHP、Python 运行时及已发布插件。当前公开版本标识维持 20260626。
+
+固定维护 helper 在切换前后生成两份快照。gzip、SHA-256、SQLite 完整性与外键在主机内验证，均为 schema3、22 表。生产库保持相同设备号、inode 与 schema，未回灌任何数据。公网核对两站 HTTPS、下载页、共享新闻、IR 只读入口、CSS 与六个适配器摘要。四个单元与 Nginx include 的切换前原件和收据在 `/var/backups/oms-maintenance/oms-desktop-download-link-20261126/`，本地验证记录在 `artifacts/desktop-release-link-20261126/`。
 
 ## 2026-11-19 依赖安全维护
 
@@ -44,7 +50,7 @@ Laravel `13.35.0 → 13.41.0`，覆盖临时签名 URL 与进程并发修复。S
 
 操作前核实际 current、unit、manifest、运行时和同一业务库，再取得新鲜固定 helper 一致备份并完成 F 盘核验；暂停 timer 前保存其状态，等待在途备份结束。停止 Web / cache、主 IR / catalog 后，基于当前安全配置成对调整应用 / 缓存路径，核配置再切换，随后重启相关服务、清旧 OPcache、核双 health、页面资源和双站。保留当前数据，不回灌发布前 raw；失败如实保留停点。
 
-现行直接回退目标是 `909f8ff7d4de-2a9db1bb8cd1`，配对配置与保留当前库的步骤取[11 月 26 日切换收据](beatoraja-089-20261126.md#生产发布)及[11 月 24 日网页发布收据](site-design-20261124.md#生产发布)。`909f8ff7d4de-c26b894f9f53` 是 11 月 24 日切换前的历史回退目标。`fb2493cd7027-6dddd07312e4` 是 11 月 19 日的急用回退版本，含旧 Web 依赖。固定 `d1f052b93a81-22b4ee54f237` 只用于维护。更早的 `824de121a686-494932756b74` 及其准备方式取[11 月 4 日收据](oms-player-services-20261104.md#生产发布)。回退保留已修复 Python / PHP、cache 启动依赖、Nginx 安全限制和 schema3；不能整份覆盖 10 月 8 日或 11 日旧配置。
+现行直接回退目标是 `e32f44e38310-496bb6c60614`，配对配置取[当前切换收据](#2026-11-26-windows-公开下载修复)。`909f8ff7d4de-2a9db1bb8cd1` 是 11 月 26 日中午那次发布的历史回退目标。`909f8ff7d4de-c26b894f9f53` 是 11 月 24 日切换前的历史回退目标。`fb2493cd7027-6dddd07312e4` 是 11 月 19 日的急用回退版本，含旧 Web 依赖。固定 `d1f052b93a81-22b4ee54f237` 只用于维护。更早的 `824de121a686-494932756b74` 及其准备方式取[11 月 4 日收据](oms-player-services-20261104.md#生产发布)。回退保留已修复 Python / PHP、cache 启动依赖、Nginx 安全限制和 schema3；不能整份覆盖 10 月 8 日或 11 日旧配置。
 
 旧 OMS 缺 11 月 4 日新增的玩家 / 详情接口。联合回退必须先核[当前 Shiro 来源、v3 数据与恢复边界](../../../Shiro-Agent/doc_md/mainline/production.md#遗忘恢复与后续发布)，按实际兼容性安排消费者；11 月 4 日清晨的 `5a3b109` 只是当次配套目标，已冷迁出，不能直接作为以后新版 Shiro 的常规回退。无法证明当前数据和遗忘语义兼容时前向修复，不回灌旧认知。
 
@@ -72,7 +78,7 @@ Laravel `13.35.0 → 13.41.0`，覆盖临时签名 URL 与进程并发修复。S
 
 ## 运行与资源核对
 
-最近应用切换与公网核对取[11 月 26 日发布](beatoraja-089-20261126.md#生产发布)，上次主机只读核对取[11 月 22 日复核](#2026-11-22-只读运行复核)。10 月 11 日安装、三次切换和 90 秒共载取[原生服务记录](client-native-services-20261011.md#资源与安全清理)。网页身份复用、一次下载解析、同键合并与图片 gzip 取[网络轮](network-service-review-20261011.md)的原日期证据。客户端内容按页请求、取消迟到结果，以 300 秒有界缓存支持阅读。谱包沿批准原站下载。全站 CPU、长期流量和数据增长仍按对应预算复核。
+最近应用切换与公网核对取[11 月 26 日公开下载修复](#2026-11-26-windows-公开下载修复)，上次主机只读核对取[11 月 22 日复核](#2026-11-22-只读运行复核)。10 月 11 日安装、三次切换和 90 秒共载取[原生服务记录](client-native-services-20261011.md#资源与安全清理)。网页身份复用、一次下载解析、同键合并与图片 gzip 取[网络轮](network-service-review-20261011.md)的原日期证据。客户端内容按页请求、取消迟到结果，以 300 秒有界缓存支持阅读。谱包沿批准原站下载。全站 CPU、长期流量和数据增长仍按对应预算复核。
 
 | 单元 | 固定预算和行为 |
 | --- | --- |
