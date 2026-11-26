@@ -40,6 +40,7 @@
     "text": "下面四款播放器提供试运行插件，实际交分和读榜仍待游玩验证。经典原版 LR2 的实时接入尚未提供。\n先在账号页为播放器创建专用密钥，再下载与播放器版本一致的插件。密钥只显示一次，请将它填入播放器设置。停用时可在账号页撤销。\n插件上传更新后的最佳成绩。单局时间和旧库缺失数据以「—」显示。",
     "links": [
       { "label": "创建或撤销专用密钥", "href": "/account" },
+      { "label": "beatoraja 0.8.9 Java 插件", "href": "/ir/adapters/omsir-beatoraja-0.8.9-0.1.0.jar" },
       { "label": "beatoraja 0.8.8 Java 插件", "href": "/ir/adapters/omsir-beatoraja-0.8.8-0.1.0.jar" },
       { "label": "LR2oraja build11611350155 Java 插件", "href": "/ir/adapters/omsir-lr2oraja-build11611350155-0.1.0.jar" },
       { "label": "Endless Dream v0.4.0 Java 插件", "href": "/ir/adapters/omsir-ed-v0.4.0-0.1.0.jar" },

@@ -88,7 +88,21 @@ with tarfile.open(args.package) as archive:
         assert len(data) == file_map['file_bytes'][name] and hashlib.sha256(data).hexdigest() == checksum
     versions = json.load(archive.extractfile('web/ir/adapters/versions.json'))
     assert not manifest['adapter_source']['artifacts_rebuilt']
-    assert all(item['backend_commit'] == manifest['adapter_source']['backend_commit'] for item in versions['items'])
+    source = manifest['adapter_source']
+    supplemental = source.get('supplemental', {})
+    assert set(supplemental) <= {'beatoraja-089'}
+    items = {item['target']: item for item in versions['items']}
+    assert len(items) == len(versions['items']) and supplemental.keys() <= items.keys()
+    for target, item in items.items():
+        assert item['backend_commit'] == supplemental.get(target, source['backend_commit'])
+        assert file_map['files']['web/ir/adapters/' + item['file']] == item['sha256']
+        if target in supplemental:
+            assert re.fullmatch(r'[0-9a-f]{40}', supplemental[target])
+            assert item['source'] == 'beatoraja' and item['client_version'] == '0.8.9'
+            assert item['file'] == 'omsir-beatoraja-0.8.9-0.1.0.jar'
+            sdk = json.load(archive.extractfile('backend/adapters/sdk-manifest.json'))
+            pinned = next(entry for entry in sdk['java'] if entry['target'] == target)
+            assert item['provider'] == pinned['class_name'] and item['sdk_sha256'] == pinned['jar_sha256']
     public = manifest['public_archive']
     projection = Path('/opt/oms-ir/archives') / (public['projection_version'] + '.db')
     assert not projection.is_symlink() and projection.stat().st_size == public['bytes']

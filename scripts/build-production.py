@@ -6,6 +6,7 @@ import gzip
 import hashlib
 import io
 import json
+import runpy
 from pathlib import Path, PurePosixPath
 import subprocess
 import tarfile
@@ -13,8 +14,9 @@ from php_runtime import RUNTIME_ARCHIVE, inspect_runtime
 
 WEB = Path(__file__).resolve().parent.parent
 BACKEND = WEB.parent.parent / 'oms-server/oms-backend'
-CLIENT = Path('/mnt/f/zdamexy-workspace/oms')
-LEGACY = Path('/mnt/f/zdamexy-workspace/oms/artifacts/oms-deai-20261007/oms-ir-d1f052b93a81-e6fdf914cb04.tar.gz')
+CLIENT = WEB.parent.parent / 'oms'
+LEGACY = CLIENT / 'artifacts/oms-deai-20261007/oms-ir-d1f052b93a81-e6fdf914cb04.tar.gz'
+BEATORAJA_089 = 'beatoraja-089'
 LEGACY_SHA = 'b2bc5c490b5f2e6bddb72bb4cdb35ab0b7412507d4ae8b9ac8bc3cd59b78e62b'
 
 def git(repo, *args):
@@ -44,6 +46,8 @@ def tar_bytes(files):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--beatoraja-089-verification', type=Path,
+                        default=BACKEND / 'adapters/build/java/beatoraja-089/sdk-http-verification.json')
     args = parser.parse_args()
     heads = {name: git(repo, 'rev-parse', 'HEAD').decode().strip() for name, repo in [('backend', BACKEND), ('website', WEB), ('client', CLIENT)]}
     web_paths = ('app', 'config', 'routes', 'bootstrap', 'resources/views', 'resources/lang', 'resources/oms', 'public', 'deploy', 'artisan', 'composer.json', 'composer.lock', 'LICENCE')
@@ -86,11 +90,24 @@ def main():
                 files[name] = data
     versions = json.loads(files['web/ir/adapters/versions.json'])
     assert all(row['backend_commit'] == old_manifest['backend_commit'] for row in versions['items'])
+    if git(BACKEND, 'status', '--porcelain', '--', 'scripts/build_release.py'):
+        raise ValueError('Commit the adapter verifier before publishing')
+    verify_adapters = runpy.run_path(str(BACKEND / 'scripts/build_release.py'))['java_adapter_assets']
+    extra_files, extra_items = verify_adapters(BACKEND, args.beatoraja_089_verification, {BEATORAJA_089})
+    assert len(extra_items) == 1 and not files.keys() & extra_files.keys()
+    files.update(extra_files)
+    versions['items'].extend(extra_items)
+    files['web/ir/adapters/versions.json'] = json.dumps(versions, ensure_ascii=False, indent=2).encode()
+    supplemental = {row['target']: row['backend_commit'] for row in extra_items}
     # Corresponding source has all committed web inputs, locks, licences and
     # exact backend inputs. Never include developer caches, env files or data.
     sources = {'web/' + name: data for name, data in archive_files(WEB).items()}
     sources.update({name: data for name, data in files.items() if name.startswith('backend/')})
-    sources['source-manifest.json'] = json.dumps({'backend_commit': heads['backend'], 'website_commit': heads['website'], 'adapter_backend_commit': old_manifest['backend_commit'], 'files': {name: hashlib.sha256(data).hexdigest() for name, data in sources.items()}}, indent=2).encode()
+    for row in extra_items:
+        for input_ in row['source_files']:
+            name = input_['path']
+            sources['backend/' + name] = git(BACKEND, 'show', row['backend_commit'] + ':' + name)
+    sources['source-manifest.json'] = json.dumps({'backend_commit': heads['backend'], 'website_commit': heads['website'], 'adapter_backend_commit': old_manifest['backend_commit'], 'supplemental_adapter_commits': supplemental, 'files': {name: hashlib.sha256(data).hexdigest() for name, data in sources.items()}}, indent=2).encode()
     files['web/public/oms-web-source.tar.gz'] = tar_bytes(sources)
     runtime = WEB / 'artifacts/production' / RUNTIME_ARCHIVE
     php_runtime = inspect_runtime(runtime)
@@ -100,7 +117,7 @@ def main():
         'release_id': heads['backend'][:12] + '-' + heads['website'][:12],
         **{name + '_commit': commit for name, commit in heads.items()},
         'public_archive': old_manifest['public_archive'],
-        'adapter_source': {'backend_commit': old_manifest['backend_commit'], 'original_release': old_manifest['release_id'], 'original_package_sha256': LEGACY_SHA, 'artifacts_rebuilt': False},
+        'adapter_source': {'backend_commit': old_manifest['backend_commit'], 'original_release': old_manifest['release_id'], 'original_package_sha256': LEGACY_SHA, 'artifacts_rebuilt': False, 'supplemental': supplemental},
         'php_runtime': php_runtime,
         'compiled_input_sha256': hashlib.sha256((WEB / 'artifacts/production/compiled-inputs.json').read_bytes()).hexdigest(),
         'created_at': datetime.now(timezone.utc).isoformat(),

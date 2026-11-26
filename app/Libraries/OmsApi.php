@@ -19,6 +19,7 @@ class OmsApi
 {
     public const ADAPTER_FILES = [
         'omsir-beatoraja-0.8.8-0.1.0.jar',
+        'omsir-beatoraja-0.8.9-0.1.0.jar',
         'omsir-lr2oraja-build11611350155-0.1.0.jar',
         'omsir-ed-v0.4.0-0.1.0.jar',
         'OmsIR-v260915.x64.dll',
