@@ -54,7 +54,7 @@
   {
     "id": "java-ir",
     "heading": "Java 插件设置",
-    "text": "适用于 beatoraja、LR2oraja 和 Endless Dream 的上述版本：\n1. 确认播放器版本，将对应 JAR 放入播放器的 ir/ 目录。\n2. 在原启动器的 Java classpath 中加入 ir/*，保留原有项目；然后重启播放器，让插件被加载。\n3. 在播放器的 IR 设置中选择对应的 OMS 插件。ID 填 OMS，Password 填为该播放器创建的专用密钥。\n4. 保存并重启。插件默认连接 https://oms.zdamexy.work；有自建服务时可在原 Java 启动参数加入 -Domsir.origin=https://你的站点。\n5. 检查播放器的 IR 连接提示，再完成一张标准 LN 谱面并在网站核对成绩。当前插件不支持 CN、HCN 或带随机分支的谱面。"
+    "text": "适用于 beatoraja、LR2oraja 和 Endless Dream 的上述版本：\n1. 确认播放器版本，将对应 JAR 放入播放器的 ir/ 目录。\n2. 在原启动器的 Java classpath 中加入 ir/*，保留原有项目；然后重启播放器，让插件被加载。\n3. 在播放器的 IR 设置中选择对应的 OMS 插件。ID 填 OMS，Password 填为该播放器创建的专用密钥。\n4. 保存并重启。插件默认连接 https://oms.zdamexy.work。连接自建服务时，beatoraja 0.8.9 需将 -Domsir.origin=https://你的站点 传给实际的 IR 子进程。其余列出的 Java 版本沿用原播放器的 JVM 启动参数。\n5. 检查播放器的 IR 连接提示，再完成一张标准 LN 谱面并在网站核对成绩。当前插件不支持 CN、HCN 或带随机分支的谱面。"
   },
   {
     "id": "openlr2-ir",
